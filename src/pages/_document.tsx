@@ -7,8 +7,6 @@ export default class MyDocument extends Document {
     return (
       <Html>
         <Head>
-          <meta charSet="utf-8" />
-          <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
           <Favicons />
           <link rel="manifest" href="/manifest.json" />
         </Head>
