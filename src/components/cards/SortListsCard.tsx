@@ -44,9 +44,12 @@ const SortListsCard = ({
   const [stateProjectsData, setStateProjectsData] = useState<MdxMetadataCard[]>(projectsCards.slice(0, cardsPerPage));
   const isMounted = useIsMounted();
   const intl = useIntl();
-  const handleSort = useCallback((item: Item | null) => {
-    item ? setSort(item) : setSort(null);
-  }, []);
+  const handleSort = useCallback(
+    (item: Item | null) => {
+      item ? setSort(item) : setSort(null);
+    },
+    [setSort]
+  );
   const handleReverse = useCallback(() => {
     sort && setReverse((b) => !b);
   }, [sort]);
