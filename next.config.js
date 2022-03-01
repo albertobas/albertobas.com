@@ -83,7 +83,6 @@ const nextConfig = {
     }
     return config;
   },
-  eslint: { ignoreDuringBuilds: true }, // https://github.com/vercel/next.js/discussions/34797
 };
 
 module.exports = nextConfig;
