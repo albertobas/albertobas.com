@@ -1,0 +1,76 @@
+/*------------ PANDAS DATAFRAME ------------*/
+.dataframe {
+  font-family: var(--font-mono);
+  border-collapse: collapse;
+  border-spacing: 0;
+  border: none;
+  font-size: 0.825rem;
+  table-layout: fixed;
+  margin: 1.25rem auto;
+  overflow: scroll;
+  overflow: auto;
+  display: block;
+  thead {
+    vertical-align: bottom;
+    @mixin isDark {
+      border-color: var(--gray-800);
+    }
+  }
+  td,
+  th,
+  tr {
+    vertical-align: middle;
+    padding: 0.5em;
+    line-height: normal;
+    white-space: normal;
+    max-width: none;
+    border: none;
+  }
+  th {
+    font-weight: 600;
+  }
+  th,
+  td {
+    color: var(--black-400);
+    @mixin isDark {
+      color: var(--gray-200);
+    }
+  }
+  tbody {
+    box-shadow: var(--shadow);
+    @mixin isDark {
+      box-shadow: var(--shadow-dark);
+    }
+    tr:nth-child(odd) {
+      background: #fff;
+      @mixin isDark {
+        background: var(--black-400);
+      }
+    }
+    tr:nth-child(even) {
+      background: #e5e5e5;
+      @mixin isDark {
+        background: var(--black-200);
+      }
+    }
+  }
+  table {
+    margin-bottom: 1em;
+  }
+  *:last-child {
+    margin: 0;
+  }
+}
+.dataframe tbody tr:hover {
+  background-color: var(--gray-500);
+  @mixin isDark {
+    background-color: var(--gray-600);
+  }
+}
+.dataframe :global(.table-selected),
+.dataframe :global(.table-selected) > p {
+  color: var(--blue-300);
+  @mixin isDark {
+    color: var(--blue-200);
+  }
+}

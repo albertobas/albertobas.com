@@ -1,0 +1,73 @@
+.menu {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  overflow: hidden;
+  inset: 0px;
+  opacity: 0;
+  background: radial-gradient(circle at center, #f9fafb, 75%, var(--gray-200-l));
+  transition: opacity 200ms ease, transform 200ms ease;
+  @mixin isDark {
+    background: radial-gradient(circle at center, var(--black-300), 75%, var(--black-400));
+  }
+  li {
+    transform: translateX(-100px);
+    opacity: 0;
+    transition: opacity 200ms ease, transform 200ms ease;
+  }
+}
+.menuRendered {
+  opacity: 1;
+  li {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+.nav {
+  width: 100vw;
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  align-items: center;
+}
+.ul {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 3rem 0;
+  margin: 0;
+  li {
+    @mixin $text-3xl;
+    font-weight: 500;
+    color: var(--black-600);
+    -webkit-tap-highlight-color: var(--gray-800-l);
+    @mixin isDark {
+      color: var(--gray-100);
+      -webkit-tap-highlight-color: var(--gray-500);
+    }
+  }
+  li:not(:last-child) {
+    margin-bottom: 5rem;
+  }
+}
+@media (--mobile-xl) {
+  .ul > li:not(:last-child) {
+    margin-bottom: 4rem;
+  }
+  .ul > li > a {
+    @mixin $text-2xl;
+  }
+}
+@media (--mobile-m) {
+  .ul > li:not(:last-child) {
+    margin-bottom: 3rem;
+  }
+  .ul > li > a {
+    @mixin $text-2xl;
+  }
+}

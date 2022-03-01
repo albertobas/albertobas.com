@@ -1,0 +1,101 @@
+.searchWrapper {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  align-items: center;
+  margin-top: 0.5rem;
+  border-radius: var(--border-radius);
+}
+.search {
+  position: relative;
+  width: 100%;
+  border-radius: var(--border-radius);
+  border: 1px solid var(--gray-200-l);
+  @mixin isDark {
+    border: 1px solid var(--black-300);
+  }
+  svg {
+    position: absolute;
+    display: block;
+    fill: currentColor;
+    top: 1em;
+    left: 1em;
+    color: var(--gray-400-l);
+    @mixin isDark {
+      color: var(--gray-700);
+    }
+  }
+  input {
+    width: 100%;
+    font-family: var(--font-sans);
+    @mixin $text-base;
+    border-radius: var(--border-radius);
+    border: 3px solid transparent;
+    padding: 0.5em 0.5em 0.5em 3em;
+    color: #000;
+    background-color: #fff;
+    outline: none;
+    appearance: none;
+    @mixin isDark {
+      color: #fff;
+      background-color: #000;
+    }
+  }
+  input::placeholder {
+    opacity: 1;
+    color: var(--gray-400-l);
+    @mixin isDark {
+      color: var(--gray-700);
+    }
+  }
+  input::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+    height: 24px;
+    width: 24px;
+    margin-left: 0.4em;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23777'><path d='M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z'/></svg>");
+    cursor: pointer;
+  }
+}
+.btnOn,
+.btnOff {
+  margin-left: 1rem;
+  position: relative;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 0;
+  fill: currentColor;
+  @mixin $text-xl;
+  svg {
+    display: block;
+  }
+}
+.btnOff {
+  color: var(--gray-600-l);
+  @mixin isDark {
+    color: var(--gray-400);
+  }
+}
+.btnOn,
+.btnOff:hover {
+  color: var(--black-600);
+  @mixin isDark {
+    color: var(--gray-100);
+  }
+}
+.search:focus-within svg {
+  color: var(--gray-600-l);
+  @mixin isDark {
+    color: var(--gray-400);
+  }
+}
+.search:hover,
+.search:focus-within {
+  border-color: transparent;
+  box-shadow: var(--shadow);
+  @mixin isDark {
+    box-shadow: var(--shadow-dark);
+  }
+}

@@ -1,0 +1,97 @@
+.layout {
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+  background-color: #fff;
+  @mixin isDark {
+    background-color: #000;
+  }
+}
+.field {
+  @mixin $text-2xs;
+  font-weight: 500;
+  text-transform: uppercase;
+  margin: 0;
+  color: var(--gray-700-l);
+  @mixin isDark {
+    color: var(--gray-600);
+  }
+}
+.layout h2 {
+  @mixin $text-xl;
+  margin: 0.5rem 0 0;
+  width: fit-content;
+}
+.description {
+  @mixin $text-base;
+  margin: 0.5rem 0 0;
+}
+.layoutTags {
+  margin: 0.5rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: left;
+  li {
+    margin: 0 0.2rem 0.3rem 0;
+  }
+}
+.tech {
+  ul {
+    display: flex;
+    flex-direction: row;
+    padding: 0;
+    margin: 0;
+    align-items: center;
+    li {
+      svg {
+        display: block;
+        font-size: 1.125rem;
+        fill: currentColor;
+      }
+    }
+    li:not(:first-of-type) {
+      margin-left: 0.5rem;
+    }
+  }
+}
+.vyper {
+  display: block;
+  font-size: 1.125rem;
+  line-height: 1.125rem;
+  font-weight: 700;
+  cursor: default;
+}
+.layoutDate {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  @mixin $text-sm;
+}
+.layoutDate > div {
+  margin-right: 1.5rem;
+  margin-top: 0.5rem;
+}
+.date {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  span {
+    margin-right: 0.25rem;
+  }
+}
+.layout h2 > a:hover {
+  text-decoration: underline;
+}
+@media (--laptop) {
+  .layoutTags > li {
+    margin: 0 0.25rem 0.6rem 0;
+  }
+}
+@media (--tablet) {
+  .layout {
+    padding: 1.5rem 1rem;
+  }
+}

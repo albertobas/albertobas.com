@@ -1,0 +1,12 @@
+.container {
+  composes: container from 'src/styles/modules/utils.module.css';
+}
+.containerMargin {
+  composes: containerMargin from 'src/styles/modules/utils.module.css';
+}
+.external {
+  composes: external from 'src/styles/modules/utils.module.css';
+}
+.internal {
+  composes: internal from 'src/styles/modules/utils.module.css';
+}

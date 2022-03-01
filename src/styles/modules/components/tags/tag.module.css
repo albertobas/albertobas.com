@@ -1,0 +1,48 @@
+.tag,
+.tagUnknown {
+  font-family: var(--font-sans);
+  display: inline-block;
+  font-size: 0.875rem;
+  line-height: 1.6rem;
+  padding: 0rem 0.7rem;
+  white-space: nowrap;
+  font-weight: 500;
+  border-radius: 1rem;
+  text-align: center;
+  max-width: 100%;
+  @mixin isDark {
+    color: #fff;
+  }
+}
+.tag {
+  color: var(--blue-300);
+  background-color: var(--blue-100);
+  @mixin isDark {
+    background-color: var(--blue-500);
+  }
+}
+.tagUnknown {
+  color: var(--black-400);
+  background-color: var(--gray-200-l);
+  @mixin isDark {
+    background-color: var(--gray-800);
+  }
+}
+.tag:hover,
+.tagUnknown:hover {
+  color: #fff;
+}
+.tag:hover {
+  background-color: var(--blue-300);
+  @mixin isDark {
+    color: var(--blue-300);
+    background-color: var(--blue-100);
+  }
+}
+.tagUnknown:hover {
+  background-color: var(--black-400);
+  @mixin isDark {
+    color: var(--black-400);
+    background-color: var(--gray-200-l);
+  }
+}

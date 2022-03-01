@@ -1,0 +1,188 @@
+{
+  "aboutDescription": {
+    "defaultMessage": "Breve introducción de Alberto Bas"
+  },
+  "aboutP1": {
+    "defaultMessage": "Soy Alberto Bas, desarrollador español de finanzas descentralizadas. He escrito esta página para publicar y mostrarles algunos de los trabajos y proyectos acerca de criptografía y blockchain, y ciencia de datos."
+  },
+  "aboutP2": {
+    "defaultMessage": "Intento tratar sobre conceptos como <smartcontracts></smartcontracts>, préstamos rápidos, carteras criptográficas, ZK-SNARKs y otros generalmente sobre <defi></defi>, principalmente escribiendo aplicaciones descentralizadas que normalmente desarrollo utilizando componentes de <reactjs></reactjs> y <typescript></typescript>, en ocasiones utilizando <nextjs></nextjs>. Desarrollo contratos inteligente en los lenguajes <solidity></solidity> y Vyper. Los entornos de desarrollo que generalmente utilizo son <hardhat></hardhat> y Brownie."
+  },
+  "aboutP3": {
+    "defaultMessage": "En cuanto a ciencia de datos, tengo conocimiento de modelado paramétrico y no paramétrico en <supervisedlearning></supervisedlearning>, y de clusterizado y técnicas de PCA en aprendizaje no supervidsado. Principalmente escribo código en <python></python> y utilizo librerías como <scikitlearn></scikitlearn>, <xgboost></xgboost>, <lightgbm></lightgbm>. Tengo experiencia implementando y optimizando redes neuronales prealimentadas and <cnn></cnn>, así como recurrentes (RNN, <lstm></lstm>, <gru></gru>) y redes recursivas. Principalmente utilizo <pytorch></pytorch>, aunque también TensorFlow y Keras. En cuanto a <eda></eda>, utilizo librerías de python (<pandas></pandas>, <numpy></numpy>, <scipy></scipy>, <matplotlib></matplotlib> y <seaborn></seaborn>)."
+  },
+  "aboutP4": {
+    "defaultMessage": "Me puede contactar por <email></email> y en mis perfiles de <github></github> y de <linkedin></linkedin>."
+  },
+  "articleFound": {
+    "defaultMessage": "artículo encontrado"
+  },
+  "articlesFound": {
+    "defaultMessage": "artículos encontrados"
+  },
+  "blogDescription": {
+    "defaultMessage": "Blog sobre criptografía, cadenas de bloques y ciencia de datos y Web3"
+  },
+  "closeFilters": {
+    "defaultMessage": "Cerrar filtros de búsqueda"
+  },
+  "convolutional": {
+    "defaultMessage": "convolucionales"
+  },
+  "datePublished": {
+    "defaultMessage": "Publicado el"
+  },
+  "dateUpdated": {
+    "defaultMessage": "Actualizado el"
+  },
+  "defi": {
+    "defaultMessage": "finanzas descentralizadas"
+  },
+  "dynamicTag": {
+    "defaultMessage": "Proyectos y entradas sobre "
+  },
+  "exploratoryDataAnalysis": {
+    "defaultMessage": "análisis exploratorio de datos"
+  },
+  "firstPage": {
+    "defaultMessage": "Primera página"
+  },
+  "footerWebNote": {
+    "defaultMessage": "Esta página no le rastrea. Su <openSource></openSource> es abierto."
+  },
+  "fullList": {
+    "defaultMessage": "Lista completa"
+  },
+  "introSectionH1": {
+    "defaultMessage": "Una página sobre cadena de bloques, ciencia de datos y Web3"
+  },
+  "introSectionP": {
+    "defaultMessage": "Hola!, soy Alberto Bas, un desarrollador de finanzas descentralizadas e ingeniero técnico de telecomunicaciones de formación. En esta página publico algunos de mis <projects></projects> y <blog></blog>. Espero disfrute de la lectura."
+  },
+  "introSectionPBlog": {
+    "defaultMessage": "artículos"
+  },
+  "introSectionPProjects": {
+    "defaultMessage": "proyectos"
+  },
+  "lastPage": {
+    "defaultMessage": "Última página"
+  },
+  "learnMore": {
+    "defaultMessage": "Ver más"
+  },
+  "loading": {
+    "defaultMessage": "Cargando contenido..."
+  },
+  "mobileMenu": {
+    "defaultMessage": "Menu para móvil"
+  },
+  "nextPage": {
+    "defaultMessage": "Página siguiente"
+  },
+  "notFoundA": {
+    "defaultMessage": "Ir a inicio"
+  },
+  "notFoundP": {
+    "defaultMessage": "Esta página no existe."
+  },
+  "openColab": {
+    "defaultMessage": "Abrir en Colab"
+  },
+  "openFilters": {
+    "defaultMessage": "Abrir filtros de búsqueda"
+  },
+  "openSource": {
+    "defaultMessage": "código"
+  },
+  "page": {
+    "defaultMessage": "Página"
+  },
+  "perPage": {
+    "defaultMessage": "por página"
+  },
+  "postFound": {
+    "defaultMessage": "entrada encontrada"
+  },
+  "postsFound": {
+    "defaultMessage": "entradas encontradas"
+  },
+  "prevPage": {
+    "defaultMessage": "Página previa"
+  },
+  "projectFound": {
+    "defaultMessage": "proyecto encontrado"
+  },
+  "projectsFound": {
+    "defaultMessage": "proyectos encontrados"
+  },
+  "projectsDescription": {
+    "defaultMessage": "Proyectos sobre criptografía, cadena de bloques and ciencia de datos."
+  },
+  "reading": {
+    "defaultMessage": "min de lectura"
+  },
+  "relatedPosts": {
+    "defaultMessage": "Artículos similares"
+  },
+  "relatedProjects": {
+    "defaultMessage": "Proyectos similares"
+  },
+  "reverse": {
+    "defaultMessage": "Revertir"
+  },
+  "searchPosts": {
+    "defaultMessage": "Busca entradas..."
+  },
+  "searchPostsProjects": {
+    "defaultMessage": "Busca entradas y proyectos..."
+  },
+  "searchProjects": {
+    "defaultMessage": "Busca proyectos..."
+  },
+  "searchTags": {
+    "defaultMessage": "Busca etiquetas..."
+  },
+  "footerSections": {
+    "defaultMessage": "Secciones"
+  },
+  "select": {
+    "defaultMessage": "Elija..."
+  },
+  "selectLabel": {
+    "defaultMessage": "Elija "
+  },
+  "slogan": {
+    "defaultMessage": "Desarrollador de DeFi"
+  },
+  "smartContracts": {
+    "defaultMessage": "contratos inteligentes"
+  },
+  "footerContact": {
+    "defaultMessage": "Contacto"
+  },
+  "sortBy": {
+    "defaultMessage": "Ordenar por..."
+  },
+  "supervisedLearning": {
+    "defaultMessage": "aprendizaje supervisado"
+  },
+  "tableOfContents": {
+    "defaultMessage": "Tabla de contenidos"
+  },
+  "tagFound": {
+    "defaultMessage": "etiqueta encontrada"
+  },
+  "tagsDescription": {
+    "defaultMessage": "Etiquetas sobre criptografía, cadena de bloques y ciencia de datos"
+  },
+  "tagsFound": {
+    "defaultMessage": "etiquetas encontradas"
+  },
+  "toc": {
+    "defaultMessage": "En este artículo"
+  },
+  "viewGithub": {
+    "defaultMessage": "Ver en GitHub"
+  }
+}

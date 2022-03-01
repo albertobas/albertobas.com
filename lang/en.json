@@ -1,0 +1,188 @@
+{
+  "aboutDescription": {
+    "defaultMessage": "Brief introduction of Alberto Bas"
+  },
+  "aboutP1": {
+    "defaultMessage": "I'm Alberto Bas, a defi developer from Spain. I've written this page to gather and publish some work and projects mainly about cryptography, blockchain and data science."
+  },
+  "aboutP2": {
+    "defaultMessage": "I try to cover concepts like <smartcontracts></smartcontracts>, flash loans and swaps, crypto wallets, ZK-SNARKs and others mostly about <defi></defi> generally coding decentralized applications which I usually develop using <reactjs></reactjs> components and <typescript></typescript>, sometimes using <nextjs></nextjs>. I code smart contracts in <solidity></solidity> and Vyper. The development environments I usually use are <hardhat></hardhat> and Brownie."
+  },
+  "aboutP3": {
+    "defaultMessage": "In regards to data science, I have knowledge of parametric and non-parametric modeling in <supervisedlearning></supervisedlearning>, and of clustering and PCA techniques in unsupervised learning. I usually code in <python></python> and use libraries such as <scikitlearn></scikitlearn>, <xgboost></xgboost>, <lightgbm></lightgbm>. I have experience of implementing and optimizing feed-forward and <cnn></cnn> as well as recurrent (<lstm></lstm>, <gru></gru>) and recursive networks. I primarily use <pytorch></pytorch> but also TensorFlow and Keras. I perform <eda></eda> using python libraries (<pandas></pandas>, <numpy></numpy>, <scipy></scipy>, <matplotlib></matplotlib> and <seaborn></seaborn>)."
+  },
+  "aboutP4": {
+    "defaultMessage": "You can contact me by <email></email> and on <github></github> and <linkedin></linkedin>."
+  },
+  "articleFound": {
+    "defaultMessage": "article found"
+  },
+  "articlesFound": {
+    "defaultMessage": "articles found"
+  },
+  "blogDescription": {
+    "defaultMessage": "Blog about cryptography, blockchain and data science"
+  },
+  "closeFilters": {
+    "defaultMessage": "Close search filters"
+  },
+  "convolutional": {
+    "defaultMessage": "convolutional"
+  },
+  "datePublished": {
+    "defaultMessage": "Published on"
+  },
+  "dateUpdated": {
+    "defaultMessage": "Updated on"
+  },
+  "defi": {
+    "defaultMessage": "decentralized finance"
+  },
+  "dynamicTag": {
+    "defaultMessage": "Projects and posts about"
+  },
+  "exploratoryDataAnalysis": {
+    "defaultMessage": "exploratory data analysis"
+  },
+  "firstPage": {
+    "defaultMessage": "First page"
+  },
+  "footerContact": {
+    "defaultMessage": "Contact"
+  },
+  "footerSections": {
+    "defaultMessage": "Sections"
+  },
+  "footerWebNote": {
+    "defaultMessage": "This webpage does not track you. It is <openSource></openSource>."
+  },
+  "fullList": {
+    "defaultMessage": "Full list"
+  },
+  "introSectionH1": {
+    "defaultMessage": "A page about blockchain, data science and Web3"
+  },
+  "introSectionP": {
+    "defaultMessage": "Hi!, I'm Alberto Bas, a DeFi developer by profession and telecommunications technical engineer by training. I post in this page some <projects></projects> and <blog></blog> about cryptography, blockchain, and data science."
+  },
+  "introSectionPBlog": {
+    "defaultMessage": "articles"
+  },
+  "introSectionPProjects": {
+    "defaultMessage": "projects"
+  },
+  "lastPage": {
+    "defaultMessage": "Last page"
+  },
+  "learnMore": {
+    "defaultMessage": "Learn more"
+  },
+  "loading": {
+    "defaultMessage": "Loading content..."
+  },
+  "mobileMenu": {
+    "defaultMessage": "Mobile menu"
+  },
+  "nextPage": {
+    "defaultMessage": "Next page"
+  },
+  "notFoundA": {
+    "defaultMessage": "Go back home"
+  },
+  "notFoundP": {
+    "defaultMessage": "This page does not exist."
+  },
+  "openColab": {
+    "defaultMessage": "Open in Colab"
+  },
+  "openFilters": {
+    "defaultMessage": "Open search filters"
+  },
+  "openSource": {
+    "defaultMessage": "open source"
+  },
+  "page": {
+    "defaultMessage": "Page"
+  },
+  "perPage": {
+    "defaultMessage": "per page"
+  },
+  "postFound": {
+    "defaultMessage": "post found"
+  },
+  "postsFound": {
+    "defaultMessage": "posts found"
+  },
+  "prevPage": {
+    "defaultMessage": "Previous page"
+  },
+  "projectFound": {
+    "defaultMessage": "project found"
+  },
+  "projectsDescription": {
+    "defaultMessage": "Projects about cryptography, blockchain and data science"
+  },
+  "projectsFound": {
+    "defaultMessage": "projects found"
+  },
+  "reading": {
+    "defaultMessage": "min read"
+  },
+  "relatedPosts": {
+    "defaultMessage": "Similar posts"
+  },
+  "relatedProjects": {
+    "defaultMessage": "Similar projects"
+  },
+  "reverse": {
+    "defaultMessage": "Reverse"
+  },
+  "searchPosts": {
+    "defaultMessage": "Search posts..."
+  },
+  "searchPostsProjects": {
+    "defaultMessage": "Search posts and projects..."
+  },
+  "searchProjects": {
+    "defaultMessage": "Search projects..."
+  },
+  "searchTags": {
+    "defaultMessage": "Search tags..."
+  },
+  "select": {
+    "defaultMessage": "Select..."
+  },
+  "selectLabel": {
+    "defaultMessage": "Select"
+  },
+  "slogan": {
+    "defaultMessage": "DeFi developer"
+  },
+  "smartContracts": {
+    "defaultMessage": "smart contracts"
+  },
+  "sortBy": {
+    "defaultMessage": "Sort by..."
+  },
+  "supervisedLearning": {
+    "defaultMessage": "supervised learning"
+  },
+  "tableOfContents": {
+    "defaultMessage": "Table of contents"
+  },
+  "tagFound": {
+    "defaultMessage": "tag found"
+  },
+  "tagsDescription": {
+    "defaultMessage": "Tags about cryptography, blockchain and data science"
+  },
+  "tagsFound": {
+    "defaultMessage": "tags found"
+  },
+  "toc": {
+    "defaultMessage": "In this article"
+  },
+  "viewGithub": {
+    "defaultMessage": "View on GitHub"
+  }
+}

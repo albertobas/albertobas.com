@@ -1,0 +1,97 @@
+.paginationWrapper {
+  display: grid;
+  grid-template-columns: 25% 50% 25%;
+  margin: 0 auto;
+  max-width: var(--max-width);
+  align-items: center;
+  margin-top: 1.5rem;
+  font-size: 1rem;
+}
+.pagination {
+  grid-column: 2;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.layoutCardsList {
+  grid-column: 3;
+  justify-self: right;
+  align-items: right;
+}
+.cardsPerPage {
+  grid-column: 3;
+  justify-self: right;
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  width: fit-content;
+}
+.cardsPerPage > span {
+  @mixin $text-sm;
+}
+.cardsPerPageDD {
+  width: 95px;
+  padding-right: 10px;
+}
+.seeAll {
+  grid-column: 3;
+  grid-row: 2;
+  margin-top: 1rem;
+  justify-self: end;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: fit-content;
+  svg {
+    fill: currentColor;
+    margin-left: 0.4em;
+    display: block;
+  }
+}
+.seeAll:hover {
+  color: #000;
+  text-decoration: underline;
+  @mixin isDark {
+    color: #fff;
+  }
+}
+.paginationMobile {
+  display: none;
+}
+@media (--tablet) {
+  .paginationWrapper {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+    justify-items: center;
+  }
+  .pagination {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .cardsPerPage {
+    margin-top: 1rem;
+    grid-column: 1;
+    grid-row: 2;
+    justify-self: center;
+    padding-right: 0;
+  }
+  .seeAll {
+    grid-column: 1;
+    grid-row: 3;
+    justify-self: center;
+  }
+}
+@media (--mobile-m) {
+  .pagination {
+    display: none;
+  }
+  .paginationMobile {
+    grid-column: 1;
+    grid-row: 1;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+}

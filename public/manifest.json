@@ -1,0 +1,24 @@
+{
+  "name": "Alberto Bas",
+  "short_name": "www.albertobas.com",
+  "description": "A page about blockchain, data science and Web3.",
+  "background_color": "#f9fafb",
+  "theme_color": "#f9fafb",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "dir": "ltr",
+  "lang": "en",
+  "start_url": "index.html",
+  "icons": [
+    {
+      "src": "/favicons/favicon_192x192.png", 
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/favicons/favicon_512x512.png", 
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ]
+}

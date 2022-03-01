@@ -1,0 +1,6 @@
+.external {
+  cursor: ne-resize;
+}
+.externalContact {
+  composes: external from 'src/styles/modules/utils.module.css';
+}

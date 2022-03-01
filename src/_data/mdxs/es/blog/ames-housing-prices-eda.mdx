@@ -1,0 +1,1457 @@
+---
+field: 'data-visualization'
+title: 'Prediciendo precios de casas de Ames: análisis exploratorio de datos'
+description: 'Análisis exploratorio de datos en el set de datos Ames housing prices.'
+introduction: '<p>En este cuaderno se presenta un análisis exploratorio con el fin de llegar a una buena comprensión del conjunto de datos de Ames housing prices. Haré uso de dos formas simples de visualizaciones de datos exploratorias: gráficos de distribución (o basados en distribución) y visualizaciones de dos variables.</p><p>Me interesa conocer la forma de los datos y las relaciones entre las variables independientes y la respuesta. Este ejercicio visual puede darnos ideas y mostrar patrones que de otra manera hubiera sido más difícil de comprender.</p>'
+tags: 'univariate-analysis,bivariate-analysis,exploratory-data-analysis'
+tech: 'python,jupyter,numpy,pandas,matplotlib,seaborn,scipy'
+datePublished: '2022-03-01'
+github: { repo: 'ames-housing-prices', file: 'precios_casas_ames_eda.ipynb' }
+---
+
+## Configuración
+
+```python
+%%capture
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import seaborn as sns
+import warnings
+from scipy.stats import boxcox, kurtosis, norm, probplot, skew
+from sklearn.datasets import fetch_openml
+from utils import plot_univariate, plot_bivariate
+from IPython.display import display
+pd.set_option('max_columns', 200)
+warnings.filterwarnings('ignore')
+sns.distributions._has_statsmodels=False # Estimating density with scipy
+```
+
+El conjunto de datos contiene 79 valores por cada observación, 80 en el conjunto de entrenamiento considerando la variable objetivo. Hay 1460 observaciones en el conjunto de entrenamiento y una menos en el conjunto que se utiliza para evaluar el análisis, es decir, predecir la variable objetivo, que es `SalePrice`. La única columna que no se utilizará es `Id`.
+
+```python
+X_train = fetch_openml(name="house_prices", as_frame=True, data_home='data')['frame']
+X_train.drop(['Id'], axis=1, inplace=True)
+for col in ['MSSubClass', 'OverallQual', 'OverallCond']:
+    X_train[col] = X_train[col].astype('int')
+display(X_train.head(2), X_train.shape)
+```
+
+<DataFrame>
+  <thead>
+    <tr>
+      <th></th>
+      <th>MSSubClass</th>
+      <th>MSZoning</th>
+      <th>LotFrontage</th>
+      <th>LotArea</th>
+      <th>Street</th>
+      <th>Alley</th>
+      <th>LotShape</th>
+      <th>LandContour</th>
+      <th>Utilities</th>
+      <th>LotConfig</th>
+      <th>LandSlope</th>
+      <th>Neighborhood</th>
+      <th>Condition1</th>
+      <th>Condition2</th>
+      <th>BldgType</th>
+      <th>HouseStyle</th>
+      <th>OverallQual</th>
+      <th>OverallCond</th>
+      <th>YearBuilt</th>
+      <th>YearRemodAdd</th>
+      <th>RoofStyle</th>
+      <th>RoofMatl</th>
+      <th>Exterior1st</th>
+      <th>Exterior2nd</th>
+      <th>MasVnrType</th>
+      <th>MasVnrArea</th>
+      <th>ExterQual</th>
+      <th>ExterCond</th>
+      <th>Foundation</th>
+      <th>BsmtQual</th>
+      <th>BsmtCond</th>
+      <th>BsmtExposure</th>
+      <th>BsmtFinType1</th>
+      <th>BsmtFinSF1</th>
+      <th>BsmtFinType2</th>
+      <th>BsmtFinSF2</th>
+      <th>BsmtUnfSF</th>
+      <th>TotalBsmtSF</th>
+      <th>Heating</th>
+      <th>HeatingQC</th>
+      <th>CentralAir</th>
+      <th>Electrical</th>
+      <th>1stFlrSF</th>
+      <th>2ndFlrSF</th>
+      <th>LowQualFinSF</th>
+      <th>GrLivArea</th>
+      <th>BsmtFullBath</th>
+      <th>BsmtHalfBath</th>
+      <th>FullBath</th>
+      <th>HalfBath</th>
+      <th>BedroomAbvGr</th>
+      <th>KitchenAbvGr</th>
+      <th>KitchenQual</th>
+      <th>TotRmsAbvGrd</th>
+      <th>Functional</th>
+      <th>Fireplaces</th>
+      <th>FireplaceQu</th>
+      <th>GarageType</th>
+      <th>GarageYrBlt</th>
+      <th>GarageFinish</th>
+      <th>GarageCars</th>
+      <th>GarageArea</th>
+      <th>GarageQual</th>
+      <th>GarageCond</th>
+      <th>PavedDrive</th>
+      <th>WoodDeckSF</th>
+      <th>OpenPorchSF</th>
+      <th>EnclosedPorch</th>
+      <th>3SsnPorch</th>
+      <th>ScreenPorch</th>
+      <th>PoolArea</th>
+      <th>PoolQC</th>
+      <th>Fence</th>
+      <th>MiscFeature</th>
+      <th>MiscVal</th>
+      <th>MoSold</th>
+      <th>YrSold</th>
+      <th>SaleType</th>
+      <th>SaleCondition</th>
+      <th>SalePrice</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>60</td>
+      <td>RL</td>
+      <td>65.0</td>
+      <td>8450.0</td>
+      <td>Pave</td>
+      <td>None</td>
+      <td>Reg</td>
+      <td>Lvl</td>
+      <td>AllPub</td>
+      <td>Inside</td>
+      <td>Gtl</td>
+      <td>CollgCr</td>
+      <td>Norm</td>
+      <td>Norm</td>
+      <td>1Fam</td>
+      <td>2Story</td>
+      <td>7</td>
+      <td>5</td>
+      <td>2003.0</td>
+      <td>2003.0</td>
+      <td>Gable</td>
+      <td>CompShg</td>
+      <td>VinylSd</td>
+      <td>VinylSd</td>
+      <td>BrkFace</td>
+      <td>196.0</td>
+      <td>Gd</td>
+      <td>TA</td>
+      <td>PConc</td>
+      <td>Gd</td>
+      <td>TA</td>
+      <td>No</td>
+      <td>GLQ</td>
+      <td>706.0</td>
+      <td>Unf</td>
+      <td>0.0</td>
+      <td>150.0</td>
+      <td>856.0</td>
+      <td>GasA</td>
+      <td>Ex</td>
+      <td>Y</td>
+      <td>SBrkr</td>
+      <td>856.0</td>
+      <td>854.0</td>
+      <td>0.0</td>
+      <td>1710.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>2.0</td>
+      <td>1.0</td>
+      <td>3.0</td>
+      <td>1.0</td>
+      <td>Gd</td>
+      <td>8.0</td>
+      <td>Typ</td>
+      <td>0.0</td>
+      <td>None</td>
+      <td>Attchd</td>
+      <td>2003.0</td>
+      <td>RFn</td>
+      <td>2.0</td>
+      <td>548.0</td>
+      <td>TA</td>
+      <td>TA</td>
+      <td>Y</td>
+      <td>0.0</td>
+      <td>61.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.0</td>
+      <td>2.0</td>
+      <td>2008.0</td>
+      <td>WD</td>
+      <td>Normal</td>
+      <td>208500.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>20</td>
+      <td>RL</td>
+      <td>80.0</td>
+      <td>9600.0</td>
+      <td>Pave</td>
+      <td>None</td>
+      <td>Reg</td>
+      <td>Lvl</td>
+      <td>AllPub</td>
+      <td>FR2</td>
+      <td>Gtl</td>
+      <td>Veenker</td>
+      <td>Feedr</td>
+      <td>Norm</td>
+      <td>1Fam</td>
+      <td>1Story</td>
+      <td>6</td>
+      <td>8</td>
+      <td>1976.0</td>
+      <td>1976.0</td>
+      <td>Gable</td>
+      <td>CompShg</td>
+      <td>MetalSd</td>
+      <td>MetalSd</td>
+      <td>None</td>
+      <td>0.0</td>
+      <td>TA</td>
+      <td>TA</td>
+      <td>CBlock</td>
+      <td>Gd</td>
+      <td>TA</td>
+      <td>Gd</td>
+      <td>ALQ</td>
+      <td>978.0</td>
+      <td>Unf</td>
+      <td>0.0</td>
+      <td>284.0</td>
+      <td>1262.0</td>
+      <td>GasA</td>
+      <td>Ex</td>
+      <td>Y</td>
+      <td>SBrkr</td>
+      <td>1262.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1262.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>2.0</td>
+      <td>0.0</td>
+      <td>3.0</td>
+      <td>1.0</td>
+      <td>TA</td>
+      <td>6.0</td>
+      <td>Typ</td>
+      <td>1.0</td>
+      <td>TA</td>
+      <td>Attchd</td>
+      <td>1976.0</td>
+      <td>RFn</td>
+      <td>2.0</td>
+      <td>460.0</td>
+      <td>TA</td>
+      <td>TA</td>
+      <td>Y</td>
+      <td>298.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.0</td>
+      <td>5.0</td>
+      <td>2007.0</td>
+      <td>WD</td>
+      <td>Normal</td>
+      <td>181500.0</td>
+    </tr>
+  </tbody>
+</DataFrame>
+
+<pre>(1460, 80)</pre>
+
+Las variables de entrada se han clasificado por sus niveles de medición (de razón, de intervalo, ordinal, nominal):
+
+```python
+verbal = [f for f in X_train.columns if X_train.dtypes[f] == 'object']
+numerical = [f for f in X_train.columns if X_train.dtypes[f] != 'object']
+qualitative = verbal + ['MSSubClass', 'OverallQual', 'OverallCond']
+quantitative = [n for n in numerical if n not in qualitative and n != 'SalePrice']
+interval = ['GarageYrBlt', 'YearBuilt', 'YearRemodAdd', 'YrSold', 'MoSold']
+ratio = [c for c in quantitative if c not in interval and c != 'SalePrice']
+ratio.sort()
+ordinal = ['LotShape', 'Utilities', 'LandSlope', 'ExterQual', 'OverallQual', 'OverallCond',
+           'ExterCond', 'BsmtQual', 'BsmtCond', 'BsmtExposure', 'BsmtFinType1', 'BsmtFinType2',
+           'HeatingQC', 'Electrical', 'KitchenQual', 'Functional', 'FireplaceQu',
+           'GarageFinish', 'GarageQual', 'GarageCond', 'PavedDrive', 'PoolQC', 'Fence']
+ordinal.sort()
+nominal = [n for n in qualitative if n not in ordinal]
+nominal.sort()
+```
+
+## La respuesta: `SalePrice`
+
+Los gráficos del lado izquierdo de la siguiente figura muestran la distribución de todos los precios que
+utilizaré para supervisar el análisis y la gráfica de probabilidad de todas estas muestras.
+
+Podemos ver asimetría positiva y curtosis, hay una cola larga a la derecha y la distribución es muy puntiaguda alrededor de la media, por lo que nuestra respuesta no sigue una distribución normal (mostrada en negro).
+
+Sin embargo, esto se rectifica parcialmente después de una transformación logarítmica, como se puede ver en las gráficas de probabilidad y distribución del lado derecho: la distribución sigue de cerca la diagonal en la gráfica de probabilidad correspondiente y la densidad está más cerca de la forma normal.
+
+```python
+sns.set(font_scale=1.35, style='dark');
+fig = plt.figure(figsize=(17,9));
+plt.subplots_adjust(hspace=.3);
+title = ['SalePrice', 'log(SalePrice)']
+for i, y in enumerate([X_train['SalePrice'], np.log(X_train['SalePrice'])]*2, start=1):
+    ax = plt.subplot(2, 2, i);
+    if i<3:
+        sns.distplot(y, fit=norm, ax=ax);
+        ax.legend(['Normal distribution', 'Skewness: {:.3}\nKurtosis: {:.3}'.format(y.skew(),
+                                                                                    y.kurt())],
+                  loc='best');
+        ax.set_title(title[i-1], fontdict={'fontweight':'bold'})
+        ax.set_xlabel(title[i-1])
+    else:
+        probplot(y, plot=ax);
+        ax.get_lines()[0].set_markerfacecolor('#7b9ece')
+plt.show()
+```
+
+<Image alt="Gráficas de probabilidad y distribución de SalePrice y log(SalePrice)" src="/images/ames-housing-prices-eda/output_7_0.png" width={1040} height={564} />
+
+```python
+X_train[['SalePrice']].describe()
+```
+
+<DataFrame>
+  <thead>
+    <tr>
+      <th></th>
+      <th>SalePrice</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>count</th>
+      <td>1460.000000</td>
+    </tr>
+    <tr>
+      <th>mean</th>
+      <td>180921.195890</td>
+    </tr>
+    <tr>
+      <th>std</th>
+      <td>79442.502883</td>
+    </tr>
+    <tr>
+      <th>min</th>
+      <td>34900.000000</td>
+    </tr>
+    <tr>
+      <th>25%</th>
+      <td>129975.000000</td>
+    </tr>
+    <tr>
+      <th>50%</th>
+      <td>163000.000000</td>
+    </tr>
+    <tr>
+      <th>75%</th>
+      <td>214000.000000</td>
+    </tr>
+    <tr>
+      <th>max</th>
+      <td>755000.000000</td>
+    </tr>
+  </tbody>
+</DataFrame>
+
+## Los predictores
+
+Primero se realizará un análisis gráfico, mirando los predictores uno por uno, y luego las gráficas de los predictores como una función de la respuesta. Las cifras se clasifican por nivel de medida: de razón, de intervalo, ordinal y nominal. Utilizarés estas [dos funciones](utils/eda.py 'Funciones para análisis exploratorio de datos') para trazar los gráficos.
+
+### Análisis univariante
+
+Este análisis es útil para descubrir algunas particularidades en los datos:
+
+- La gran mayoría de las casas tienen menos de 2000 pies cuadrados de superficie habitable y menos de 20000 pies cuadrados de área de lote.
+
+- La parcela de distribución de `TotalBsmtSF` muestra que la mayoría de las casas tienen sótano.
+
+- La mayoría de las casas tienen entre 5 y 7 habitaciones sobre rasante, sin embargo, hay casas con hasta 14 habitaciones sobre rasante.
+
+- Hay algunas casas con más de una cocina sobre rasante y algunas sin dormitorios.
+
+- La mayoría de las propiedades tienen 1 o 2 baños completos, pero hay algunas con 3 y otras sin baños completos.
+
+- La mayoría de las propiedades tienen suficiente espacio para hasta dos automóviles en el garaje.
+
+- La mayoría de las casas no tienen piscina ni porche.
+
+```python
+# Ratio-measured variables
+X_train[ratio].describe()
+```
+
+<DataFrame>
+  <thead>
+    <tr>
+      <th></th>
+      <th>1stFlrSF</th>
+      <th>2ndFlrSF</th>
+      <th>3SsnPorch</th>
+      <th>BedroomAbvGr</th>
+      <th>BsmtFinSF1</th>
+      <th>BsmtFinSF2</th>
+      <th>BsmtFullBath</th>
+      <th>BsmtHalfBath</th>
+      <th>BsmtUnfSF</th>
+      <th>EnclosedPorch</th>
+      <th>Fireplaces</th>
+      <th>FullBath</th>
+      <th>GarageArea</th>
+      <th>GarageCars</th>
+      <th>GrLivArea</th>
+      <th>HalfBath</th>
+      <th>KitchenAbvGr</th>
+      <th>LotArea</th>
+      <th>LotFrontage</th>
+      <th>LowQualFinSF</th>
+      <th>MasVnrArea</th>
+      <th>MiscVal</th>
+      <th>OpenPorchSF</th>
+      <th>PoolArea</th>
+      <th>ScreenPorch</th>
+      <th>TotRmsAbvGrd</th>
+      <th>TotalBsmtSF</th>
+      <th>WoodDeckSF</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>count</th>
+      <td>1460.000000</td>
+      <td>1460.000000</td>
+      <td>1460.000000</td>
+      <td>1460.000000</td>
+      <td>1460.000000</td>
+      <td>1460.000000</td>
+      <td>1460.000000</td>
+      <td>1460.000000</td>
+      <td>1460.000000</td>
+      <td>1460.000000</td>
+      <td>1460.000000</td>
+      <td>1460.000000</td>
+      <td>1460.000000</td>
+      <td>1460.000000</td>
+      <td>1460.000000</td>
+      <td>1460.000000</td>
+      <td>1460.000000</td>
+      <td>1460.000000</td>
+      <td>1201.000000</td>
+      <td>1460.000000</td>
+      <td>1452.000000</td>
+      <td>1460.000000</td>
+      <td>1460.000000</td>
+      <td>1460.000000</td>
+      <td>1460.000000</td>
+      <td>1460.000000</td>
+      <td>1460.000000</td>
+      <td>1460.000000</td>
+    </tr>
+    <tr>
+      <th>mean</th>
+      <td>1162.626712</td>
+      <td>346.992466</td>
+      <td>3.409589</td>
+      <td>2.866438</td>
+      <td>443.639726</td>
+      <td>46.549315</td>
+      <td>0.425342</td>
+      <td>0.057534</td>
+      <td>567.240411</td>
+      <td>21.954110</td>
+      <td>0.613014</td>
+      <td>1.565068</td>
+      <td>472.980137</td>
+      <td>1.767123</td>
+      <td>1515.463699</td>
+      <td>0.382877</td>
+      <td>1.046575</td>
+      <td>10516.828082</td>
+      <td>70.049958</td>
+      <td>5.844521</td>
+      <td>103.685262</td>
+      <td>43.489041</td>
+      <td>46.660274</td>
+      <td>2.758904</td>
+      <td>15.060959</td>
+      <td>6.517808</td>
+      <td>1057.429452</td>
+      <td>94.244521</td>
+    </tr>
+    <tr>
+      <th>std</th>
+      <td>386.587738</td>
+      <td>436.528436</td>
+      <td>29.317331</td>
+      <td>0.815778</td>
+      <td>456.098091</td>
+      <td>161.319273</td>
+      <td>0.518911</td>
+      <td>0.238753</td>
+      <td>441.866955</td>
+      <td>61.119149</td>
+      <td>0.644666</td>
+      <td>0.550916</td>
+      <td>213.804841</td>
+      <td>0.747315</td>
+      <td>525.480383</td>
+      <td>0.502885</td>
+      <td>0.220338</td>
+      <td>9981.264932</td>
+      <td>24.284752</td>
+      <td>48.623081</td>
+      <td>181.066207</td>
+      <td>496.123024</td>
+      <td>66.256028</td>
+      <td>40.177307</td>
+      <td>55.757415</td>
+      <td>1.625393</td>
+      <td>438.705324</td>
+      <td>125.338794</td>
+    </tr>
+    <tr>
+      <th>min</th>
+      <td>334.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>334.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>1300.000000</td>
+      <td>21.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>2.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>25%</th>
+      <td>882.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>2.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>223.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>1.000000</td>
+      <td>334.500000</td>
+      <td>1.000000</td>
+      <td>1129.500000</td>
+      <td>0.000000</td>
+      <td>1.000000</td>
+      <td>7553.500000</td>
+      <td>59.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>5.000000</td>
+      <td>795.750000</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>50%</th>
+      <td>1087.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>3.000000</td>
+      <td>383.500000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>477.500000</td>
+      <td>0.000000</td>
+      <td>1.000000</td>
+      <td>2.000000</td>
+      <td>480.000000</td>
+      <td>2.000000</td>
+      <td>1464.000000</td>
+      <td>0.000000</td>
+      <td>1.000000</td>
+      <td>9478.500000</td>
+      <td>69.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>25.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>6.000000</td>
+      <td>991.500000</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>75%</th>
+      <td>1391.250000</td>
+      <td>728.000000</td>
+      <td>0.000000</td>
+      <td>3.000000</td>
+      <td>712.250000</td>
+      <td>0.000000</td>
+      <td>1.000000</td>
+      <td>0.000000</td>
+      <td>808.000000</td>
+      <td>0.000000</td>
+      <td>1.000000</td>
+      <td>2.000000</td>
+      <td>576.000000</td>
+      <td>2.000000</td>
+      <td>1776.750000</td>
+      <td>1.000000</td>
+      <td>1.000000</td>
+      <td>11601.500000</td>
+      <td>80.000000</td>
+      <td>0.000000</td>
+      <td>166.000000</td>
+      <td>0.000000</td>
+      <td>68.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>7.000000</td>
+      <td>1298.250000</td>
+      <td>168.000000</td>
+    </tr>
+    <tr>
+      <th>max</th>
+      <td>4692.000000</td>
+      <td>2065.000000</td>
+      <td>508.000000</td>
+      <td>8.000000</td>
+      <td>5644.000000</td>
+      <td>1474.000000</td>
+      <td>3.000000</td>
+      <td>2.000000</td>
+      <td>2336.000000</td>
+      <td>552.000000</td>
+      <td>3.000000</td>
+      <td>3.000000</td>
+      <td>1418.000000</td>
+      <td>4.000000</td>
+      <td>5642.000000</td>
+      <td>2.000000</td>
+      <td>3.000000</td>
+      <td>215245.000000</td>
+      <td>313.000000</td>
+      <td>572.000000</td>
+      <td>1600.000000</td>
+      <td>15500.000000</td>
+      <td>547.000000</td>
+      <td>738.000000</td>
+      <td>480.000000</td>
+      <td>14.000000</td>
+      <td>6110.000000</td>
+      <td>857.000000</td>
+    </tr>
+  </tbody>
+</DataFrame>
+
+```python
+# add '3SsnPorch', 'OpenPorchSF', 'ScreenPorch' below to check the rest of the variables with values for Porch
+ratio_vars = ['BedroomAbvGr', 'EnclosedPorch', 'KitchenAbvGr', 'FullBath', 'GarageCars',
+              'GrLivArea', 'LotArea', 'TotalBsmtSF', 'TotRmsAbvGrd']
+plot_univariate(X_train, ratio_vars, 2.5, 3, 5, 2, sns.distplot)
+```
+
+<Image alt="Gráficas de distribución de variables de razón" src="/images/ames-housing-prices-eda/output_11_0.png" width={2110} height={1029} />
+
+```python
+plot_univariate(X_train, ratio_vars+['PoolArea'], 2, 3, 4, 2, sns.boxplot)
+```
+
+<Image alt="Gráficas de caja de variables de razón" src="/images/ames-housing-prices-eda/output_12_0.png" width={1690} height={1114} />
+
+- Hay observaciones en `YearRemodAdd` desde 1950 en adelante y, dada la enorme diferencia en cantidad de este año a los siguientes cincuenta años, es probable que haya un límite inferior en sus valores. Además, como las propiedades nuevas probablemente no necesiten remodelación y `YearRemodAdd` no contiene valores que faltan, muchos de los valores, aparte de los de las casas con `YearRemodAdd` de 1950, pueden haber sido imputados de alguna manera prescriptiva.
+
+```python
+# Interval-measured variables
+X_train[interval].describe()
+```
+
+<DataFrame>
+  <thead>
+    <tr>
+      <th></th>
+      <th>GarageYrBlt</th>
+      <th>YearBuilt</th>
+      <th>YearRemodAdd</th>
+      <th>YrSold</th>
+      <th>MoSold</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>count</th>
+      <td>1379.000000</td>
+      <td>1460.000000</td>
+      <td>1460.000000</td>
+      <td>1460.000000</td>
+      <td>1460.000000</td>
+    </tr>
+    <tr>
+      <th>mean</th>
+      <td>1978.506164</td>
+      <td>1971.267808</td>
+      <td>1984.865753</td>
+      <td>2007.815753</td>
+      <td>6.321918</td>
+    </tr>
+    <tr>
+      <th>std</th>
+      <td>24.689725</td>
+      <td>30.202904</td>
+      <td>20.645407</td>
+      <td>1.328095</td>
+      <td>2.703626</td>
+    </tr>
+    <tr>
+      <th>min</th>
+      <td>1900.000000</td>
+      <td>1872.000000</td>
+      <td>1950.000000</td>
+      <td>2006.000000</td>
+      <td>1.000000</td>
+    </tr>
+    <tr>
+      <th>25%</th>
+      <td>1961.000000</td>
+      <td>1954.000000</td>
+      <td>1967.000000</td>
+      <td>2007.000000</td>
+      <td>5.000000</td>
+    </tr>
+    <tr>
+      <th>50%</th>
+      <td>1980.000000</td>
+      <td>1973.000000</td>
+      <td>1994.000000</td>
+      <td>2008.000000</td>
+      <td>6.000000</td>
+    </tr>
+    <tr>
+      <th>75%</th>
+      <td>2002.000000</td>
+      <td>2000.000000</td>
+      <td>2004.000000</td>
+      <td>2009.000000</td>
+      <td>8.000000</td>
+    </tr>
+    <tr>
+      <th>max</th>
+      <td>2010.000000</td>
+      <td>2010.000000</td>
+      <td>2010.000000</td>
+      <td>2010.000000</td>
+      <td>12.000000</td>
+    </tr>
+  </tbody>
+</DataFrame>
+
+```python
+interval_vars = ['YearBuilt', 'YearRemodAdd', 'GarageYrBlt']
+plot_univariate(X_train, interval_vars, 1.8, 3, 3, 2, sns.distplot, bins=50)
+```
+
+<Image alt="Gráficas de distribución de variables de intevalo" src="/images/ames-housing-prices-eda/output_15_0.png" width={1274} height={183} />
+
+- Obviamente, existe una estrecha relación entre predictores como `GarageYrBlt` y `YearBuilt`, o `GarageArea` y `GarageCars`, sin embargo, dado que la mayoría de las casas tienen garaje y la distribución de `GarageYrBlt` y `YearBuilt` es ligeramente diferente, es probable que el garaje en muchas propiedades se haya construido más tarde o que la unidad de garaje y la casa sean propiedades independientes y, en consecuencia, lo más probable es que ambas se hayan construido en años diferentes.
+
+```python
+print("Number of houses with garage:",
+      X_train[X_train['GarageArea']>0].shape[0],
+      "\nNumber of houses built the same year as the garage:",
+      X_train[(X_train['GarageArea']>0) &
+              (X_train['YearBuilt']==X_train['GarageYrBlt'])].shape[0])
+```
+
+```
+Number of houses with garage: 1379
+Number of houses built the same year as the garage: 1089
+```
+
+- Se han vendido muchas más casas durante la temporada de verano. Además, el número de casas vendidas de un año a otro desde 2006 no ha cambiado mucho excepto en 2010, sin embargo, esto se debe a que en el conjunto de datos hay registros de casas que se han vendido solo hasta julio de 2010, como podemos ver a continuación:
+
+```python
+interval_vars2 = ['MoSold', 'YrSold']
+plot_univariate(X_train, interval_vars2, 1.4, 2, 3, 2, sns.barplot)
+```
+
+<Image alt="Gráficas de barras de variables de intevalo" src="/images/ames-housing-prices-eda/output_19_0.png" width={842} height={194} />
+
+```python
+display(pd.DataFrame(X_train['YrSold'].value_counts()))
+print("Last month with records in 2010: ", X_train[X_train['YrSold']==2010]['MoSold'].max())
+```
+
+<DataFrame>
+  <thead>
+    <tr>
+      <th></th>
+      <th>YrSold</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2009.0</th>
+      <td>338</td>
+    </tr>
+    <tr>
+      <th>2007.0</th>
+      <td>329</td>
+    </tr>
+    <tr>
+      <th>2006.0</th>
+      <td>314</td>
+    </tr>
+    <tr>
+      <th>2008.0</th>
+      <td>304</td>
+    </tr>
+    <tr>
+      <th>2010.0</th>
+      <td>175</td>
+    </tr>
+  </tbody>
+</DataFrame>
+
+<pre>Last month with records in 2010: 7.0</pre>
+
+```python
+# Nominal-measured variables
+nominal_vars = ['BldgType', 'CentralAir', 'Heating', 'HouseStyle', 'LandContour', 'LotConfig',
+                'MSZoning', 'MSSubClass', 'Neighborhood', 'SaleCondition', 'SaleType']
+plot_univariate(X_train, nominal_vars, 1.6, 3, 3, 2, sns.barplot, labels_thresh=9, rotation=60)
+```
+
+<Image alt="Gráficas de barras de variables nominales" src="/images/ames-housing-prices-eda/output_21_0.png" width={1261} height={836} />
+
+- La gran mayoría de viviendas tienen aire acondicionado y también generadores de aire caliente de tiro forzado a gas como tipo de calefacción.
+
+- La mayoría de las viviendas se han construido en una zona residencial de baja densidad.
+
+```python
+# Ordinal-measured variables
+X_train['OverallCond'] = X_train['OverallCond'].astype('category')
+X_train['OverallQual'] = X_train['OverallQual'].astype('category')
+frame = X_train[ordinal].describe()
+frame.index = ["count", 'unique', 'mode', 'freq']
+display(frame)
+X_train['OverallCond'] = X_train['OverallCond'].astype('int')
+X_train['OverallQual'] = X_train['OverallQual'].astype('int')
+```
+
+<DataFrame>
+  <thead>
+    <tr>
+      <th></th>
+      <th>BsmtCond</th>
+      <th>BsmtExposure</th>
+      <th>BsmtFinType1</th>
+      <th>BsmtFinType2</th>
+      <th>BsmtQual</th>
+      <th>Electrical</th>
+      <th>ExterCond</th>
+      <th>ExterQual</th>
+      <th>Fence</th>
+      <th>FireplaceQu</th>
+      <th>Functional</th>
+      <th>GarageCond</th>
+      <th>GarageFinish</th>
+      <th>GarageQual</th>
+      <th>HeatingQC</th>
+      <th>KitchenQual</th>
+      <th>LandSlope</th>
+      <th>LotShape</th>
+      <th>OverallCond</th>
+      <th>OverallQual</th>
+      <th>PavedDrive</th>
+      <th>PoolQC</th>
+      <th>Utilities</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>count</th>
+      <td>1423</td>
+      <td>1422</td>
+      <td>1423</td>
+      <td>1422</td>
+      <td>1423</td>
+      <td>1459</td>
+      <td>1460</td>
+      <td>1460</td>
+      <td>281</td>
+      <td>770</td>
+      <td>1460</td>
+      <td>1379</td>
+      <td>1379</td>
+      <td>1379</td>
+      <td>1460</td>
+      <td>1460</td>
+      <td>1460</td>
+      <td>1460</td>
+      <td>1460</td>
+      <td>1460</td>
+      <td>1460</td>
+      <td>7</td>
+      <td>1460</td>
+    </tr>
+    <tr>
+      <th>unique</th>
+      <td>4</td>
+      <td>4</td>
+      <td>6</td>
+      <td>6</td>
+      <td>4</td>
+      <td>5</td>
+      <td>5</td>
+      <td>4</td>
+      <td>4</td>
+      <td>5</td>
+      <td>7</td>
+      <td>5</td>
+      <td>3</td>
+      <td>5</td>
+      <td>5</td>
+      <td>4</td>
+      <td>3</td>
+      <td>4</td>
+      <td>9</td>
+      <td>10</td>
+      <td>3</td>
+      <td>3</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>mode</th>
+      <td>TA</td>
+      <td>No</td>
+      <td>Unf</td>
+      <td>Unf</td>
+      <td>TA</td>
+      <td>SBrkr</td>
+      <td>TA</td>
+      <td>TA</td>
+      <td>MnPrv</td>
+      <td>Gd</td>
+      <td>Typ</td>
+      <td>TA</td>
+      <td>Unf</td>
+      <td>TA</td>
+      <td>Ex</td>
+      <td>TA</td>
+      <td>Gtl</td>
+      <td>Reg</td>
+      <td>5</td>
+      <td>5</td>
+      <td>Y</td>
+      <td>Gd</td>
+      <td>AllPub</td>
+    </tr>
+    <tr>
+      <th>freq</th>
+      <td>1311</td>
+      <td>953</td>
+      <td>430</td>
+      <td>1256</td>
+      <td>649</td>
+      <td>1334</td>
+      <td>1282</td>
+      <td>906</td>
+      <td>157</td>
+      <td>380</td>
+      <td>1360</td>
+      <td>1326</td>
+      <td>605</td>
+      <td>1311</td>
+      <td>741</td>
+      <td>735</td>
+      <td>1382</td>
+      <td>925</td>
+      <td>821</td>
+      <td>397</td>
+      <td>1340</td>
+      <td>3</td>
+      <td>1459</td>
+    </tr>
+  </tbody>
+</DataFrame>
+
+```python
+ordinal_vars = ['BsmtCond', 'BsmtQual', 'ExterQual', 'ExterCond',  'FireplaceQu', 'GarageCond',
+                'GarageQual', 'HeatingQC', 'KitchenQual', 'LandSlope', 'OverallCond',
+                'OverallQual']
+frame_ordinal = X_train[ordinal_vars].copy()
+Bsmt_Fireplace_Garage_mapping = {'Ex': 5, 'Gd': 4, 'TA': 3, 'Fa': 2, 'Po': 1, np.nan: 0}
+Exter_Heating_Kitchen_mapping = {'Ex': 5, 'Gd': 4, 'TA': 3, 'Fa': 2, 'Po': 1}
+LandSlope_mapping = {'Gtl': 2, 'Mod': 1, 'Sev': 0}
+frame_ordinal['BsmtCond'] = frame_ordinal['BsmtCond'].map(Bsmt_Fireplace_Garage_mapping)
+frame_ordinal['BsmtQual'] = frame_ordinal['BsmtQual'].map(Bsmt_Fireplace_Garage_mapping)
+frame_ordinal['ExterQual'] = frame_ordinal['ExterQual'].map(Exter_Heating_Kitchen_mapping)
+frame_ordinal['ExterCond'] = frame_ordinal['ExterCond'].map(Exter_Heating_Kitchen_mapping)
+frame_ordinal['FireplaceQu'] = frame_ordinal['FireplaceQu'].map(Bsmt_Fireplace_Garage_mapping)
+frame_ordinal['GarageCond'] = frame_ordinal['GarageCond'].map(Bsmt_Fireplace_Garage_mapping)
+frame_ordinal['GarageQual'] = frame_ordinal['GarageQual'].map(Bsmt_Fireplace_Garage_mapping)
+frame_ordinal['HeatingQC'] = frame_ordinal['HeatingQC'].map(Exter_Heating_Kitchen_mapping)
+frame_ordinal['KitchenQual'] = frame_ordinal['KitchenQual'].map(Exter_Heating_Kitchen_mapping)
+frame_ordinal['LandSlope'] = frame_ordinal['LandSlope'].map(LandSlope_mapping)
+plot_univariate(frame_ordinal, ordinal_vars, 1.6, 3, 3, 2, sns.barplot)
+```
+
+<Image alt="Gráficas de barras de variables ordinales" src="/images/ames-housing-prices-eda/output_24_0.png" width={1268} height={836} />
+
+- La mayoría de las propiedades son casi planas (pendiente suave del terreno). Obviamente, esto puede deberse al barrio o área donde se han construido. Sin embargo, puede haber algunas excepciones que pueden crear distinciones entre unas casas y otras en la misma área.
+
+Algunas otras posibles distinciones son las casas que tienen diferentes calificaciones en `OverallQual` o en `OverallCond` o diferente `LotArea` dentro del mismo" vecindario.
+
+Dado que estas diferencias pueden resultar en un aumento o disminución del precio, es posible que necesitemos crear algunas variables para explicar esta información en caso de que nuestro modelo no pueda capturar o explicar esta proporción de varianza en la respuesta.
+
+Por ejemplo, valores atípicos y patrones en las gráficas de los residuos una vez que se ajusta el modelo, ya que esto podría indicar una deficiencia en el análisis, como la falta de una variable.
+
+### Análisis bivariante
+
+Las gráficas siguientes nos ayudan a identificar algunas observaciones que están fuera de la tendencia general del resto de los datos en cada uno de los espacios de predictores y objetivo.
+
+Por ejemplo, sabemos por el diagrama de caja de `GrLivArea` que la misma contiene observaciones sobre el bigote superior, es decir, con un valor extremo en el espacio del predictor, pero ahora, como podemos ver a continuación, podemos afirmar que dos de de estos cuatro supuestos valores atípicos son verdaderamente valores atípicos, en el sentido de que no siguen la tendencia general de los datos.
+
+Otro ejemplo claro es la propiedad con más de 6000 pies cuadrados de sótano en `TotalBsmtSF`, que por el precio podría ser uno de los valores atípicos previamente definidos.
+
+Por otro lado, las otras dos observaciones en `GrLivArea` con más de 4000 pies cuadrados están en concordancia con el resto de puntos o, al menos, podríamos decir que siguen la tendencia del resto de casas.
+
+```python
+# Ratio-measured variables and 'SalePrice'
+plot_bivariate(X_train, 'SalePrice', ratio_vars, 2.8, 3, 5, 2, plt.scatter)
+```
+
+<Image alt="Gráficas de dispersión de variables de razón" src="/images/ames-housing-prices-eda/output_26_0.png" width={2101} height={1021} />
+
+```python
+# Interval-measured variables and 'SalePrice'
+plot_bivariate(X_train, 'SalePrice', interval_vars, 2.2, 2, 6, 2, plt.scatter)
+```
+
+<Image alt="Gráficas de dispersión de variables de intervalo" src="/images/ames-housing-prices-eda/output_27_0.png" width={1685} height={821} />
+
+Algunas casas tienen los mismos valores en `YearRemodAdd` como en `YearBuilt` por lo que aún no han sido remodeladas, es decir, algunos de sus valores podrían haber sido introducidos prescriptivamente. Esto puede deberse a que la propiedad se acaba de construir o que se encuentra en buenas condiciones.
+
+Sin embargo, puede que no siempre sea el caso, como podemos ver en la tabla a continuación. Hay 39 propiedades en el conjunto de entrenamiento con un `OverallCond` inferior a 5 que se construyeron el mismo año en el que se especifica que fueron remodeladas:
+
+```python
+pd.DataFrame(X_train[(X_train['YearRemodAdd']==X_train['YearBuilt'])&
+                     (X_train['OverallCond']<5)]['OverallCond'].value_counts())
+```
+
+<DataFrame>
+  <thead>
+    <tr>
+      <th></th>
+      <th>OverallCond</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>4</th>
+      <td>25</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>13</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1</td>
+    </tr>
+  </tbody>
+</DataFrame>
+
+> La creación de algunas características podría capturar información que podría explicar la diferencia de tiempo entre `YearBuilt` y `YrSold`, o entre `YearBuilt` y `YearRemodAdd`, o entre `YearRemodAdd` y `YrSold`. Es decir, podría haber un patrón que podría ayudar a predecir el precio.
+
+Como podemos ver a continuación tanto en el gráfico de la izquierda como en la tabla, el mes con la mediana más baja de `SalePrice` es abril. Enero, agosto y noviembre son los meses en los que hay más variabilidad en el precio de las casas en venta.
+
+Aunque solo existen 1460 observaciones en este conjunto de datos, podemos decir que la primera mitad del año y julio es cuando hay más propiedades alejadas del grueso de los datos, i.e., quizás esto represente el tipo de casas que no se suelen vender durante el resto del año.
+
+Además, octubre no parece el mejor mes para los agentes inmobiliarios. Tampoco lo fue 2008 en general.
+
+> Aunque la mediana de 2010 es incluso más baja que la mediana de 2008, solo hay casas en este conjunto hasta julio de 2010, como se mostró anteriormente.
+
+```python
+plot_bivariate(X_train, 'SalePrice', interval_vars2, 1.6, 2, 4, 2,
+               sns.boxplot)
+```
+
+<Image alt="Gráficas de caja de variables de intervalo" src="/images/ames-housing-prices-eda/output_31_0.png" width={1124} height={260} />
+
+```python
+pd.DataFrame(X_train.groupby(['MoSold'])
+             ['SalePrice'].median().sort_values().head(3))
+```
+
+<DataFrame>
+  <thead>
+    <tr>
+      <th></th>
+      <th>SalePrice</th>
+    </tr>
+    <tr>
+      <th>MoSold</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>4.0</th>
+      <td>147000.0</td>
+    </tr>
+    <tr>
+      <th>1.0</th>
+      <td>151650.0</td>
+    </tr>
+    <tr>
+      <th>5.0</th>
+      <td>154000.0</td>
+    </tr>
+  </tbody>
+</DataFrame>
+
+A continuación se muestran diagramas de caja de algunos predictores codificados ordinales frente a `SalePrice` . La codificación ayuda a comprender cómo influye el orden de los predictores en el precio de venta.
+
+```python
+# Ordinal predictors and Sale Price
+# Please refer to the mapping in univariate ordinal plot in order to check the x-labels
+frame_ordinal = pd.concat([frame_ordinal, X_train['SalePrice']], axis=1)
+plot_bivariate(frame_ordinal, 'SalePrice', ordinal_vars, 2.2, 3, 5, 2,
+               sns.boxplot)
+```
+
+<Image alt="Gráficas de caja de variables ordinales" src="/images/ames-housing-prices-eda/output_34_0.png" width={2117} height={1397} />
+
+La mayoría de las veces existe una correlación positiva entre el precio y los predictores ordinales, sin embargo, si tomamos en cuenta solo los predictores que miden las condiciones, más no siempre es mejor, o una mejor condición puede no traducirse en un precio más alto.
+
+De hecho, el 73,84% de las primeras 730 casas más caras del conjunto (la mitad del conjunto de datos) tienen un `OverallCond` de cinco de nueve:
+
+```python
+series_cond = X_train.sort_values(by='SalePrice',
+                                  ascending=False)['OverallCond'][:730].value_counts()
+pd.DataFrame([series_cond, np.round(series_cond/series_cond.sum()*100, 2)],
+             index=['n_houses', '%']).T
+```
+
+<DataFrame>
+  <thead>
+    <tr>
+      <th></th>
+      <th>n_houses</th>
+      <th>%</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>5</th>
+      <td>539.0</td>
+      <td>73.84</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>80.0</td>
+      <td>10.96</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>66.0</td>
+      <td>9.04</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>20.0</td>
+      <td>2.74</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>13.0</td>
+      <td>1.78</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>8.0</td>
+      <td>1.10</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>3.0</td>
+      <td>0.41</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1.0</td>
+      <td>0.14</td>
+    </tr>
+  </tbody>
+</DataFrame>
+
+O también podemos decir que el 93% de las casas con un `OverallQual` de 9 o superior ha sido calificado con un `OverallCond` de 5 sobre 9:
+
+```python
+series_cond = X_train[X_train['OverallQual']>8]['OverallCond'].value_counts()
+pd.DataFrame([series_cond, np.round(series_cond/series_cond.sum()*100, 2)],
+             index=['n_houses', '%']).T
+```
+
+<DataFrame>
+  <thead>
+    <tr>
+      <th></th>
+      <th>n_houses</th>
+      <th>%</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>5</th>
+      <td>57.0</td>
+      <td>93.44</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>2.0</td>
+      <td>3.28</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>1.0</td>
+      <td>1.64</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1.0</td>
+      <td>1.64</td>
+    </tr>
+  </tbody>
+</DataFrame>
+
+Como podemos ver a continuación, y como se esperaba, el precio de las propiedades fluctúa mucho dependiendo del barrio y también en el tipo de vivienda (`MSSubClass`) entre otros. Por ejemplo, 1 pie cuadrado tiene una calificación muy diferente en _StoneBr_ que en _IDOTRR_.
+
+```python
+# Nominal predictors and Sale Price
+plot_bivariate(X_train, 'SalePrice', nominal_vars, 2.6, 3, 5, 2, sns.boxplot,
+               labels_thresh=7, rotation=60)#rotation=70)
+```
+
+<Image alt="Gráficas de caja de variables nominales" src="/images/ames-housing-prices-eda/output_40_0.png" width={2094} height={1450} />
+
+Podemos ver en la siguiente tabla los precios por pie cuadrado en promedio en los barrios más caros y más baratos (considerando solo el precio por pie cuadrado de la superficie habitable):
+
+```python
+X_train['Living_Area_'] = X_train['GrLivArea'] + X_train['TotalBsmtSF']
+dollar_sf = X_train.groupby(['Neighborhood'])['Living_Area_',
+                                              'SalePrice'].apply(lambda x: np.round(x.mean(), 2))
+dollar_sf['$/SF'] = np.round(dollar_sf['SalePrice'] / dollar_sf['Living_Area_'], 2)
+display(dollar_sf.sort_values('$/SF', ascending=False).head(2))
+display(dollar_sf.sort_values('$/SF', ascending=False).tail(2))
+```
+
+<DataFrame>
+  <thead>
+    <tr>
+      <th></th>
+      <th>Living_Area_</th>
+      <th>SalePrice</th>
+      <th>$/SF</th>
+    </tr>
+    <tr>
+      <th>Neighborhood</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>StoneBr</th>
+      <td>3402.08</td>
+      <td>310499.00</td>
+      <td>91.27</td>
+    </tr>
+    <tr>
+      <th>NridgHt</th>
+      <td>3518.78</td>
+      <td>316270.62</td>
+      <td>89.88</td>
+    </tr>
+  </tbody>
+</DataFrame>
+
+<DataFrame>
+  <thead>
+    <tr>
+      <th></th>
+      <th>Living_Area_</th>
+      <th>SalePrice</th>
+      <th>$/SF</th>
+    </tr>
+    <tr>
+      <th>Neighborhood</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>SWISU</th>
+      <td>2648.32</td>
+      <td>142591.36</td>
+      <td>53.84</td>
+    </tr>
+    <tr>
+      <th>IDOTRR</th>
+      <td>1889.14</td>
+      <td>100123.78</td>
+      <td>53.00</td>
+    </tr>
+  </tbody>
+</DataFrame>
+
+Si agrupamos por tipo de vivienda, así como de barrio, incluso podemos ver una diferencia mayor:
+
+```python
+dollar_sf = X_train.groupby(['Neighborhood',
+                             'MSSubClass'])['Living_Area_',
+                                            'SalePrice'].apply(lambda x: np.round(x.mean(), 2))
+dollar_sf['$/SF'] = np.round(dollar_sf['SalePrice'] / dollar_sf['Living_Area_'], 2)
+display(dollar_sf.sort_values('$/SF', ascending=False).head(2))
+display(dollar_sf.sort_values('$/SF', ascending=False).tail(2))
+```
+
+<DataFrame>
+  <thead>
+    <tr>
+      <th></th>
+      <th></th>
+      <th>Living_Area_</th>
+      <th>SalePrice</th>
+      <th>$/SF</th>
+    </tr>
+    <tr>
+      <th>Neighborhood</th>
+      <th>MSSubClass</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th rowSpan="2" valign="top">
+        StoneBr
+      </th>
+      <th>60</th>
+      <td>4316.00</td>
+      <td>444056.0</td>
+      <td>102.89</td>
+    </tr>
+    <tr>
+      <th>20</th>
+      <td>3662.29</td>
+      <td>373885.0</td>
+      <td>102.09</td>
+    </tr>
+  </tbody>
+</DataFrame>
+
+<DataFrame>
+  <thead>
+    <tr>
+      <th></th>
+      <th></th>
+      <th>Living_Area_</th>
+      <th>SalePrice</th>
+      <th>$/SF</th>
+    </tr>
+    <tr>
+      <th>Neighborhood</th>
+      <th>MSSubClass</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>IDOTRR</th>
+      <th>20</th>
+      <td>1272.0</td>
+      <td>45652.0</td>
+      <td>35.89</td>
+    </tr>
+    <tr>
+      <th>Edwards</th>
+      <th>60</th>
+      <td>6021.0</td>
+      <td>167412.5</td>
+      <td>27.80</td>
+    </tr>
+  </tbody>
+</DataFrame>
+
+En promedio, el precio de un pie cuadrado de una vivienda de 2 pisos en _Edwards_ es 5 veces más barato que en _StoneBr_. Esto es solo una aproximación a modo de ilustración, ya que muchas otras características del conjunto tienen una influencia, hasta cierto punto, en el precio del pie cuadrado.
+
+Esto se explora más en este [análisis supervisado](/blog/ames-housing-prices-models 'Prediciendo precios de casas de Ames: flujo de trabajo secuencial').

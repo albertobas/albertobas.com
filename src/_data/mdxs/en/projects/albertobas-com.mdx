@@ -1,0 +1,54 @@
+---
+field: 'web-development'
+title: 'albertobas.com'
+description: 'This is my personal webpage, where I publish articles and side-projects.'
+tags: 'web-development'
+tech: 'react-js,next-js,typescript'
+datePublished: '2022-03-01'
+github: { repo: 'albertobas.com' }
+image: { name: 'cover.png', width: 1024, height: 768 }
+---
+
+## Introduction
+
+This [project](https://github.com/albertobas/albertobas.com 'https://github.com/albertobas/albertobas.com') is my personal website, where I publish articles and side-projects. The code is mostly written in [Typescript](/tags/typescript) using [Next.js](/tags/next-js), a [React.js](/tags/react-js) framework.
+
+The page is in both dark and light mode and uses the `prefers-color-scheme` CSS media feature to select between both.
+
+Furthermore, this website is entirely translated to spanish.
+
+## Technical details
+
+<IUl>
+  <ILi>**Framework**: [Next.js](https://nextjs.org/)</ILi>
+  <ILi>**Deployment**: [Vercel](https://vercel.com)</ILi>
+  <ILi>**Content**: [MDX](https://github.com/mdx-js/mdx)</ILi>
+  <ILi>**Styling**: [PostCSS](https://postcss.org)</ILi>
+</IUl>
+
+## Overview
+
+<IUl>
+  <ILi>`src/_data/*`: MDX files used for pages in **blog** and **projects**.</ILi>
+  <ILi>`src/components/*`: React.js components in `.tsx`.</ILi>
+  <ILi>`src/pages/*`: static pages.</ILi>
+  <ILi>`src/styles/*`: CSSModules files, postcss mixins and a global css file.</ILi>
+  <ILi>`src/utils/*`: helper functions, interfaces, hooks, constants and dictionaries used in some translations and options lists.</ILi>
+  <ILi>`lang/*`: JSON files used as a source for translations. The JSON file corresponding to the `defaultLocale` is generated running `npm run extract-languages`.</ILi>
+  <ILi>`compiled-lang/*`: JSON files generated running `npm run compile-languages`, obtaining translations from `lang/*` and used for formatting messages.</ILi>
+  <ILi>`scripts/*`: Javascript files used for creating an RSS feed and a sitemap in the `postbuild` script.</ILi>
+  <ILi>`public/*`: static assets.</ILi>
+</IUl>
+
+## Running locally
+
+```bash
+$ git clone https://github.com/albertobas/albertobas.com.git
+$ cd albertobas.com
+$ npm i
+$ npm run dev
+```
+
+## Notes
+
+This project is released under [Apache 2.0 License](https://github.com/albertobas/albertobas.com/blob/main/LICENSE).

@@ -1,0 +1,17 @@
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 1rem;
+}
+.layout > p {
+  margin: 0;
+}
+@media (--tablet) {
+  .layout {
+    display: unset;
+    gap: unset;
+  }
+  .layout > p {
+    margin-top: unset;
+  }
+}

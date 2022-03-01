@@ -1,0 +1,75 @@
+.container,
+.containerMargin {
+  max-width: var(--max-width);
+  padding: 0 20px;
+  margin: 0 auto;
+}
+.containerMargin {
+  margin-top: 4rem;
+}
+.containerMargin > h1 {
+  @mixin $text-6xl;
+  margin-top: 0;
+}
+.containerMargin > h2 {
+  @mixin $text-4xl;
+  margin: 0;
+}
+.hidden {
+  display: none;
+}
+.external {
+  cursor: ne-resize;
+}
+.internal,
+.external {
+  color: var(--blue-300);
+  text-decoration-thickness: 1px;
+  @mixin isDark {
+    color: var(--blue-200);
+  }
+}
+.internal:hover,
+.external:hover {
+  text-decoration: underline;
+  text-decoration-color: var(--blue-300);
+  @mixin isDark {
+    text-decoration-color: var(--blue-200);
+  }
+}
+.internal:active,
+.external:active {
+  color: #000;
+  @mixin isDark {
+    color: #fff;
+  }
+}
+.internal:visited,
+.external:visited {
+  color: #bb2bb9;
+  text-decoration-color: #bb2bb9;
+  @mixin isDark {
+    color: #c586c0;
+    text-decoration-color: #c586c0;
+  }
+}
+@media (--tablet) {
+  .containerMargin > h1 {
+    @mixin $text-4xl;
+  }
+  .containerMargin > h2 {
+    @mixin $text-3xl;
+  }
+}
+@media (--mobile-s) {
+  .container,
+  .containerMargin {
+    padding: 0 0.75rem;
+  }
+  .containerMargin > h1 {
+    @mixin $text-3xl;
+  }
+  .containerMargin > h2 {
+    @mixin $text-2xl;
+  }
+}

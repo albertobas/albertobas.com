@@ -1,0 +1,49 @@
+.ul {
+  padding-left: 2rem;
+  list-style: none;
+}
+.ol {
+  padding-left: 2rem;
+  list-style: none;
+  counter-reset: my-counter;
+}
+.li,
+.ol > li {
+  padding: 0;
+  margin-bottom: 0.5rem;
+}
+.ul > li {
+  width: 100%;
+  height: 100%;
+}
+.ol > li {
+  counter-increment: my-counter;
+}
+.ol > li::before {
+  margin-left: -1.5rem;
+  margin-right: 1rem;
+  content: counter(my-counter);
+  font-weight: 600;
+  color: var(--blue-300);
+  @mixin isDark {
+    color: var(--blue-200);
+  }
+}
+.li {
+  padding: 0;
+  margin-bottom: 0.5rem;
+}
+.li > svg {
+  margin-left: -1.5rem;
+  font-size: 0.75rem;
+  color: var(--blue-300);
+  @mixin isDark {
+    color: var(--blue-200);
+  }
+}
+.ol > li > svg {
+  display: none;
+}
+.li > span {
+  padding-left: 0.75rem;
+}

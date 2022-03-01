@@ -1,0 +1,46 @@
+$btnSide: 21px;
+$separation: 8px;
+$strokeWidth: 2px;
+$ty: 4px;
+.btn {
+  display: block;
+  padding: 0;
+  margin: 0;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  width: $btnSide;
+  height: $btnSide;
+}
+.container {
+  width: $btnSide;
+  height: calc($separation + $strokeWidth);
+  position: relative;
+}
+.top,
+.bottom {
+  display: block;
+  height: $strokeWidth;
+  width: 100%;
+  transition-timing-function: ease;
+  transition-duration: 0.4s;
+  transform-origin: center;
+  position: absolute;
+  background-color: var(--black-600);
+  @mixin isDark {
+    background-color: var(--gray-100);
+  }
+}
+.topUnclicked {
+  transform: translate3d(0, 0px, 0) rotate(0);
+}
+.bottomUnclicked {
+  transform: translate3d(0, 8px, 0) rotate(0);
+}
+.topClicked {
+  transform: translate3d(0, $ty, 0) rotate(-45deg);
+}
+.bottomClicked {
+  transform: translate3d(0, $ty, 0) rotate(45deg);
+}

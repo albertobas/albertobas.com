@@ -1,0 +1,54 @@
+---
+field: 'web-development'
+title: 'albertobas.com'
+description: 'Esta es mi página web personal, donde publico artículos y proyectos.'
+tags: 'web-development'
+tech: 'react-js,next-js,typescript'
+datePublished: '2022-03-01'
+github: { repo: 'albertobas.com' }
+image: { name: 'cover.png', width: 1024, height: 768 }
+---
+
+## Introducción
+
+Este [proyecto](https://github.com/albertobas/albertobas.com 'https://github.com/albertobas/albertobas.com') es mi página web personal, donde publico artículos y proyectos. El código está escrito en su práctica totalidad en [Typescript](/tags/typescript) utilizando [Next.js](/tags/next-js), un framework de [React.js](/tags/react-js).
+
+La página está en modo oscuro y claro y utiliza la característica de medios `prefers-color-scheme` de CSS para elegir entre ambos.
+
+Además, esta web está totalmente traducida al inglés.
+
+## Detalles técnicos
+
+<IUl>
+  <ILi>**Framework**: [Next.js](https://nextjs.org/)</ILi>
+  <ILi>**Despliegue**: [Vercel](https://vercel.com)</ILi>
+  <ILi>**Contenido**: [MDX](https://github.com/mdx-js/mdx)</ILi>
+  <ILi>**Diseño**: [PostCSS](https://postcss.org)</ILi>
+</IUl>
+
+## Perspectiva general
+
+<IUl>
+  <ILi>`src/_data/*`: archivos MDX utilizados para las páginas en **blog** y **proyectos**.</ILi>
+  <ILi>`src/components/*`: componentes React.js en `.tsx`.</ILi>
+  <ILi>`src/pages/*`: páginas estáticas.</ILi>
+  <ILi>`src/styles/*`: archivos CSSModules, mixins de postcss y un archivo css global.</ILi>
+  <ILi>`src/utils/*`: funciones de soporte, interfaces, hooks, constantes y diccionarios utilizados en algunas traducciones y listas de opciones.</ILi>
+  <ILi>`lang/*`: archivos JSON utilizados como fuente para las traducciones. El archivo JSON correspondiente al `defaultLocale` se genera ejecutando `npm run extract-languages`.</ILi>
+  <ILi>`compiled-lang/*`: archivos JSON generados ejecutando `npm run compile-languages`, obteniendo traucciones en `lang/*` y utilizada para formatear mensajes.</ILi>
+  <ILi>`scripts/*`: archivos Javascript utilizados para crear un _feed RSS_ y un _sitemap_ en el script `postbuild`.</ILi>
+  <ILi>`public/*`: archivos estáticos.</ILi>
+</IUl>
+
+## Ejecución local
+
+```bash
+$ git clone https://github.com/albertobas/albertobas.com.git
+$ cd albertobas.com
+$ npm i
+$ npm run dev
+```
+
+## Notes
+
+Este proyecto se publica bajo [licencia Apache 2.0](https://github.com/albertobas/albertobas.com/blob/main/LICENSE).

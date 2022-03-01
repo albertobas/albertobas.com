@@ -1,0 +1,193 @@
+.smallPanel {
+  @mixin $text-sm;
+  display: grid;
+  grid-template-columns: 30% 40% 30%;
+  align-items: center;
+  width: 100%;
+  margin-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+.smallPanelInfo {
+  grid-column: 1;
+  justify-self: start;
+  padding-right: 10px;
+  width: 220px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  button {
+    margin-left: 0.5em;
+  }
+}
+.smallPanelResults {
+  grid-column: 2;
+  justify-self: center;
+  margin: 0 4px;
+}
+.sortDD {
+  width: 170px;
+}
+.btnOff,
+.btnOn,
+.disabled {
+  position: relative;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 0;
+  @mixin $text-xl;
+  svg {
+    display: block;
+  }
+}
+.btnOff > svg,
+.btnOn > svg {
+  fill: var(--black-100);
+  @mixin isDark {
+    fill: var(--gray-200);
+  }
+}
+.disabled {
+  cursor: default;
+}
+.disabled > svg {
+  color: var(--gray-300-l);
+  @mixin isDark {
+    color: var(--black-100);
+  }
+}
+.layoutCardsBlog {
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  @mixin isDark {
+    box-shadow: var(--shadow-dark);
+  }
+}
+.layoutCardsBlog > div:not(:first-of-type) {
+  border-top: 1px solid var(--gray-200-l);
+  @mixin isDark {
+    border-color: var(--black-300);
+  }
+}
+.layoutCardsBlog > div:first-of-type {
+  border-top-left-radius: var(--border-radius);
+  border-top-right-radius: var(--border-radius);
+}
+.layoutCardsBlog > div:only-of-type {
+  border-bottom-left-radius: var(--border-radius);
+  border-bottom-right-radius: var(--border-radius);
+}
+.layoutCardsProjects {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  column-gap: 1rem;
+  row-gap: 1rem;
+  grid-auto-rows: 1fr;
+}
+.layoutTags {
+  width: 100%;
+  padding: 0;
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+  justify-content: center;
+}
+.layoutTags > li {
+  margin: 0 0.2rem 0.3rem;
+}
+.paginationWrapper {
+  display: grid;
+  grid-template-columns: 25% 50% 25%;
+  margin: 0 auto;
+  max-width: var(--max-width);
+  align-items: center;
+  margin-top: 1.5rem;
+  font-size: 1rem;
+}
+.pagination,
+.paginationMargin {
+  grid-column: 2;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.paginationMargin {
+  margin-bottom: 2rem;
+}
+.paginationMobile,
+.paginationMobileMargin {
+  display: none;
+}
+@media (--laptop) {
+  .layoutTags > li {
+    margin: 0 0.25rem 0.6rem;
+  }
+}
+@media (--tablet) {
+  .smallPanel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+  }
+  .smallPanelInfo {
+    margin: 0.25rem auto;
+  }
+  .smallPanelResults {
+    margin: 0.25rem auto;
+  }
+  .paginationWrapper {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+    justify-items: center;
+  }
+  .pagination,
+  .paginationMargin {
+    grid-column: 1;
+    grid-row: 1;
+  }
+}
+@media (--mobile-xl) {
+  .layoutCardsProjects {
+    display: flex;
+    flex-direction: column;
+    gap: unset;
+  }
+  .layoutCardsProjects > div:not(:first-of-type) {
+    margin-top: 1rem;
+  }
+}
+@media (--mobile-l) {
+  .layoutCardsBlog {
+    display: flex;
+    flex-direction: column;
+  }
+}
+@media (--mobile-m) {
+  .pagination,
+  .paginationMargin {
+    display: none;
+  }
+  .paginationMobile,
+  .paginationMobileMargin {
+    grid-column: 1;
+    grid-row: 1;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+  .paginationMobileMargin {
+    margin-bottom: 2rem;
+  }
+}
+@media (--mobile-xs) {
+  .smallPanelInfo {
+    width: 70vw;
+    flex-direction: column;
+  }
+}

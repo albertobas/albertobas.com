@@ -1,0 +1,1393 @@
+---
+field: 'machine-learning'
+title: 'Predicting Ames housing prices: pipeline workflow'
+description: 'Price regression on the Ames housing prices dataset'
+introduction: '<p>The purpose of this notebook is to conduct a supervised learning analysis in which it is modelled for predicting a continuous value -using the Ames Housing Prices dataset- by regressing a house sale price onto different measures and ratings. Then, historical prices that act as response variables are leveraged to supervise the learning process of this model.</p><p>Pipelines -chained transformer and estimator objects conforming a workflow- and an ensemble of pipelines have been developed in order to perform this regression task. Every pipeline is given the same input, however, the estimators get different sets depending on the pre-processing objects (transformers in scikit-learn) we assign to each pipeline.</p><p>The idea is to evaluate not just the regressor object but the entire pipelines using cross-validation to get optimized parameters for the regressors. Therefore, all the pre-processing through objects -scaling and/or imputed values with averages- will be performed for every single batch of the data during the evaluation process to avoid using information of the entire set at every validation stage, which would -to some extent- bias the results.</p>'
+tags: 'elastic-net,kernel-ridge,lasso,lgbm-regressor,regression,ridge,random-forest-regressor,support-vector-regressor,xgb-regressor,supervised-learning,data-preprocessing'
+tech: 'python,jupyter,numpy,pandas,scikit-learn,scipy,matplotlib,seaborn'
+datePublished: '2022-03-01'
+github: { repo: 'ames-housing-prices', file: 'ames_housing_prices_models.ipynb' }
+---
+
+## Setup
+
+```python
+import warnings
+warnings.filterwarnings('ignore')
+import itertools
+import joblib
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import re
+import seaborn as sns
+import xgboost as xgb
+from dask.distributed import Client
+from IPython.display import display
+from scipy.stats import boxcox, kurtosis, norm, skew
+from sklearn.datasets import fetch_openml
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.kernel_ridge import KernelRidge
+from sklearn.linear_model import Ridge, Lasso, ElasticNet
+from sklearn.metrics import r2_score
+from sklearn.model_selection import train_test_split, KFold
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.svm import SVR
+from utils import Get_Categorical, Get_Dummies, HousePrices_AvgFeat, HousePrices_BoxCox, Imputer, rmse, rmse_cv, BoostingTunerCV, PipeTunerCV, Weighted_Average
+from xgboost.sklearn import XGBRegressor
+from lightgbm.sklearn import LGBMRegressor
+%matplotlib inline
+pd.set_option('max_columns', 200)
+```
+
+## Data preprocessing
+
+In this section I explain how the data are preprocessed right before being fed to the chains. All the classes that I use in the pipelines for preprocessing the data can be found [here](utils/preprocessing.py 'Preprocessing classes').
+
+```python
+X_train = fetch_openml(name="house_prices", as_frame=True, data_home='data')['frame']
+y_train = X_train['SalePrice']
+X_train.drop(['Id'], axis=1, inplace=True)
+verbal = [f for f in X_train.columns if X_train.dtypes[f] == 'object']
+numerical = [f for f in X_train.columns if X_train.dtypes[f] != 'object']
+qualitative = verbal + ['MSSubClass', 'OverallQual', 'OverallCond']
+quantitative = [n for n in numerical if n not in qualitative and n != 'SalePrice']
+```
+
+### Missing data
+
+As part of the workflow, the imputation of missing values inside the chain in every single pipeline will be given by an `Imputer` object, however, most of the missing values are deductible just considering other values in the same observation:
+
+- In the case of qualitative variables consider the following example, if an observation showed that there is no pool, i.e., `PoolArea` is zero, we would then assign `NA` to the pertinent observation in `PoolQC` if it was missing, as the data description states this is the value for the quality of the pool when there is no pool. And if in fact there was a pool, we would impute `None` so that we do not bias the result. Also, in relation to the pipelines that use sets with dummy variables, when the indicators are created this observation would not be represented by any of the `PoolQC` classes, and in relation to the pipelines that use categorical sets `None` would not be taken as a category.
+
+- In the case of quantitative variables, and following a similar example, if there was a missing value in `GarageArea` for a given observation and `GarageQual` was `NA` in the same row, then `0` would be imputed in `GarageArea`.
+
+The rest of the missing values will be assigned by an `Imputer` object, which takes as one of the arguments either a number to fill the missing values or the type of average (mean or median). This average can also be computed after grouping by another predictor, passing the feature name to the _groupby_ argument.
+
+```python
+# Missing values in the dataset
+missing = X_train.apply(lambda x: sum(x.isnull()),axis=0).sort_values(ascending=False)
+percent = np.round((X_train.apply(lambda x: sum(x.isnull()),axis=0)/
+                    X_train.apply(lambda x: len(x.isnull()),axis=0)*100), 2).sort_values(ascending=False)
+train_missing = pd.concat([missing, percent], axis=1, keys=['Missing', '%']).head(20)
+train_missing.columns.name = "Training Set"
+display(train_missing.transpose())
+```
+
+<DataFrame>
+  <thead>
+    <tr>
+      <th></th>
+      <th>PoolQC</th>
+      <th>MiscFeature</th>
+      <th>Alley</th>
+      <th>Fence</th>
+      <th>FireplaceQu</th>
+      <th>LotFrontage</th>
+      <th>GarageType</th>
+      <th>GarageCond</th>
+      <th>GarageFinish</th>
+      <th>GarageQual</th>
+      <th>GarageYrBlt</th>
+      <th>BsmtFinType2</th>
+      <th>BsmtExposure</th>
+      <th>BsmtQual</th>
+      <th>BsmtCond</th>
+      <th>BsmtFinType1</th>
+      <th>MasVnrArea</th>
+      <th>MasVnrType</th>
+      <th>Electrical</th>
+      <th>RoofMatl</th>
+    </tr>
+    <tr>
+      <th>Training Set</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Missing</th>
+      <td>1453.00</td>
+      <td>1406.0</td>
+      <td>1369.00</td>
+      <td>1179.00</td>
+      <td>690.00</td>
+      <td>259.00</td>
+      <td>81.00</td>
+      <td>81.00</td>
+      <td>81.00</td>
+      <td>81.00</td>
+      <td>81.00</td>
+      <td>38.0</td>
+      <td>38.0</td>
+      <td>37.00</td>
+      <td>37.00</td>
+      <td>37.00</td>
+      <td>8.00</td>
+      <td>8.00</td>
+      <td>1.00</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>%</th>
+      <td>99.52</td>
+      <td>96.3</td>
+      <td>93.77</td>
+      <td>80.75</td>
+      <td>47.26</td>
+      <td>17.74</td>
+      <td>5.55</td>
+      <td>5.55</td>
+      <td>5.55</td>
+      <td>5.55</td>
+      <td>5.55</td>
+      <td>2.6</td>
+      <td>2.6</td>
+      <td>2.53</td>
+      <td>2.53</td>
+      <td>2.53</td>
+      <td>0.55</td>
+      <td>0.55</td>
+      <td>0.07</td>
+      <td>0.0</td>
+    </tr>
+  </tbody>
+</DataFrame>
+
+```python
+for column in qualitative:
+    if column in ['BsmtQual', 'BsmtCond', 'BsmtExposure', 'BsmtFinType1', 'BsmtFinType2']:
+        X_train[column] = X_train[column].fillna(pd.Series(np.where(X_train['TotalBsmtSF']==0, 'NA', None)))
+    elif column == 'FireplaceQu':
+        X_train[column] = X_train[column].fillna(pd.Series(np.where(X_train['Fireplaces']==0, 'NA', None)))
+    elif column in ['GarageCond', 'GarageFinish', 'GarageQual', 'GarageType']:
+        X_train[column] = X_train[column].fillna(pd.Series(np.where(X_train['GarageArea']==0, 'NA', None)))
+    elif column == 'KitchenQual':
+        X_train[column] = X_train[column].fillna(pd.Series(np.where(X_train['KitchenAbvGr']==0, 'NA', None)))
+    elif column == 'MasVnrType':
+        X_train[column] = X_train[column].fillna(pd.Series(np.where(X_train['MasVnrArea']==0, 'None', None)))
+    elif column == 'MiscFeature':
+        X_train[column] = X_train[column].fillna(pd.Series(np.where(X_train['MiscVal']==0, 'NA', None)))
+    elif column == 'PoolQC':
+        X_train[column] = X_train[column].fillna(pd.Series(np.where(X_train['PoolArea']==0, 'NA', None)))
+    elif column in ['Exterior1st', 'Exterior2nd']:
+        X_train[column] = X_train[column].fillna('Missing')
+    # Utilities does not add info, all its values in the training set but one observation are the same
+    elif column == 'Utilities':
+        X_train.drop(column, axis=1, inplace=True)
+
+for column in quantitative:
+    if column in ['BsmtFullBath', 'BsmtFinSF2', 'BsmtFinSF1', 'BsmtHalfBath', 'BsmtUnfSF', 'TotalBsmtSF']:
+        X_train[column] = X_train[column].fillna(pd.Series(np.where((X_train['BsmtQual']=='NA') |
+                                                                (X_train['BsmtCond']=='NA') |
+                                                                (X_train['BsmtExposure']=='NA') |
+                                                                (X_train['BsmtFinType1']=='NA') |
+                                                                (X_train['BsmtFinType2']=='NA'), 0, None)))
+    elif column in ['GarageArea', 'GarageCars', 'GarageYrBlt']:
+        X_train[column] = X_train[column].fillna(pd.Series(np.where((X_train['GarageCond']=='NA') |
+                                                                (X_train['GarageFinish']=='NA') |
+                                                                (X_train['GarageQual']=='NA') |
+                                                                (X_train['GarageType']=='NA'), 0, None)))
+    elif column == 'MasVnrArea':
+        X_train[column] = X_train[column].fillna(pd.Series(np.where(X_train['MasVnrType']=='None', 0, None)))
+
+for column in ['MSSubClass', 'OverallQual', 'OverallCond', 'GarageYrBlt', 'YearBuilt',
+            'YearRemodAdd', 'YrSold', 'MoSold']:
+    X_train[column] = X_train[column].astype('int')
+```
+
+### Outliers
+
+The training set contains some observations with uncommon values in some of their predictor spaces and also in their response. The effects of this observations if we fed them to the learning model could invalidate the fit.
+
+On the other hand, removing them could prevent the estimator from learning some peculiarities in the data and, in the end, from generalizing better.
+
+I opted for not removing any observation of the set, for transforming some variables as well as for creating some others attempting to alleviate the impact of this outliers over the resulting fit.
+
+In the figure below we see four of the predictors with some points that, to different extents, do not follow the general trend of the data, or have values that are not common in the predictor space:
+
+```python
+sns.set(font_scale=1.4)
+fig, ax = plt.subplots(nrows=2, ncols=2, figsize=(20,10), sharex=False, sharey=True)
+fig.subplots_adjust(hspace=.2, wspace=.1)
+outliers_arr = np.array([[X_train['GrLivArea']>4500, X_train['LotArea']>100000],
+                         [X_train['TotalBsmtSF']>4000, X_train['BsmtFinSF1']>3000]])
+predictors_w_outliers_arr = np.array([['GrLivArea', 'LotArea'], ['TotalBsmtSF', 'BsmtFinSF1']])
+for irow in range(2):
+    for icol in range(2):
+        sns.regplot(X_train[predictors_w_outliers_arr[irow][icol]], X_train['SalePrice'], ax = ax[irow][icol],
+                    ci=0)
+        sns.regplot(X_train.loc[np.invert(outliers_arr[irow][icol])][predictors_w_outliers_arr[irow][icol]],
+                    X_train.loc[np.invert(outliers_arr[irow][icol])]['SalePrice'], ax = ax[irow][icol],
+                    color='black', ci=0,
+                    scatter=False, line_kws={'ls': 'dotted'}, label='Regression line w/o outliers')
+        ax[irow][icol].scatter(X_train.loc[outliers_arr[irow][icol]][predictors_w_outliers_arr[irow][icol]],
+                               X_train.loc[outliers_arr[irow][icol]]['SalePrice'], c='black', label='Outlier',
+                               marker = 'x')
+        ax[irow][icol].legend(edgecolor='black', loc=2, facecolor='white', frameon=True)
+        ax[irow][icol].set_ylim([0, 1000000])
+```
+
+<Image alt="Regression fits with and without outliers" src="/images/ames-housing-prices-models/output_8_0.png" width={1218} height={605} />
+
+We can graphically see the impact of some points on the regression fit and how each fit changes just removing one observation or a few of them.
+
+Let's then take two of these variables we believe contain outliers and transform them. In the case of `GrLivArea` and `LotArea`, we can see the result of transforming both predictor and response below:
+
+```python
+fig, ax = plt.subplots(nrows=1,ncols=2, figsize=(20,5), sharey=True)
+fig.subplots_adjust(wspace=.1)
+for i, (feat, lambd) in enumerate([('GrLivArea', 0.006), ('LotArea', 0.031)]):
+    sns.regplot(boxcox(X_train[feat], lmbda=lambd), np.log(X_train['SalePrice']), ax=ax[i], ci=0);
+    ax[i].scatter(boxcox(X_train[outliers_arr[0][i]][feat], lmbda=lambd),
+                  np.log(X_train[outliers_arr[0][i]]['SalePrice']),
+                  c='black', marker='x', label='Former outlier')
+    sns.regplot(boxcox(X_train[np.invert(outliers_arr[0][i])][feat], lmbda=lambd),
+                np.log(X_train[np.invert(outliers_arr[0][i])]['SalePrice']), color='gray', ci=0,
+                label='Regression line data w/o outliers', scatter=False, line_kws={'ls': 'dotted'},
+                ax=ax[i])
+    ax[i].legend(loc='best', facecolor='white', frameon=True)
+    ax[i].set_xlabel("boxcox {}, lambda = {}".format(feat, lambd))
+    ax[i].set_ylabel('log(SalePrice)')
+```
+
+<Image alt="Regression fits without outliers" src="/images/ames-housing-prices-models/output_10_0.png" width={1188} height={328} />
+
+The presence of the same observations that were altering the regression before is now virtually not affecting the resulting fit. The points that were out of the general trend of the data are now following it and the points with values in the predictor space that were too big compared with the rest of the observations have now similar values thanks to the change of the scale after using a Box Cox and log transformation.
+
+### Feature engineering
+
+There are some other aspects that may influence the price of a house, I have created new features from the variables that we already have to attempt to capture that information, and I have also made some aggregations combining some variables:
+
+- `_Baths/Rooms` (quantitative): ratio of bathrooms and rooms.
+- `_Baths/SF` (quantitative): number of bathrooms per square feet.
+- `_BsmtUnfin_ratio` (quantitative): ratio of unfinished basement square feet. Zero when there is no basement.
+- `_Condition` (quantitative): aggregation of both `Condition1` and `Condition2` to create indicator variables for every single condition. These are almost half the variables that would result from getting dummies without aggregating (17 versus 9) which is still less than if we were to create dummies from the aggregated variable (16 versus 9). We also use this variable to create the following predictors and then we remove it from the data set:
+  - `_Connected` (quantitative): houses adjacent to an arterial or feeder street.
+  - `_Railed` (quantitative): houses within 200' or adjacent to a railroad.
+- `_Exterior` (quantitative): the same as `_Condition` but with `Exterior1` and `Exterior2`.
+  > A catch is that when training a pipeline with a Random Forest regressor, the frame has Condition and Exterior variables sparsed. One could include this aggregations in the class to create dummies so that the pipe with the forest does not get this dummies. However, this is more computation during the optimization of the parameters in the other pipelines.
+- `_Date_Sold` (quantitative): I combine `YrSold` with `MoSold` into this feature. There is a clear pattern in house sales through the months during 5 years. There are more sales during the summer than during any other season, and the amount of sales and the price of the houses sold remain similar over time. We can see a box plot of it against `SalePrice` below:
+
+```python
+fig, ax = plt.subplots(figsize=(15,5))
+sns.boxplot((((X_train['MoSold']-1)/12) + X_train['YrSold']), y_train, ax=ax, color='#5876a0')
+ax.set_xticklabels(labels=list(range(1,13))*5, rotation=30);
+```
+
+<Image alt="_Date_sold against SalePrice box plot" src="/images/ames-housing-prices-models/output_12_0.png" width={930} height={316} />
+
+- `_Living_Area` (quantitative): total number of square feet in the house.
+- `_LowQualFin_ratio` (quantitative): ratio of low quality finished basement square feet in all floors.
+- `_Rooms/SF` (quantitative): number of rooms per square feet.
+- `_Time2sale` (quantitative): years passed between the date of building and the date of selling.
+- `_Time2remod` (quantitative): years passed between the date of building and the date of remodelling.
+- `_Time_remod2sale` (quantitative): years passed between the date of remodelling and the date of selling.
+- `_TopZone` (qualitative): indicates the houses located in FV (Floating Village Residential), RL (Residential Low Density) and RP (Residential Low Density Park) zones. Although there are no observations in the dataset with houses in RP zones, we include this zone in the set of zones with more expensive properties, elaborated from the following simple group:
+
+```python
+X_train.groupby(['MSZoning'])[['SalePrice']].apply(lambda x: np.round(x.mean(), 2)).sort_values(by='SalePrice',
+                                                                                                ascending=False)
+```
+
+<DataFrame>
+  <thead>
+    <tr>
+      <th></th>
+      <th>SalePrice</th>
+    </tr>
+    <tr>
+      <th>MSZoning</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>FV</th>
+      <td>214014.06</td>
+    </tr>
+    <tr>
+      <th>RL</th>
+      <td>191004.99</td>
+    </tr>
+    <tr>
+      <th>RH</th>
+      <td>131558.38</td>
+    </tr>
+    <tr>
+      <th>RM</th>
+      <td>126316.83</td>
+    </tr>
+    <tr>
+      <th>C (all)</th>
+      <td>74528.00</td>
+    </tr>
+  </tbody>
+</DataFrame>
+
+- `_Total_Baths` (quantitative): total number of bathrooms including half bathrooms above grade, and bathroom and half bathrooms in the basement.
+- `_Unfinished` (quantitative): houses with any of their predictors in the dataset that describe an unfinished part or area.
+
+```python
+X_train.drop(['SalePrice'], axis=1, inplace=True)
+# In order to ease isin()'s:
+bestnei = ['StoneBr', 'NridgHt', 'Veenker', 'Somerst', 'Timber', 'Blmngtn', 'CollgCr', 'NoRidge', 'Mitchel']
+notbestnei = [f for f in X_train['Neighborhood'].unique() if f not in bestnei]
+topzone = ['FV', 'RL', 'RP']
+X_train['_Baths/Rooms'] = (X_train['BsmtFullBath'] + X_train['BsmtHalfBath'] + X_train['FullBath'] +
+                         X_train['HalfBath']) / X_train['TotRmsAbvGrd']
+X_train['_Baths/SF'] = (X_train['BsmtFullBath'] + X_train['BsmtHalfBath'] + X_train['FullBath'] +
+                      X_train['HalfBath']) / (X_train['TotalBsmtSF'] + X_train['GrLivArea'])
+X_train['_BsmtUnfin_ratio'] = np.where((X_train['TotalBsmtSF']==0), 0, X_train['BsmtUnfSF']/X_train['TotalBsmtSF'])
+X_train['_Condition'] = (X_train['Condition1'] + ',' +
+                       X_train['Condition2']).apply(lambda x: pd.Series(sorted(re.split('\,', x))).str.cat(sep='/'))
+X_train['_Condition_Artery'] = X_train['_Condition'].apply(lambda x: np.where(('Artery' in x), 1, -1))
+X_train['_Condition_Feedr'] = X_train['_Condition'].apply(lambda x: np.where(('Feedr' in x), 1, -1))
+X_train['_Condition_Norm'] = X_train['_Condition'].apply(lambda x: np.where(('Norm' in x), 1, -1))
+X_train['_Condition_PosN'] = X_train['_Condition'].apply(lambda x: np.where(('PosN' in x), 1, -1))
+X_train['_Condition_RRAe'] = X_train['_Condition'].apply(lambda x: np.where(('RRAe' in x), 1, -1))
+X_train['_Condition_RRNn'] = X_train['_Condition'].apply(lambda x: np.where(('RRNn' in x), 1, -1))
+X_train['_Condition_RRAn'] = X_train['_Condition'].apply(lambda x: np.where(('RRAn' in x), 1, -1))
+X_train['_Condition_PosA'] = X_train['_Condition'].apply(lambda x: np.where(('PosA' in x), 1, -1))
+X_train['_Condition_RRNe'] = X_train['_Condition'].apply(lambda x: np.where(('RRNe' in x), 1, -1))
+X_train['_Connected'] = X_train['_Condition'].apply(lambda x: np.where((('Feedr' in x)|('Artery'in x)), 1, -1))
+X_train['Exterior2nd'] = X_train['Exterior2nd'].str.replace('Wd Shng', 'WdShing')
+X_train['Exterior2nd'] = X_train['Exterior2nd'].str.replace('CmentBd', 'CemntBd')
+X_train['Exterior2nd'] = X_train['Exterior2nd'].str.replace('Brk Cmn', 'BrkComm')
+X_train['_Exterior'] = (X_train['Exterior1st'] + ',' +
+                      X_train['Exterior2nd']).apply(lambda x: pd.Series(re.split('\,', x)).str.cat(sep='/'))
+X_train['_Exterior_AsbShng'] = X_train['_Exterior'].apply(lambda x: np.where(('AsbShng' in x), 1, -1))
+X_train['_Exterior_AsphShn'] = X_train['_Exterior'].apply(lambda x: np.where(('AsphShn' in x), 1, -1))
+X_train['_Exterior_BrkComm'] = X_train['_Exterior'].apply(lambda x: np.where(('BrkComm' in x), 1, -1))
+X_train['_Exterior_BrkFace'] = X_train['_Exterior'].apply(lambda x: np.where(('BrkFace' in x), 1, -1))
+X_train['_Exterior_CBlock'] = X_train['_Exterior'].apply(lambda x: np.where(('CBlock' in x), 1, -1))
+X_train['_Exterior_CemntBd'] = X_train['_Exterior'].apply(lambda x: np.where(('CemntBd' in x), 1, -1))
+X_train['_Exterior_HdBoard'] = X_train['_Exterior'].apply(lambda x: np.where(('HdBoard' in x), 1, -1))
+X_train['_Exterior_ImStucc'] = X_train['_Exterior'].apply(lambda x: np.where(('ImStucc' in x), 1, -1))
+X_train['_Exterior_MetalSd'] = X_train['_Exterior'].apply(lambda x: np.where(('MetalSd' in x), 1, -1))
+X_train['_Exterior_Other'] = X_train['_Exterior'].apply(lambda x: np.where(('Other' in x), 1, -1))
+X_train['_Exterior_Plywood'] = X_train['_Exterior'].apply(lambda x: np.where(('Plywood' in x), 1, -1))
+X_train['_Exterior_Stone'] = X_train['_Exterior'].apply(lambda x: np.where(('Stone' in x), 1, -1))
+X_train['_Exterior_Stucco'] = X_train['_Exterior'].apply(lambda x: np.where(('Stucco' in x), 1, -1))
+X_train['_Exterior_VinylSd'] = X_train['_Exterior'].apply(lambda x: np.where(('VinylSd' in x), 1, -1))
+X_train['_Exterior_Wd Sdng'] = X_train['_Exterior'].apply(lambda x: np.where(('Wd Sdng' in x), 1, -1))
+X_train['_Exterior_WdShing'] = X_train['_Exterior'].apply(lambda x: np.where(('WdShing' in x), 1, -1))
+X_train['_Date_Sold'] = ((X_train['MoSold']-1)/12) + X_train['YrSold']
+X_train['_LowQualFin_ratio'] = X_train['LowQualFinSF']/(X_train['TotalBsmtSF'] + X_train['GrLivArea'])
+X_train['_Railed'] = X_train['_Condition'].apply(lambda x: np.where(('RR' in x), 1, -1))
+X_train['_Rooms/SF'] = X_train['TotRmsAbvGrd'] / (X_train['TotalBsmtSF'] + X_train['GrLivArea'])
+X_train['_Time2Sale'] = X_train['_Date_Sold'] - X_train['YearBuilt']
+X_train['_Time2Remod'] = X_train['YearRemodAdd'] - X_train['YearBuilt']
+X_train['_Time_Remod2Sale'] = X_train['_Date_Sold'] - X_train['YearRemodAdd']
+X_train['_TopZone'] = X_train['MSZoning'].apply(lambda x: 1 if x in topzone else -1)
+X_train['_Total_Baths'] = X_train['BsmtFullBath']+X_train['BsmtHalfBath']+X_train['FullBath'] + X_train['HalfBath']
+X_train['_Unfinished'] = np.where(((X_train['GarageFinish']=='Unf')|(X_train['MSSubClass']==45)|
+                                 (X_train['HouseStyle']=='1.5Unf')|(X_train['HouseStyle']=='2.5Unf')|
+                                 (X_train['BsmtUnfSF']==0)), 1, -1)
+droplist = ['YrSold', 'MoSold', '_Condition', 'Condition1', 'Condition2', '_Exterior', 'Exterior1st',
+            'Exterior2nd']
+X_train.drop(droplist, axis=1, inplace=True)
+X_train['MSSubClass'] = X_train['MSSubClass'].apply(str)
+quantitative = [feat for feat in X_train.columns if feat not in qualitative]
+qualitative = [feat for feat in X_train.columns if feat not in quantitative]
+```
+
+In some pipelines I add an object to create features with averages as part of the workflow. If I was to create this features beforehand, and therefore, add them to the set with which we feed the pipeline, I would be training and validating models with information from the whole set during the cross validation process.
+
+Then, I aim to prevent this catch by creating features with averages from the subset fed to the estimator, which, in the cross-validation process to optimize the parameters, will be the training batch, or split.
+
+### Feature transformation
+
+I have used the Box Cox family of transformations in scipy which, if does not get a fixed lambda, finds the lambda that maximizes the log-likelihood function:
+
+```python
+# Select the n_features to plot:
+n_features2plot = 8
+lmbdas = pd.Series()
+features2transform = ['1stFlrSF', 'GrLivArea', 'LotArea', 'LotFrontage', 'TotalBsmtSF',
+                      '_Baths/Rooms', '_Baths/SF', '_Rooms/SF']
+colours = ['royalblue', 'seagreen', 'firebrick', 'darkorange', 'darkorchid', 'dodgerblue',
+           'limegreen', 'crimson']
+fig = plt.figure(figsize=(20, n_features2plot*5))
+plt.subplots_adjust(hspace=0.25)
+for colour, (i, feat) in zip(colours, enumerate(features2transform, start=1)):
+    feature =  X_train[feat].fillna(X_train[feat].mean())
+    if i<=n_features2plot:
+        ax=plt.subplot(n_features2plot, 2, i+i-1)
+        if (i==1):
+            ax.set_title("Raw features", fontdict={'fontweight':'bold'})
+        sns.distplot(feature, ax=ax, color=colour, fit=norm)
+        ax.legend(['Normal distribution', 'Skewness: {:.3}\nKurtosis: {:.3}'.format(X_train[feat].skew(),
+                                                                                    X_train[feat].kurt())],
+                  loc='best', facecolor='white', frameon = True);
+
+    if feature.min()==0:
+        feature, lmbdas.loc[(i-1)] =  boxcox(feature+0.1)
+    else:
+        feature, lmbdas.loc[(i-1)] =  boxcox(feature)
+    if i<=n_features2plot:
+        ax=plt.subplot(n_features2plot, 2, 2*i)
+        if i==1:
+            ax.set_title("Transformed features", fontdict={'fontweight':'bold'})
+        sns.distplot(feature, ax=ax, color=colour, fit=norm)
+        ax.legend(['Normal distribution', 'Skewness: {:.3}\nKurtosis: {:.3}'.format(skew(feature),
+                                                                                    kurtosis(feature))],
+                  loc='best', facecolor='white', frameon = True);
+        ax.set_xlabel("boxcox {}, lambda = {}".format(feat, round(lmbdas.loc[(i-1)], 3)))
+y_train = np.log(y_train)
+```
+
+<Image alt="Variables Box Cox transformations" src="/images/ames-housing-prices-models/output_18_0.png" width={1208} height={2249} />
+
+I include another object in the pipe to transform some features, but with a list of lambdas we have already computed above using the entire set.
+
+### Encoding qualitative variables
+
+In order to be able to encode properly the data, no matter what the observations are in every validation set, a set of the categories will be needed:
+
+```python
+categories = list(itertools.chain.from_iterable((var + '_' + str(value)
+                                                 for value in np.unique(X_train[var].dropna()))
+                                                for var in qualitative))
+avg_features = ['_Neighbs_GarageYrBlt_mean', '_Neighbs_GrLivArea_mean', '_Neighbs_LotArea_mean',
+                '_Neighbs_LotFrontage_mean', '_Neighbs_OverallCond_mode', '_Neighbs_OverallQual_mode',
+                '_Neighbs_GarageYrBlt_offset', '_Neighbs_GrLivArea_offset', '_Neighbs_LotArea_offset',
+                '_Neighbs_LotFrontage_offset', '_Neighbs_OverallCond_offset', '_Neighbs_OverallQual_offset']
+columns_w_dummies = quantitative + categories
+columns_w_avg_n_dummies = quantitative + avg_features + categories
+columns_w_avg =  X_train.columns.tolist() + avg_features
+categories[:5]
+```
+
+    ['MSSubClass_120',
+     'MSSubClass_160',
+     'MSSubClass_180',
+     'MSSubClass_190',
+     'MSSubClass_20']
+
+Right before scaling the features with a sklearn `StandardScaler` object, I include either a `Get_Dummies` or a `Get_Categorical` object to encode the variables in the set but with all the categories from the entire set, computed above.
+
+The reason for passing this list of categories is to prevent the estimators from being fed with different sets of encoded predictors in some folds during the cross-validation process: it is expected in small sets that when cross-validating, the batches of data after a split may not include the whole set of categories in the respective qualitative feature.
+
+## Modelling
+
+I have written [three classes](utils/validation.py 'Validation classes') that are used in this section:
+
+- `PipeTunerCV`, which is used to optimize the parameters passed from the estimators in the pipelines, prevailing the values of this parameters with lower cross-validated RMSE over the others. Also, I include some methods to plot the coefficients of pipelines with Ridge, the Lasso and ElasticNet regressors, and the feature importance of the Random Forest Regressor.
+
+- `BoostingTunerCV`, which is used to optimize the pre-arranged parameters of the estimators outside the pipelines and to plot the feature importance of the predictors and the learning curve of the model.
+
+- `WeightedAverage`: it is used to select the combination of pipelines that yields the best performance.
+
+In order to assess how well the estimators generalize I use the square root of the mean squared error evaluated by cross-validation using 5 folds:
+
+```python
+# 5-Folds cross-validator enabling shuffling data before splitting
+kfold = KFold(n_splits=5, shuffle=True, random_state=0)
+```
+
+The dataset consists of many dimensions compared with the total number of observations, therefore, models capable of shrinking the coefficients of every predictor -and good with sparse data- may be a good starting point.
+
+> Whereas Ridge regression with an ℓ2 norm shrinks the coefficients towards zero and reduces the importance of highly correlated variables, the Lasso and ElasticNet -with an ℓ1 norm, and a compromise between both ℓ1 and ℓ2 norms respectively- are able as well of regularizing since when the control parameter of the ℓ1 penalty becomes sufficiently large, forces some of the coefficients to equal zero, subsequently discarding its associated predictor from the elaboration of a future prediction.
+
+```python
+# Transformers to be included in the Pipeline or in the creation of transformed sets
+imp_median = Imputer(columns=quantitative, fillna='median')
+imp_median_bynei = Imputer(columns=quantitative, fillna='median', groupby='Neighborhood')
+av_ft = HousePrices_AvgFeat()
+bc = HousePrices_BoxCox(features=features2transform, lmbda=lmbdas)
+gd = Get_Dummies(categories, qualitative, ['OverallCond', 'OverallQual'])
+gc = Get_Categorical(categories, qualitative)
+st_sc = StandardScaler()
+```
+
+```python
+# The fitting procedure of some models will run on a distributed scheduler.
+# I'll enclose them in separate contexts for displaying purposes.
+client = Client(processes=False)
+```
+
+### Ridge
+
+```python
+pipe_ridge = make_pipeline(imp_median, av_ft, bc, gd, st_sc, Ridge())
+tuner = PipeTunerCV(estimator=pipe_ridge, kfold=kfold, param_grid = {'alpha':np.linspace(785, 787, 25)},
+                    metrics=rmse)
+with joblib.parallel_backend('dask'):
+    tuner.tune(X_train, y_train)
+print("Best parameters: {}\nRMSE-CV mean: {}\nRMSE-CV std:  {}".format(tuner.best_params_,
+                                                                       tuner.metrics_cv_.mean(),
+                                                                       tuner.metrics_cv_.std()))
+```
+
+```
+Best parameters: {'alpha': 785.8333333333334}
+RMSE-CV mean: 0.13563131546568435
+RMSE-CV std:  0.029110041077239458
+```
+
+```python
+tuner.plot(X_train, y_train, columns_w_avg_n_dummies, slice_=np.r_[0:5, -5:0])
+```
+
+<Image alt="Ridge coefficients magnitudes" src="/images/ames-housing-prices-models/output_28_0.png" width={782} height={219} />
+
+### Lasso
+
+```python
+pipe_lasso = make_pipeline(imp_median_bynei, av_ft, bc, gd, st_sc, Lasso())
+tuner = PipeTunerCV(estimator=pipe_lasso, kfold=kfold, param_grid = {'alpha':np.linspace(0.0048, 0.005, 25)},
+                    metrics=rmse)
+with joblib.parallel_backend('dask'):
+    tuner.tune(X_train, y_train)
+print("Best parameters: {}\nRMSE-CV mean: {}\nRMSE-CV std:  {}".format(tuner.best_params_,
+                                                                       tuner.metrics_cv_.mean(),
+                                                                       tuner.metrics_cv_.std()))
+```
+
+```
+Best parameters: {'alpha': 0.004925}
+RMSE-CV mean: 0.1281796543618152
+RMSE-CV std:  0.026869613398467728
+```
+
+```python
+tuner.plot(X_train, y_train, columns_w_avg_n_dummies, slice_=np.r_[0:5, -5:0])
+```
+
+```
+Number of features used: 89 (26.969696969696972 %)
+```
+
+<Image alt="Lasso coefficients magnitudes" src="/images/ames-housing-prices-models/output_31_1.png" width={787} height={219} />
+
+### Elastic Net
+
+```python
+pipe_elnet = make_pipeline(imp_median_bynei, av_ft, bc, gd, st_sc, ElasticNet())
+tuner = PipeTunerCV(estimator=pipe_elnet, kfold=kfold, param_grid={'alpha':np.linspace(0.03, 0.04, 7),
+                                                                   'l1_ratio': np.linspace(0.12, 0.17, 7)},
+                    metrics=rmse)
+with joblib.parallel_backend('dask'):
+    tuner.tune(X_train, y_train)
+print("Best parameters: {}\nRMSE-CV mean: {}\nRMSE-CV std:  {}".format(tuner.best_params_,
+                                                                       tuner.metrics_cv_.mean(),
+                                                                       tuner.metrics_cv_.std()))
+```
+
+```
+Best parameters: {'alpha': 0.03833333333333333, 'l1_ratio': 0.12833333333333333}
+RMSE-CV mean: 0.13206704650193685
+RMSE-CV std:  0.0329695249965181
+```
+
+```python
+tuner.plot(X_train, y_train, columns_w_avg_n_dummies, slice_=np.r_[0:5, -5:0])
+```
+
+```
+Number of features used: 99 (30.0 %)
+```
+
+<Image alt="Elastic Net coefficients magnitudes" src="/images/ames-housing-prices-models/output_34_1.png" width={788} height={219} />
+
+Algorithms with kernel trick have also been used. A polynomial kernel in case of Kernel Ridge Regression, and an RBF kernel in case of Support Vector Regression. The parameters of this estimators are optimized by cross-validated grid search over different parameter grids defined below:
+
+### Kernel Ridge
+
+```python
+pipe_kr = make_pipeline(imp_median, av_ft, bc, gd, st_sc, KernelRidge(kernel='polynomial',
+                                                                      degree=2))
+tuner = PipeTunerCV(estimator=pipe_kr, kfold=kfold, param_grid = {'alpha':np.linspace(4, 5, 7),
+                                                                  'coef0':np.linspace(2, 3, 7)},
+                    metrics=rmse)
+with joblib.parallel_backend('loky'):
+    tuner.tune(X_train, y_train)
+print("Best parameters: {}\nRMSE-CV mean: {}\nRMSE-CV std:  {}".format(tuner.best_params_,
+                                                                       tuner.metrics_cv_.mean(),
+                                                                       tuner.metrics_cv_.std()))
+```
+
+```
+Best parameters: {'alpha': 4.166666666666667, 'coef0': 2.5}
+RMSE-CV mean: 0.13063084285859192
+RMSE-CV std:  0.02972132851508003
+```
+
+### Support Vector Regressor
+
+```python
+pipe_svr = make_pipeline(imp_median, av_ft, bc, gd, st_sc, SVR())
+tuner = PipeTunerCV(estimator=pipe_svr, kfold=kfold, param_grid = {'C':np.linspace(10, 20, 7),
+                                                                   'gamma':np.linspace(1e-5, 8e-6, 7)},
+                    metrics=rmse)
+with joblib.parallel_backend('dask'):
+    tuner.tune(X_train, y_train)
+print("Best parameters: {}\nRMSE-CV mean: {}\nRMSE-CV std:  {}".format(tuner.best_params_,
+                                                                       tuner.metrics_cv_.mean(),
+                                                                       tuner.metrics_cv_.std()))
+```
+
+```
+Best parameters: {'C': 13.333333333333334, 'gamma': 9.666666666666667e-06}
+RMSE-CV mean: 0.13281716522086923
+RMSE-CV std:  0.02828733335034169
+```
+
+### Random Forest Regressor
+
+I have also created a pipeline that contains a random forest regressor. Increasing the number of trees will slightly improve the performance, although it will still be worse than the performance of the preceding estimators for this dataset.
+
+I assign 25 to _n_iter_ to randomize the search as this will limit the length of every grid, if this value is lower than the length of the array of combinations, and sample from it randomly without replacement:
+
+```python
+pipe_rfr = make_pipeline(imp_median, av_ft, gc, RandomForestRegressor(max_features='auto',
+                                                                      n_estimators=250,
+                                                                      random_state=0))
+tuner = PipeTunerCV(estimator=pipe_rfr, kfold=kfold, param_grid = {'max_depth': list(range(15, 25, 4)),
+                                                                   'min_samples_leaf': list(range(1, 4)),
+                                                                   'min_samples_split': list(range(2, 6))},
+                    metrics=rmse, n_iter=25)
+with joblib.parallel_backend('dask'):
+    tuner.tune(X_train, y_train)
+print("Best parameters: {}\nRMSE-CV mean: {}\nRMSE-CV std:  {}".format(tuner.best_params_,
+                                                                       tuner.metrics_cv_.mean(),
+                                                                       tuner.metrics_cv_.std()))
+```
+
+```
+Best parameters: {'max_depth': 23, 'min_samples_leaf': 1, 'min_samples_split': 4}
+RMSE-CV mean: 0.1517686048099904
+RMSE-CV std:  0.02005319065787054
+```
+
+```python
+tuner.plot(X_train, y_train, columns_w_avg, slice_=np.arange(-10, 0))
+```
+
+<Image alt="Random Forest Regressor feature importance" src="/images/ames-housing-prices-models/output_41_0.png" width={786} height={219} />
+
+### Gradient boosting regressors
+
+eXtreme Gradient Boosting and Light Gradient Boosting Machine are the boosting regressors that are going to be explored. The former uses the depth-wise tree growth algorithm while the latter the leaf-wise tree growth algorithm.
+
+Given that the number of observations in our training set is not large and this ensembles tend to overfit in small sets, the optimization of the parameters is a necessary task to be performed since otherwise our estimator would most likely follow too closely the training data and would yield bad predictions. In this regard, an approach to optimize -or tune- the parameters in both regressors has been written: `BoostingTunerCV`.
+
+The main idea is to automate the process of cross-validated grid searches of all the parameters. This parameters are then included in different grids: firstly, the main parameters to control model complexity, a posteriori, parameters to add randomness subsampling features and observations -to make training robust to noise-, and finally, regularization parameters.
+
+I have set the learning rate to 0.025 in the XGB regressor and 0.03 in the LGBM ensemble and have used the native `xgb.cv` and `lgb.cv` cross-validation functions to evaluate the correspondent models enabling `early_stopping_round` rounds.
+
+In this way, the training stops in any of the batches if the square root of the mean squared error (selected metric) of the validation data doesn’t improve in the given rounds. The number of the last round will be the total number of estimators that are needed to perform an optimal task with the given parameters.
+
+```python
+# Dataset to train the gradient boosting regressors. Once the parameters of the models are tuned, the models are
+# chained to a GetDummies class object in Pipelines. All the Pipelines will then be fit with same set: X_train
+X_train_boosting = gd.fit_transform(X_train)
+```
+
+#### eXtreme Gradient Boosting
+
+As noted above and as we can see next, the model tends to overfit the training data using the standard parameters even stopping the training if there is no improvement after 100 epochs (or iterations over the training set). The performance of the ensemble improves greatly as the number of estimators increases to 300. Around 800 the training error keeps decreasing substantially as opposed to the test rmse, i.e. the model is correcting errors in every subsequent tree that will not help when it comes to predict on new data.
+
+The training can then be stopped earlier setting a lower `early_stopping_rounds` value to avoid overfitting, i.e. to keep a good generalization, as we can see on the plot on the right hand side:
+
+```python
+xgb_cv={}
+learning_rate = 0.025
+esrs = [100, 5]
+params = {'learning_rate':learning_rate, 'objective':'reg:linear', 'nthread':-1, 'seed':1, 'silent':1}
+fig, ax = plt.subplots(nrows=1,ncols=2, figsize=(20,6))
+fig.subplots_adjust(wspace=.17)
+fig.suptitle("XGB learning curve (rate = {})".format(learning_rate))
+for i, esr in enumerate(esrs):
+    xgb_cv[i] = xgb.cv(params, xgb.DMatrix(X_train_boosting, y_train), num_boost_round=1150,
+                       folds=list(kfold.split(X_train_boosting, y_train)), metrics='rmse',
+                       early_stopping_rounds=esr, verbose_eval=False)
+    xgb_cv[i].index.name = "n_estimators"
+    xgb_cv[i][['test-rmse-mean', 'train-rmse-mean']].plot(ax=ax[i], title="early_stopping_rounds = "+str(esr),
+                                                          ylim=[0, 0.4])
+```
+
+<Image alt="XGB learning curve (rate = 0.025)" src="/images/ames-housing-prices-models/output_45_0.png" width={1169} height={426} />
+
+When setting `early_stopping_rounds = 5` there is still a similar test accuracy but the model does not follow so closely the training data. Although there is still overfitting, it is not so severe:
+
+```python
+for i, esr in enumerate(esrs):
+    print("\n· early_stopping_rounds = "+str(esr))
+    display(xgb_cv[i][['test-rmse-mean', 'train-rmse-mean']].tail(2))
+```
+
+```
+· early_stopping_rounds = 100
+```
+
+<DataFrame>
+  <thead>
+    <tr>
+      <th></th>
+      <th>test-rmse-mean</th>
+      <th>train-rmse-mean</th>
+    </tr>
+    <tr>
+      <th>n_estimators</th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>993</th>
+      <td>0.128690</td>
+      <td>0.01635</td>
+    </tr>
+    <tr>
+      <th>994</th>
+      <td>0.128689</td>
+      <td>0.01633</td>
+    </tr>
+  </tbody>
+</DataFrame>
+``` · early_stopping_rounds = 5 ```
+<DataFrame>
+  <thead>
+    <tr>
+      <th></th>
+      <th>test-rmse-mean</th>
+      <th>train-rmse-mean</th>
+    </tr>
+    <tr>
+      <th>n_estimators</th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>598</th>
+      <td>0.128995</td>
+      <td>0.031464</td>
+    </tr>
+    <tr>
+      <th>599</th>
+      <td>0.128990</td>
+      <td>0.031405</td>
+    </tr>
+  </tbody>
+</DataFrame>
+
+Since the parameters have yet not been optimized for the data set, this was only an approximation for the sake of introducing some inherent properties of this ensembles and to have an idea of the learning curve of our model and how we can partially attenuate overfitting keeping a low test rmse.
+
+Below I'll start tuning the hyper parameters of the boosting machine so that the performance can be further improved:
+
+```python
+# XGB parameters tuning new class early stopping every grid
+param_grid = {}
+param_grid[0] = {'max_depth':list(range(1,5)), 'min_child_weight':list(range(1,5))}
+param_grid[1] = {'gamma': [0.1, 0.01, 0]}
+param_grid[2] = {'subsample':np.arange(0., 1.01, 0.1), 'colsample_bytree':np.arange(0., 1.01, 0.1)}
+param_grid[3] = {'reg_alpha':np.arange(0, 0.31, 0.05), 'reg_lambda':np.arange(0.6, 1.01,0.1)}
+params = {'learning_rate':0.025, 'objective':'reg:linear', 'nthread':-1, 'seed':1}
+model_xgb = XGBRegressor(**params)
+tuner = BoostingTunerCV(model_xgb, kfold, param_grid, num_boost_round=1500,
+                        early_stopping_rounds=5, metrics='rmse')
+with joblib.parallel_backend('dask'):
+    tuner.tune(X_train_boosting, y_train)
+print("Best parameters: {}\nRMSE-CV mean and std: {}".format(tuner.best_params_,
+                                                             rmse_cv(model_xgb, X_train_boosting,
+                                                                     y_train, kfold)))
+```
+
+```
+Best parameters: {'max_depth': 3, 'min_child_weight': 1, 'gamma': 0, 'subsample': 1.0, 'colsample_bytree': 0.1, 'reg_alpha': 0.0, 'reg_lambda': 0.6}
+RMSE-CV mean and std: (0.1228245434674334, 0.020199295846580898)
+```
+
+```python
+model_xgb.get_params()['n_estimators']
+```
+
+```
+1051
+```
+
+```python
+tuner.plot_learning_curve()
+```
+
+<Image alt="XGBRegressor learning curve" src="/images/ames-housing-prices-models/output_51_0.png" width={389} height={292} />
+
+As we can see in the learning curve, after optimizing the parameters of the model the overfitting problem has been considerably alleviated whilst keeping a similar test rmse, i.e., the model improves its testing error and does not follow so closely the training data:
+
+```python
+tuner.cv_result_.tail(2)
+```
+
+<DataFrame>
+  <thead>
+    <tr>
+      <th></th>
+      <th>test-rmse-mean</th>
+      <th>train-rmse-mean</th>
+    </tr>
+    <tr>
+      <th>n_estimators</th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1049</th>
+      <td>0.121442</td>
+      <td>0.063438</td>
+    </tr>
+    <tr>
+      <th>1050</th>
+      <td>0.121440</td>
+      <td>0.063413</td>
+    </tr>
+  </tbody>
+</DataFrame>
+
+```python
+tuner.plot_importance(X_train_boosting, y_train, feature_names=columns_w_dummies, max_num_features=15)
+```
+
+<Image alt="XGBRegressor feature importance" src="/images/ames-housing-prices-models/output_54_0.png" width={741} height={482} />
+
+Given that I do not standardize nor impute values with averages on the frame that is used to feed the gradient boosting regressors (in fact we leave `np.nan` as the specified missing value), the cross validated RMSE is exactly the same for the XGB as for the Pipeline where it is chained:
+
+```python
+pipe_xgb = make_pipeline(gd, model_xgb)
+print("RMSE CV, std: ", rmse_cv(pipe_xgb, X_train, y_train, kfold))
+```
+
+```
+RMSE CV, std:  (0.1228245434674334, 0.020199295846580898)
+```
+
+#### Light Gradient Boosting Machine
+
+I have followed a similar procedure to optimize the hyperparameters of the LGBM, however, `early_stopping_rounds` has now been set to 10 and the learning rate to 0.03:
+
+```python
+# LightGBM parameters tuning
+param_grid = {}
+param_grid[0] = {'num_leaves': list(range(2, 15)), 'min_child_samples': list(range(1, 11))}
+param_grid[1] = {'min_split_gain': [0.1, 0.01, 0], 'min_child_weight':list(range(1, 4))}
+param_grid[2] = {'subsample': np.arange(0.0005, 0.01, 0.001), 'colsample_bytree': np.arange(0.1, 1.0, 0.1)}
+param_grid[3] = {'reg_alpha': np.arange(0,0.51,0.1), 'reg_lambda': np.arange(0,0.51,0.1)}
+params = {'learning_rate': 0.03, 'objective': 'regression', 'nthread':-1, 'n_estimators': 1500}
+model_lgb = LGBMRegressor(**params)
+tuner = BoostingTunerCV(model_lgb, kfold, param_grid, num_boost_round=1500,
+                        early_stopping_rounds=10,  metrics='rmse')
+with joblib.parallel_backend('dask'):
+    tuner.tune(X_train_boosting, y_train)
+print("Best parameters: {}\nRMSE-CV mean and std: {}".format(tuner.best_params_,
+                                                             rmse_cv(model_lgb,
+                                                                     X_train_boosting,
+                                                                     y_train, kfold)))
+```
+
+```
+Best parameters: {'num_leaves': 13, 'min_child_samples': 1, 'min_split_gain': 0, 'min_child_weight': 1, 'subsample': 0.0005, 'colsample_bytree': 0.30000000000000004, 'reg_alpha': 0.0, 'reg_lambda': 0.0}
+RMSE-CV mean and std: (0.12361663405106404, 0.021072999585591393)
+```
+
+```python
+model_lgb.get_params()['n_estimators']
+```
+
+```
+610
+```
+
+```python
+tuner.plot_learning_curve()
+```
+
+<Image alt="LGBMRegressor learning curve" src="/images/ames-housing-prices-models/output_60_0.png" width={396} height={292} />
+
+```python
+tuner.cv_result_.tail(2)
+```
+
+<DataFrame>
+  <thead>
+    <tr>
+      <th></th>
+      <th>test-rmse-mean</th>
+    </tr>
+    <tr>
+      <th>n_estimators</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>608</th>
+      <td>0.122496</td>
+    </tr>
+    <tr>
+      <th>609</th>
+      <td>0.122480</td>
+    </tr>
+  </tbody>
+</DataFrame>
+
+```python
+tuner.plot_importance(X_train_boosting, y_train, feature_names=columns_w_dummies,
+                      max_num_features=15)
+```
+
+<Image alt="LGBMRegressor feature importance" src="/images/ames-housing-prices-models/output_62_0.png" width={741} height={482} />
+
+```python
+pipe_lgb = make_pipeline(gd, model_lgb)
+print("RMSE CV, std: ", rmse_cv(pipe_lgb, X_train, y_train, kfold))
+```
+
+```
+RMSE CV, std:  (0.12361663405106404, 0.021072999585591393)
+```
+
+The Light Gradient Boosting Machine is performing slightly better on this set and also it allows a faster training compared with the XGB.
+
+### Residual plots
+
+The following figure shows the residuals of every estimator after splitting the training set, fitting every estimator and predicting the validation set. Observations on the dark orange dashed line, or origin, are perfectly predicted (residual=0).
+
+```python
+Xtrain, Xvalidation, ytrain, yvalidation = train_test_split(X_train, y_train, test_size=0.3,
+                                                            random_state=0, shuffle=True)
+fig = plt.figure(figsize=(20, 20))
+plt.subplots_adjust(wspace=0.25, hspace=0.25)
+for i, estimator in enumerate([pipe_ridge, pipe_lasso, pipe_elnet, pipe_kr, pipe_svr, pipe_rfr,
+                               pipe_xgb, pipe_lgb], start=1):
+    ax = plt.subplot(3, 3, i)
+    estimator.fit(Xtrain, ytrain)
+    y_train_pred = estimator.predict(Xtrain)
+    y_validation_pred = estimator.predict(Xvalidation)
+    ax.scatter(y_train_pred, ytrain - y_train_pred, c = "blue", marker = "x", label = "Training data",
+               edgecolors="black")
+    ax.scatter(y_validation_pred, yvalidation - y_validation_pred, c = "limegreen", marker = "s",
+               label = "Validation data", edgecolors="black")
+    ax.set_title(re.match(r'\w+',str(estimator))[0] + ' ' +
+                 re.match(r'\w+', str(estimator.named_steps[list(estimator.named_steps.keys())[-1]]))[0]+
+                 " residual plot")
+    ax.set_xlabel("Predicted values")
+    ax.set_ylabel("Residuals")
+    if (i-1)%3==0:
+        ax.legend(loc = "upper left", frameon=True)
+    ax.text(12.62, 0.67, 'R^2 train: {:.3}\nR^2 valid: {:.3}'.format(r2_score(ytrain, y_train_pred),
+                                                                     r2_score(yvalidation, y_validation_pred)),
+            fontsize=14, style='italic', bbox={'facecolor':'white'})
+    ax.hlines(y=0, xmin=10, xmax=14, lw=2.5, color='darkorange', linestyle="--")
+    ax.set_xlim([10, 14])
+    ax.set_ylim([-0.9, 0.9])
+plt.show()
+```
+
+<Image alt="Residual plots" src="/images/ames-housing-prices-models/output_65_0.png" width={1204} height={1162} />
+
+Despite the fact that there are no clear patterns in the validation data, there are still some observations hard to predict properly after training the models with 70% of the data (the rest of the data is left for model evaluation). However, all the estimators but the ensemble of trees perform quite well. The random forest regressor overfits significantly the training data, and, as a result, performs significantly worse than the other regressors.
+
+> $R^2$ is used to assess the accuracy of the model. This metric measures the proportion of variance that an estimator is able to explain.
+
+### Weighted average
+
+Most of the predictions above are quite similar, but some others differ, so my intention has been to come up with a very simple ensemble computing the best average amongst pre-selected models predictions, i.e. some of this predictions will carry more importance, or weight, than others.
+
+In order to select the best combination of weights for all the estimators, a frame of percentages between 0 and 1 every a given step is created so that all the weights of every row in the frame will sum up exactly one, this is, the full percentage of an estimation is computed. Finally, every column contains all the weights to be computed for every estimator.
+
+For instance, let's say one of the rows is _[0.25, 0.0, 0.35, 0.1, 0.3]_, this would be the weights needed to compute an estimation from taking 25% of the predictions of the first estimator, zero from the estimation of the second model, 35% from the third model, ten percent from the fourth model and 30% from the fifth. This weights are, therefore, multiplied by the predictions of every model. But this predictions are for a holdout set since this whole process is evaluated by k-fold cross-validation.
+
+So, once the selected weights are multiplied by the predictions of this holdout set, the resulting average is scored with the function `rmse` and then the result of the metric is stored in one of the cells of the predictions frame which will, in the end of this process, contain one column per fold of the k-fold cross-validation and one row per possible combination of all the weights or rates pre-specified.
+
+> The rates are computed once the fit method of an object of this class is called. The higher the number of models included in the ensemble for a given step the longer it'll take to compute the combination of rates.
+
+In conclusion, in case we created a `Weighted_Average` object of five estimators with a step of five, the weights used as an example above would be in one of the rows in the predictions data frame, and every value of this row would be its correspondent _rmse_ of the respective holdout fold. The mean along this row would be the cross-validated square root of the mean squared error of a weighted average combination. The selected weights would be the ones for whose RMSE-CV is lower, i.e. the weights that yield the lowest RMSE-CV among 10626 combinations.
+
+First, we include all the estimators -but `XGBRegressor` and `RandomForestRegressor`- with a step of 10 so that it does not take too long to create the combination of weights:
+
+```python
+wa6e = Weighted_Average([pipe_ridge, pipe_lasso, pipe_elnet, pipe_kr, pipe_xgb, pipe_lgb],
+                        kfold, step=0.1, metrics=rmse)
+wa6e.fit(X_train, y_train)
+weighted_predictions_6e = wa6e.get_cvpreds()
+weighted_predictions_6e.head(1)
+```
+
+<DataFrame>
+  <thead>
+    <tr>
+      <th></th>
+      <th>Fold 1</th>
+      <th>Fold 2</th>
+      <th>Fold 3</th>
+      <th>Fold 4</th>
+      <th>Fold 5</th>
+      <th>RMSE CV</th>
+      <th>std()</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0.0 * Pipeline_Ridge + 0.2 * Pipeline_Lasso + 0.0 * Pipeline_ElasticNet + 0.1 * Pipeline_KernelRidge + 0.30000000000000004 * Pipeline_XGBRegressor + 0.4 * Pipeline_LGBMRegressor</th>
+      <td>0.126135</td>
+      <td>0.10003</td>
+      <td>0.159723</td>
+      <td>0.110078</td>
+      <td>0.101873</td>
+      <td>0.119568</td>
+      <td>0.022093</td>
+    </tr>
+  </tbody>
+</DataFrame>
+
+The pipelines with the the `Lasso`, `Kernel Ridge`, `XGBRegressor` and `LGBMRegressor` estimators are the ones to be selected in order to create another weighted average, but now with a step of 0.01 so that the combination of weights is computed every 1%:
+
+```python
+wa4e = Weighted_Average([pipe_lasso, pipe_kr, pipe_xgb, pipe_lgb], kfold, step=0.01, metrics=rmse)
+wa4e.fit(X_train, y_train)
+weighted_predictions_4e = wa4e.get_cvpreds()
+weighted_predictions_4e.head(1)
+```
+
+<DataFrame>
+  <thead>
+    <tr>
+      <th></th>
+      <th>Fold 1</th>
+      <th>Fold 2</th>
+      <th>Fold 3</th>
+      <th>Fold 4</th>
+      <th>Fold 5</th>
+      <th>RMSE CV</th>
+      <th>std()</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0.24 * Pipeline_Lasso + 0.11 * Pipeline_KernelRidge + 0.3 * Pipeline_XGBRegressor + 0.35000000000000003 * Pipeline_LGBMRegressor</th>
+      <td>0.127444</td>
+      <td>0.099539</td>
+      <td>0.159518</td>
+      <td>0.109679</td>
+      <td>0.101427</td>
+      <td>0.119521</td>
+      <td>0.022298</td>
+    </tr>
+  </tbody>
+</DataFrame>
+
+Finally, this is the classification of all the pipelines and the most accurate ensemble of pipelines in this analysis (the best scorer is highlighted in blue):
+
+```python
+pipes_left = [pipe_rfr, pipe_xgb]
+arr = np.zeros((len(pipes_left), kfold.n_splits+2))
+for i, pipe in enumerate(pipes_left):
+    arr[i][:kfold.n_splits] = rmse_cv(pipe, X_train, y_train, kfold=kfold, raw=True)
+    arr[i][-2],arr[i][-1] = arr[i][:kfold.n_splits].mean(), arr[i][:kfold.n_splits].std()
+scores = pd.concat([weighted_predictions_4e.head(1),
+                    weighted_predictions_6e.loc[['1.0 * Pipeline_Ridge + 0.0 * Pipeline_Lasso + 0.0 * Pipeline_ElasticNet + 0.0 * Pipeline_KernelRidge + 0.0 * Pipeline_XGBRegressor + 0.0 * Pipeline_LGBMRegressor']],
+                    weighted_predictions_6e.loc[['0.0 * Pipeline_Ridge + 1.0 * Pipeline_Lasso + 0.0 * Pipeline_ElasticNet + 0.0 * Pipeline_KernelRidge + 0.0 * Pipeline_XGBRegressor + 0.0 * Pipeline_LGBMRegressor']],
+                    weighted_predictions_6e.loc[['0.0 * Pipeline_Ridge + 0.0 * Pipeline_Lasso + 1.0 * Pipeline_ElasticNet + 0.0 * Pipeline_KernelRidge + 0.0 * Pipeline_XGBRegressor + 0.0 * Pipeline_LGBMRegressor']],
+                    weighted_predictions_6e.loc[['0.0 * Pipeline_Ridge + 0.0 * Pipeline_Lasso + 0.0 * Pipeline_ElasticNet + 1.0 * Pipeline_KernelRidge + 0.0 * Pipeline_XGBRegressor + 0.0 * Pipeline_LGBMRegressor']],
+                    weighted_predictions_6e.loc[['0.0 * Pipeline_Ridge + 0.0 * Pipeline_Lasso + 0.0 * Pipeline_ElasticNet + 0.0 * Pipeline_KernelRidge + 1.0 * Pipeline_XGBRegressor + 0.0 * Pipeline_LGBMRegressor']],
+                    weighted_predictions_6e.loc[['0.0 * Pipeline_Ridge + 0.0 * Pipeline_Lasso + 0.0 * Pipeline_ElasticNet + 0.0 * Pipeline_KernelRidge + 0.0 * Pipeline_XGBRegressor + 1.0 * Pipeline_LGBMRegressor']],
+                    pd.DataFrame(arr, index= ['Pipeline_RandomForestRegressor', 'Pipeline_XGBRegressor'],
+                                 columns=["Fold "+str(fold+1) for fold in range(kfold.get_n_splits())]+
+                                 ['RMSE CV', 'std()'])])
+weightedname = '0.24 * Pipeline_Lasso + 0.11 * Pipeline_KernelRidge + 0.3 * Pipeline_XGBRegressor + 0.35 * Pipeline_LGBMRegressor'
+scores.index = [weightedname, 'Pipeline_Ridge', 'Pipeline_Lasso', 'Pipeline_ElasticNet',
+                'Pipeline_KernelRidge', 'Pipeline_SVR', 'Pipeline_LGBMRegressor',
+                'Pipeline_RandomForestRegressor', 'Pipeline_XGBRegressor']
+scores.sort_values(by='RMSE CV', ascending=True).style.apply(lambda x: ['color: royalblue' if
+                                                                        x.name == weightedname else ''
+                                                                        for _ in x], axis=1)
+```
+
+<DataFrame>
+  <thead>
+    <tr>
+      <th className="blank level0"></th>
+      <th className="col_heading level0 col0">Fold 1</th>
+      <th className="col_heading level0 col1">Fold 2</th>
+      <th className="col_heading level0 col2">Fold 3</th>
+      <th className="col_heading level0 col3">Fold 4</th>
+      <th className="col_heading level0 col4">Fold 5</th>
+      <th className="col_heading level0 col5">RMSE CV</th>
+      <th className="col_heading level0 col6">std()</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8level0_row0" className="row_heading level0 row0">
+        0.24 * Pipeline_Lasso + 0.11 * Pipeline_KernelRidge + 0.3 * Pipeline_XGBRegressor + 0.35 * Pipeline_LGBMRegressor
+      </th>
+      <td id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8row0_col0" className="data row0 col0 table-selected">
+        0.127444
+      </td>
+      <td id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8row0_col1" className="data row0 col1 table-selected">
+        0.0995394
+      </td>
+      <td id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8row0_col2" className="data row0 col2 table-selected">
+        0.159518
+      </td>
+      <td id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8row0_col3" className="data row0 col3 table-selected">
+        0.109679
+      </td>
+      <td id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8row0_col4" className="data row0 col4 table-selected">
+        0.101427
+      </td>
+      <td id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8row0_col5" className="data row0 col5 table-selected">
+        0.119521
+      </td>
+      <td id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8row0_col6" className="data row0 col6 table-selected">
+        0.0222981
+      </td>
+    </tr>
+    <tr>
+      <th id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8level0_row1" className="row_heading level0 row1">
+        Pipeline_SVR
+      </th>
+      <td id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8row1_col0" className="data row1 col0">
+        0.120766
+      </td>
+      <td id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8row1_col1" className="data row1 col1">
+        0.107271
+      </td>
+      <td id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8row1_col2" className="data row1 col2">
+        0.161829
+      </td>
+      <td id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8row1_col3" className="data row1 col3">
+        0.116805
+      </td>
+      <td id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8row1_col4" className="data row1 col4">
+        0.107452
+      </td>
+      <td id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8row1_col5" className="data row1 col5">
+        0.122825
+      </td>
+      <td id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8row1_col6" className="data row1 col6">
+        0.0201993
+      </td>
+    </tr>
+    <tr>
+      <th id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8level0_row2" className="row_heading level0 row2">
+        Pipeline_XGBRegressor
+      </th>
+      <td id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8row2_col0" className="data row2 col0">
+        0.120766
+      </td>
+      <td id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8row2_col1" className="data row2 col1">
+        0.107271
+      </td>
+      <td id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8row2_col2" className="data row2 col2">
+        0.161829
+      </td>
+      <td id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8row2_col3" className="data row2 col3">
+        0.116805
+      </td>
+      <td id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8row2_col4" className="data row2 col4">
+        0.107452
+      </td>
+      <td id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8row2_col5" className="data row2 col5">
+        0.122825
+      </td>
+      <td id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8row2_col6" className="data row2 col6">
+        0.0201993
+      </td>
+    </tr>
+    <tr>
+      <th id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8level0_row3" className="row_heading level0 row3">
+        Pipeline_LGBMRegressor
+      </th>
+      <td id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8row3_col0" className="data row3 col0">
+        0.124565
+      </td>
+      <td id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8row3_col1" className="data row3 col1">
+        0.106454
+      </td>
+      <td id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8row3_col2" className="data row3 col2">
+        0.163771
+      </td>
+      <td id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8row3_col3" className="data row3 col3">
+        0.115252
+      </td>
+      <td id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8row3_col4" className="data row3 col4">
+        0.108041
+      </td>
+      <td id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8row3_col5" className="data row3 col5">
+        0.123617
+      </td>
+      <td id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8row3_col6" className="data row3 col6">
+        0.021073
+      </td>
+    </tr>
+    <tr>
+      <th id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8level0_row4" className="row_heading level0 row4">
+        Pipeline_Lasso
+      </th>
+      <td id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8row4_col0" className="data row4 col0">
+        0.160167
+      </td>
+      <td id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8row4_col1" className="data row4 col1">
+        0.101322
+      </td>
+      <td id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8row4_col2" className="data row4 col2">
+        0.161287
+      </td>
+      <td id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8row4_col3" className="data row4 col3">
+        0.113433
+      </td>
+      <td id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8row4_col4" className="data row4 col4">
+        0.104689
+      </td>
+      <td id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8row4_col5" className="data row4 col5">
+        0.12818
+      </td>
+      <td id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8row4_col6" className="data row4 col6">
+        0.0268696
+      </td>
+    </tr>
+    <tr>
+      <th id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8level0_row5" className="row_heading level0 row5">
+        Pipeline_KernelRidge
+      </th>
+      <td id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8row5_col0" className="data row5 col0">
+        0.15867
+      </td>
+      <td id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8row5_col1" className="data row5 col1">
+        0.107148
+      </td>
+      <td id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8row5_col2" className="data row5 col2">
+        0.17368
+      </td>
+      <td id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8row5_col3" className="data row5 col3">
+        0.113637
+      </td>
+      <td id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8row5_col4" className="data row5 col4">
+        0.100018
+      </td>
+      <td id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8row5_col5" className="data row5 col5">
+        0.130631
+      </td>
+      <td id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8row5_col6" className="data row5 col6">
+        0.0297213
+      </td>
+    </tr>
+    <tr>
+      <th id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8level0_row6" className="row_heading level0 row6">
+        Pipeline_ElasticNet
+      </th>
+      <td id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8row6_col0" className="data row6 col0">
+        0.159381
+      </td>
+      <td id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8row6_col1" className="data row6 col1">
+        0.100404
+      </td>
+      <td id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8row6_col2" className="data row6 col2">
+        0.182737
+      </td>
+      <td id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8row6_col3" className="data row6 col3">
+        0.113704
+      </td>
+      <td id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8row6_col4" className="data row6 col4">
+        0.10411
+      </td>
+      <td id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8row6_col5" className="data row6 col5">
+        0.132067
+      </td>
+      <td id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8row6_col6" className="data row6 col6">
+        0.0329695
+      </td>
+    </tr>
+    <tr>
+      <th id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8level0_row7" className="row_heading level0 row7">
+        Pipeline_Ridge
+      </th>
+      <td id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8row7_col0" className="data row7 col0">
+        0.161273
+      </td>
+      <td id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8row7_col1" className="data row7 col1">
+        0.107989
+      </td>
+      <td id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8row7_col2" className="data row7 col2">
+        0.179084
+      </td>
+      <td id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8row7_col3" className="data row7 col3">
+        0.120741
+      </td>
+      <td id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8row7_col4" className="data row7 col4">
+        0.10907
+      </td>
+      <td id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8row7_col5" className="data row7 col5">
+        0.135631
+      </td>
+      <td id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8row7_col6" className="data row7 col6">
+        0.02911
+      </td>
+    </tr>
+    <tr>
+      <th id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8level0_row8" className="row_heading level0 row8">
+        Pipeline_RandomForestRegressor
+      </th>
+      <td id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8row8_col0" className="data row8 col0">
+        0.164536
+      </td>
+      <td id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8row8_col1" className="data row8 col1">
+        0.135889
+      </td>
+      <td id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8row8_col2" className="data row8 col2">
+        0.184204
+      </td>
+      <td id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8row8_col3" className="data row8 col3">
+        0.14464
+      </td>
+      <td id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8row8_col4" className="data row8 col4">
+        0.129574
+      </td>
+      <td id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8row8_col5" className="data row8 col5">
+        0.151769
+      </td>
+      <td id="T_f4e58148_6c97_11ec_b4b5_3c0754618fc8row8_col6" className="data row8 col6">
+        0.0200532
+      </td>
+    </tr>
+  </tbody>
+</DataFrame>
+
+`Weighted_Average` yields an ensemble of pipelines as the estimator with the lowest RMSE CV, namely `0.24 * Pipeline_Lasso + 0.11 * Pipeline_KernelRidge + 0.3 * Pipeline_XGBRegressor + 0.35 * Pipeline_LGBMRegressor`.
+
+## Summary
+
+The aim of this analysis was to develop an estimator or ensemble of estimators for regressing house prices using pipeline workflows so that it could be avoided to leak information from the sets to the transformer objects during the estimator training.
+
+It is shown when training the models how in this data frame pipelines with gradient boosting machines or with regressors with non-linear kernel tend to generalize better.
+
+Also that an ensemble of those and a pipeline with a lineal estimator is the most accurate estimator.
+
+This is, even though some models may not perform best standing alone, they may still be able to capture some valid information in the data to make better predictions.

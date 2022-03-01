@@ -1,0 +1,42 @@
+.tippyBox[data-animation='fade'][data-state='hidden'] {
+  opacity: 0;
+}
+.tippyBox {
+  max-width: 20rem;
+  position: relative;
+  border-radius: var(--border-radius);
+  @mixin $text-sm;
+  white-space: normal;
+  outline: 0;
+  transition-property: transform, visibility, opacity;
+  width: auto;
+  border: 1px solid var(--black-100);
+  background-color: #000;
+  color: var(--gray-100);
+  @mixin isDark {
+    color: #fff;
+    background-color: var(--black-200);
+    border-color: var(--black-100);
+  }
+}
+.tippyBox[data-inertia][data-state='visible'] {
+  transition-timing-function: cubic-bezier(0.54, 1.5, 0.38, 1.11);
+}
+.tippyContent {
+  position: relative;
+  padding: 0.25rem 0.75rem;
+  z-index: 1;
+  hyphens: auto;
+}
+
+@media (--laptop) {
+  /*.tippyBox {
+    max-width: calc(100vw - 10px);
+  }*/
+  .tippyBox {
+    display: none;
+  }
+  .tippyContent {
+    display: none;
+  }
+}
