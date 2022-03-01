@@ -141,11 +141,15 @@ button {
 }
 h2 > a.hashAnchor {
   padding-right: 0.2rem;
-  margin-left: -1.37375rem;
+  margin-left: -1.375333rem;
 }
 h3 > a.hashAnchor {
   padding-right: 0.2rem;
-  margin-left: -1.180625rem;
+  margin-left: -1.182rem; /*-1.180625rem;*/
+}
+h4 > a.hashAnchor {
+  padding-right: 0.2rem;
+  margin-left: -0.998667rem;
 }
 .hashAnchor:after {
   content: '#';
