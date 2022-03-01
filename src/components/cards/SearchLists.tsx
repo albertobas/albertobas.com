@@ -21,8 +21,6 @@ const SearchLists = ({ cardsObject, locale }: Props) => {
   const [querySearch, setQuerySearch] = useState<string | null>(null);
   const [section, setSection] = useFilterArray(true);
   const [field, setField] = useFilterArray();
-  const [tags, setTags] = useFilterArray();
-  const [tech, setTech] = useFilterArray();
   const [pageNumBlog, setPageNumBlog] = useState<number>(0);
   const [pageNumProjects, setPageNumProjects] = useState<number>(0);
   const handleFilters = useCallback(() => {
@@ -43,39 +41,23 @@ const SearchLists = ({ cardsObject, locale }: Props) => {
     },
     [setField]
   );
-  const handleTags = useCallback(
-    (items: Item[]) => {
-      items.length > 0 ? setTags(items) : setTags(null);
-    },
-    [setTags]
-  );
-  const handleTech = useCallback(
-    (items: Item[]) => {
-      items.length > 0 ? setTech(items) : setTech(null);
-    },
-    [setTech]
-  );
   useEffect(() => {
     setPageNumBlog(0);
     setPageNumProjects(0);
-  }, [section, field, tags, tech]);
+  }, [section, field]);
   const filteredBlogCards = useMemo(() => {
     return cardFilter(cardSearch(cardsObject.blog, querySearch, locale), [
       { key: 'section', filter: section },
       { key: 'field', filter: field },
-      { key: 'tags', filter: tags },
-      { key: 'tech', filter: tech },
     ]);
-  }, [section, field, tags, tech, querySearch, cardsObject, locale]);
+  }, [section, field, querySearch, cardsObject, locale]);
   const filteredProjectsCards = useMemo(() => {
     return cardFilter(cardSearch(cardsObject.projects, querySearch, locale), [
       { key: 'section', filter: section },
       { key: 'field', filter: field },
-      { key: 'tags', filter: tags },
-      { key: 'tech', filter: tech },
     ]);
-  }, [section, field, tags, tech, querySearch, cardsObject, locale]);
-  const filteredSearch = querySearch !== null || section !== null || field !== null || tags !== null || tech !== null;
+  }, [section, field, querySearch, cardsObject, locale]);
+  const filteredSearch = querySearch !== null || section !== null || field !== null;
   return (
     <>
       <SearchBar
@@ -91,12 +73,8 @@ const SearchLists = ({ cardsObject, locale }: Props) => {
           cards={[...filteredBlogCards, ...filteredProjectsCards]}
           section={section}
           field={field}
-          tags={tags}
-          tech={tech}
           handleSection={handleSection}
           handleField={handleField}
-          handleTags={handleTags}
-          handleTech={handleTech}
           locale={locale}
         />
       )}
