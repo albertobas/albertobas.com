@@ -49,9 +49,6 @@ html {
   font-size: 15px;
   font-weight: 400;
   background-color: #fff;
-  @mixin isDark {
-    background-color: #000;
-  }
 }
 body {
   font-family: var(--font-sans);
