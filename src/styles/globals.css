@@ -163,42 +163,45 @@ h4 > a.hashAnchor {
 }
 
 /*------------ CODE HIGHLIGHT ------------*/
-pre {
+/*pre {
   @mixin $text-sm;
   padding-bottom: 1em;
   overflow: auto;
-}
-code[class*='language-'],
-pre[class*='language-'] {
-  background-color: #fff;
-  color: var(--black-400);
+}*/
+/*pre,
+code {
   font-size: 0.825rem;
   font-family: var(--font-mono);
+}*/
+code,
+pre {
+  font-family: var(--font-mono);
+  background-color: #fff;
   direction: ltr;
   text-align: left;
   white-space: pre;
   word-spacing: normal;
   word-break: normal;
-  line-height: 1.5;
   tab-size: 2;
   hyphens: none;
   box-sizing: border-box;
   @mixin isDark {
     background-color: #000;
-    color: var(--gray-100);
   }
 }
 /* Code blocks */
-pre[class*='language-'] {
-  background-color: #fff;
+pre {
+  font-size: 0.825rem;
+  line-height: 1.5;
   padding: 0.5rem 0;
   margin: 1.25rem 0;
   overflow: auto;
   border-radius: var(--border-radius);
   box-shadow: var(--shadow);
+  color: var(--black-400);
   @mixin isDark {
+    color: var(--gray-100);
     box-shadow: var(--shadow-dark);
-    background-color: #000;
     border-color: var(--gray-800);
   }
 }
@@ -259,7 +262,7 @@ pre > code > span {
   }
 }
 .line-number::before {
-  display: inline-block;
+  display: none;
   text-align: left;
   font-size: 0.825rem;
   width: 1rem;
@@ -271,8 +274,8 @@ pre > code > span {
     color: var(--gray-600);
   }
 }
-pre + pre > code > span.line-number::before {
-  display: none;
+pre[class*='language-']:not(pre[class='language-bash'], pre[class='language-diff']) > code > span.line-number::before {
+  display: inline-block;
 }
 /* Inline code */
 :not(pre) > code[class*='language-'] {
