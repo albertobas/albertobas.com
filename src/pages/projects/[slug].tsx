@@ -3,7 +3,7 @@ import dynamic from 'next/dynamic';
 import { getPost, getSimilarPosts, getSlugsAndLocales } from 'src/utils/helpers/api';
 import { MdxPost, MdxMetadataCard } from 'src/utils/interfaces/post';
 import { Language } from 'src/utils/interfaces/languages';
-import { projectsComponents } from 'src/components/MDX/MDXComponents';
+import { componentsProjects } from 'src/components/MDX/MDXComponents';
 import ProjectsPost from 'src/components/layouts/ProjectsPost';
 import Loading from 'src/components/utils/Loading';
 import { GetStaticPaths, GetStaticProps } from 'next';
@@ -31,7 +31,7 @@ const DynamicProjectsPost = ({ post, relatedProjects, locale, locales }: Props) 
       locales={locales}
       {...post.frontMatter}
     >
-      <MDX code={post.code} components={projectsComponents} />
+      <MDX code={post.code} components={componentsProjects} />
     </ProjectsPost>
   );
 };

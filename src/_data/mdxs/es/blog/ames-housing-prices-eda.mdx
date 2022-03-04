@@ -293,7 +293,7 @@ display(X_train.head(2), X_train.shape)
   </tbody>
 </DataFrame>
 
-<pre>(1460, 80)</pre>
+<CellOut>``` (1460, 80) ```</CellOut>
 
 Las variables de entrada se han clasificado por sus niveles de medición (de razón, de intervalo, ordinal, nominal):
 
@@ -823,10 +823,13 @@ print("Number of houses with garage:",
               (X_train['YearBuilt']==X_train['GarageYrBlt'])].shape[0])
 ```
 
+<CellOut>
 ```
 Number of houses with garage: 1379
 Number of houses built the same year as the garage: 1089
 ```
+
+</CellOut>
 
 - Se han vendido muchas más casas durante la temporada de verano. Además, el número de casas vendidas de un año a otro desde 2006 no ha cambiado mucho excepto en 2010, sin embargo, esto se debe a que en el conjunto de datos hay registros de casas que se han vendido solo hasta julio de 2010, como podemos ver a continuación:
 
@@ -873,7 +876,7 @@ print("Last month with records in 2010: ", X_train[X_train['YrSold']==2010]['MoS
   </tbody>
 </DataFrame>
 
-<pre>Last month with records in 2010: 7.0</pre>
+<CellOut>``` Last month with records in 2010: 7.0 ```</CellOut>
 
 ```python
 # Nominal-measured variables

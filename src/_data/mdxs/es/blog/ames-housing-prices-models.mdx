@@ -479,13 +479,7 @@ columns_w_avg =  X_train.columns.tolist() + avg_features
 categories[:5]
 ```
 
-```
-['MSSubClass_120',
-  'MSSubClass_160',
-  'MSSubClass_180',
-  'MSSubClass_190',
-  'MSSubClass_20']
-```
+<CellOut>``` ['MSSubClass_120', 'MSSubClass_160', 'MSSubClass_180', 'MSSubClass_190', 'MSSubClass_20'] ```</CellOut>
 
 Justo antes de cambiar la escala de las variables con un objeto `StandardScaler` de sklearn, incluyo o un objeto `Get_Dummies` o un `Get_Categorical` para codificar las variables en el conjunto pero con todas las categorías del conjunto completo, calculadas anteriormente.
 
@@ -542,11 +536,13 @@ print("Best parameters: {}\nRMSE-CV mean: {}\nRMSE-CV std:  {}".format(tuner.bes
                                                                        tuner.metrics_cv_.std()))
 ```
 
+<CellOut>
 ```
 Best parameters: {'alpha': 785.8333333333334}
 RMSE-CV mean: 0.13563131546568435
 RMSE-CV std:  0.029110041077239458
 ```
+</CellOut>
 
 ```python
 tuner.plot(X_train, y_train, columns_w_avg_n_dummies, slice_=np.r_[0:5, -5:0])
@@ -567,19 +563,19 @@ print("Best parameters: {}\nRMSE-CV mean: {}\nRMSE-CV std:  {}".format(tuner.bes
                                                                        tuner.metrics_cv_.std()))
 ```
 
+<CellOut>
 ```
 Best parameters: {'alpha': 0.004925}
 RMSE-CV mean: 0.1281796543618152
 RMSE-CV std:  0.026869613398467728
 ```
+</CellOut>
 
 ```python
 tuner.plot(X_train, y_train, columns_w_avg_n_dummies, slice_=np.r_[0:5, -5:0])
 ```
 
-```
-Number of features used: 89 (26.969696969696972 %)
-```
+<CellOut>``` Number of features used: 89 (26.969696969696972 %) ```</CellOut>
 
 <Image alt="Magnitudes de los coeficientes de Lasso" src="/images/ames-housing-prices-models/output_31_1.png" width={787} height={219} />
 
@@ -597,19 +593,19 @@ print("Best parameters: {}\nRMSE-CV mean: {}\nRMSE-CV std:  {}".format(tuner.bes
                                                                        tuner.metrics_cv_.std()))
 ```
 
+<CellOut>
 ```
 Best parameters: {'alpha': 0.03833333333333333, 'l1_ratio': 0.12833333333333333}
 RMSE-CV mean: 0.13206704650193685
 RMSE-CV std:  0.0329695249965181
 ```
+</CellOut>
 
 ```python
 tuner.plot(X_train, y_train, columns_w_avg_n_dummies, slice_=np.r_[0:5, -5:0])
 ```
 
-```
-Number of features used: 99 (30.0 %)
-```
+<CellOut>``` Number of features used: 99 (30.0 %) ```</CellOut>
 
 <Image alt="Magnitudes de los coeficientes de Elastic Net" src="/images/ames-housing-prices-models/output_34_1.png" width={788} height={219} />
 
@@ -630,11 +626,13 @@ print("Best parameters: {}\nRMSE-CV mean: {}\nRMSE-CV std:  {}".format(tuner.bes
                                                                        tuner.metrics_cv_.std()))
 ```
 
+<CellOut>
 ```
 Best parameters: {'alpha': 4.166666666666667, 'coef0': 2.5}
 RMSE-CV mean: 0.13063084285859192
 RMSE-CV std:  0.02972132851508003
 ```
+</CellOut>
 
 ### Regresor de soporte vectorial
 
@@ -650,11 +648,13 @@ print("Best parameters: {}\nRMSE-CV mean: {}\nRMSE-CV std:  {}".format(tuner.bes
                                                                        tuner.metrics_cv_.std()))
 ```
 
+<CellOut>
 ```
 Best parameters: {'C': 13.333333333333334, 'gamma': 9.666666666666667e-06}
 RMSE-CV mean: 0.13281716522086923
 RMSE-CV std:  0.02828733335034169
 ```
+</CellOut>
 
 ### Regresor de bosque aleatorio
 
@@ -677,11 +677,13 @@ print("Best parameters: {}\nRMSE-CV mean: {}\nRMSE-CV std:  {}".format(tuner.bes
                                                                        tuner.metrics_cv_.std()))
 ```
 
+<CellOut>
 ```
 Best parameters: {'max_depth': 23, 'min_samples_leaf': 1, 'min_samples_split': 4}
 RMSE-CV mean: 0.1517686048099904
 RMSE-CV std:  0.02005319065787054
 ```
+</CellOut>
 
 ```python
 tuner.plot(X_train, y_train, columns_w_avg, slice_=np.arange(-10, 0))
@@ -740,9 +742,7 @@ for i, esr in enumerate(esrs):
     display(xgb_cv[i][['test-rmse-mean', 'train-rmse-mean']].tail(2))
 ```
 
-```
-· early_stopping_rounds = 100
-```
+<CellOut>``` · early_stopping_rounds = 100 ```</CellOut>
 
 <DataFrame>
   <thead>
@@ -771,9 +771,7 @@ for i, esr in enumerate(esrs):
   </tbody>
 </DataFrame>
 
-```
-· early_stopping_rounds = 5
-```
+<CellOut>``` · early_stopping_rounds = 5 ```</CellOut>
 
 <DataFrame>
   <thead>
@@ -824,18 +822,18 @@ print("Best parameters: {}\nRMSE-CV mean and std: {}".format(tuner.best_params_,
                                                                      y_train, kfold)))
 ```
 
+<CellOut>
 ```
 Best parameters: {'max_depth': 3, 'min_child_weight': 1, 'gamma': 0, 'subsample': 1.0, 'colsample_bytree': 0.1, 'reg_alpha': 0.0, 'reg_lambda': 0.6}
 RMSE-CV mean and std: (0.1228245434674334, 0.020199295846580898)
 ```
+</CellOut>
 
 ```python
 model_xgb.get_params()['n_estimators']
 ```
 
-```
-1051
-```
+<CellOut>``` 1051 ```</CellOut>
 
 ```python
 tuner.plot_learning_curve()
@@ -889,9 +887,7 @@ pipe_xgb = make_pipeline(gd, model_xgb)
 print("RMSE CV, std: ", rmse_cv(pipe_xgb, X_train, y_train, kfold))
 ```
 
-```
-RMSE CV, std:  (0.1228245434674334, 0.020199295846580898)
-```
+<CellOut>``` RMSE CV, std: (0.1228245434674334, 0.020199295846580898) ```</CellOut>
 
 #### Light Gradient Boosting Machine
 
@@ -916,18 +912,18 @@ print("Best parameters: {}\nRMSE-CV mean and std: {}".format(tuner.best_params_,
                                                                      y_train, kfold)))
 ```
 
+<CellOut>
 ```
 Best parameters: {'num_leaves': 13, 'min_child_samples': 1, 'min_split_gain': 0, 'min_child_weight': 1, 'subsample': 0.0005, 'colsample_bytree': 0.30000000000000004, 'reg_alpha': 0.0, 'reg_lambda': 0.0}
 RMSE-CV mean and std: (0.12361663405106404, 0.021072999585591393)
 ```
+</CellOut>
 
 ```python
 model_lgb.get_params()['n_estimators']
 ```
 
-```
-610
-```
+<CellOut>``` 610 ```</CellOut>
 
 ```python
 tuner.plot_learning_curve()
@@ -974,9 +970,7 @@ pipe_lgb = make_pipeline(gd, model_lgb)
 print("RMSE CV, std: ", rmse_cv(pipe_lgb, X_train, y_train, kfold))
 ```
 
-```
-RMSE CV, std:  (0.12361663405106404, 0.021072999585591393)
-```
+<CellOut>``` RMSE CV, std: (0.12361663405106404, 0.021072999585591393) ```</CellOut>
 
 LGBM está generalizando ligeramente mejor en este conjunto y también permite un entrenamiento más rápido en comparación con el XGB.
 

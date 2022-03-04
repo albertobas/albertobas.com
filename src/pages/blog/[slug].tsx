@@ -4,7 +4,12 @@ import { getPost, getSimilarPosts, getSlugsAndLocales } from 'src/utils/helpers/
 import { MdxPost, MdxMetadataCard } from 'src/utils/interfaces/post';
 import { Language } from 'src/utils/interfaces/languages';
 import BlogPost from 'src/components/layouts/BlogPost';
-import { blogComponents, blogComponentsPre } from 'src/components/MDX/MDXComponents';
+import {
+  componentsBlog,
+  componentsBlogDS,
+  componentsBlogDSLong,
+  componentsBlogLong,
+} from 'src/components/MDX/MDXComponents';
 import Loading from 'src/components/utils/Loading';
 import { GetStaticPaths, GetStaticProps } from 'next';
 const MDX = dynamic(() => import('src/components/MDX/MDX'));
@@ -23,6 +28,7 @@ const DynamicBlogPost = ({ post, relatedPosts, locale, locales }: Props) => {
   if (isFallback) {
     return <Loading />;
   }
+  console.log(post.frontMatter.topic);
   return (
     <BlogPost
       headings={post.headings}
@@ -33,7 +39,15 @@ const DynamicBlogPost = ({ post, relatedPosts, locale, locales }: Props) => {
     >
       <MDX
         code={post.code}
-        components={post.frontMatter.readingTime.minutes > 15 ? blogComponentsPre : blogComponents}
+        components={
+          post.frontMatter.readingTime.minutes > 15
+            ? post.frontMatter.topic === 'data-science'
+              ? componentsBlogDSLong
+              : componentsBlogLong
+            : post.frontMatter.topic === 'data-science'
+            ? componentsBlogDS
+            : componentsBlog
+        }
       />
     </BlogPost>
   );

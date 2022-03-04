@@ -293,7 +293,7 @@ display(X_train.head(2), X_train.shape)
   </tbody>
 </DataFrame>
 
-<pre>(1460, 80)</pre>
+<CellOut>```(1460, 80) ```</CellOut>
 
 Input variables have been classified by their levels of measurement (ratio, interval, ordinal, nominal):
 
@@ -823,10 +823,13 @@ print("Number of houses with garage:",
               (X_train['YearBuilt']==X_train['GarageYrBlt'])].shape[0])
 ```
 
+<CellOut>
 ```
 Number of houses with garage: 1379
 Number of houses built the same year as the garage: 1089
 ```
+
+</CellOut>
 
 - There have been many more houses sold during the summer season. Also, the number of houses sold from year to year since 2006 has not changed vastly except for 2010, however, this is because the training set has records of houses that have been sold only until July 2010 as we can see below:
 
@@ -873,7 +876,12 @@ print("Last month with records in 2010: ", X_train[X_train['YrSold']==2010]['MoS
   </tbody>
 </DataFrame>
 
-<pre>Last month with records in 2010: 7.0</pre>
+<CellOut>
+```
+Last month with records in 2010: 7.0
+```
+
+</CellOut>
 
 ```python
 # Nominal-measured variables
