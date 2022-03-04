@@ -1,0 +1,28 @@
+.cellOut {
+  margin-top: -0.5rem;
+  margin-bottom: 1.25rem;
+}
+.cellOut > pre {
+  margin-top: 0;
+  padding-top: 0;
+}
+.cellOut > code {
+  display: block;
+  padding-left: calc(0.75em + 4px);
+  font-size: 0.825rem;
+  line-height: 1.5;
+}
+.cellOut > pre,
+.cellOut > code {
+  font-family: var(--font-mono);
+  border-radius: 0;
+  box-shadow: none;
+}
+.cellOut > pre,
+.cellOut > code,
+.cellOut > pre > code {
+  background-color: transparent;
+}
+.cellOut > pre > code > span:hover {
+  background-color: unset;
+}
