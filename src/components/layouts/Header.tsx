@@ -18,10 +18,14 @@ const MobileMenu = dynamic(() => import('src/components/utils/MobileMenu'));
 export default function Header() {
   const router = useRouter();
   const isMounted = useIsMounted();
-  const { isMobileMenu, toggleMobileMenu } = useMobileContext();
+  const { isMobileMenu, setMobileMenu, toggleMobileMenu } = useMobileContext();
   const locale = router.locale as Language;
   const handleLocaleTransition = (nextLocale: Item) => {
     router.push(router.asPath, router.asPath, { locale: nextLocale.value });
+  };
+  const handleNavKey = (url: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    url === router.asPath ? setMobileMenu(false) : router.push(url, url, { locale: locale });
   };
   const localeItems: Item[] = Object.keys(dictLocales).map((key) => {
     return dictLocales[key as Language];
@@ -31,9 +35,15 @@ export default function Header() {
       <MobileMenu locale={locale} />
       <header className={styles.header}>
         <div className={styles.logo}>
-          <ILink href={'/'} aria-label="Logo">
-            <Logo />
-          </ILink>
+          {isMobileMenu ? (
+            <a href={'/'} onClick={(e) => handleNavKey('/', e)} aria-label="Logo">
+              <Logo />
+            </a>
+          ) : (
+            <ILink href={'/'} aria-label="Logo">
+              <Logo />
+            </ILink>
+          )}
         </div>
         <div className={styles.navLangBurger}>
           <nav className={styles.nav} role="navigation">
