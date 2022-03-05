@@ -48,6 +48,9 @@
 .similar > h2 {
   margin: 2em 0 1em; /*1.5em 0 0.75em;*/
 }
+.mdx h2 {
+  letter-spacing: 0;
+}
 .mdx > h1 code,
 .mdx > h2 code,
 .mdx > h3 code,

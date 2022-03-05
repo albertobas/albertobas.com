@@ -8,7 +8,7 @@
 }
 .cellOut > code {
   display: block;
-  padding-left: calc(0.75em + 4px);
+  padding-left: calc(0.75em + 3px);
   font-size: 0.825rem;
   line-height: 1.5;
 }
