@@ -36,16 +36,18 @@
   margin: 1.25em 0 0;
   text-align: left;
 }
-.content h1,
-.content h2,
-.content h3,
-.content h4,
-.content h5,
+.toc > h2,
+.mdx > h1,
+.mdx > h2,
+.mdx > h3,
+.mdx > h4,
+.mdx > h5,
 .similar > h2 {
   margin: 2em 0 1em;
 }
-.mdx h2,
-.mdx h3 {
+.toc > h2,
+.mdx > h2,
+.similar > h2 {
   letter-spacing: 0;
 }
 .mdx > h1 code,
