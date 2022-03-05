@@ -164,39 +164,13 @@ h4 > a.hashAnchor {
 }
 
 /*------------ CODE HIGHLIGHT ------------*/
-/*pre {
-  @mixin $text-sm;
-  padding-bottom: 1em;
-  overflow: auto;
-}*/
-/*pre,
-code {
-  font-size: 0.825rem;
-  font-family: var(--font-mono);
-}*/
-code,
-pre {
-  font-family: var(--font-mono);
-  background-color: #fff;
-  direction: ltr;
-  text-align: left;
-  white-space: pre;
-  word-spacing: normal;
-  word-break: normal;
-  tab-size: 2;
-  hyphens: none;
-  box-sizing: border-box;
-  @mixin isDark {
-    background-color: #000;
-  }
-}
-/* Code blocks */
 pre {
   font-size: 0.825rem;
   line-height: 1.5;
   padding: 0.5rem 0;
   margin: 1.25rem 0;
   overflow: auto;
+  white-space: pre;
   border-radius: var(--border-radius);
   box-shadow: var(--shadow);
   color: var(--black-400);
@@ -204,6 +178,21 @@ pre {
     color: var(--gray-100);
     box-shadow: var(--shadow-dark);
     border-color: var(--gray-800);
+  }
+}
+code,
+pre {
+  font-family: var(--font-mono);
+  background-color: #fff;
+  direction: ltr;
+  text-align: left;
+  word-spacing: normal;
+  word-break: normal;
+  tab-size: 2;
+  hyphens: none;
+  box-sizing: border-box;
+  @mixin isDark {
+    background-color: #000;
   }
 }
 pre > code > span {
