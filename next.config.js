@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 
 const { SubresourceIntegrityPlugin } = require('webpack-subresource-integrity');
-
+const withPWA = require('next-pwa');
 const ContentSecurityPolicy = `
   default-src 'self'; 
   child-src 'self'; 
@@ -83,6 +83,12 @@ const nextConfig = {
     }
     return config;
   },
+  pwa: {
+    dest: 'public',
+    register: true,
+    skipWaiting: true,
+    disable: process.env.NODE_ENV === 'development',
+  },
 };
 
-module.exports = nextConfig;
+module.exports = withPWA(nextConfig);

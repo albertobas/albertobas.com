@@ -80,11 +80,14 @@
   "nextPage": {
     "defaultMessage": "Página siguiente"
   },
-  "notFoundA": {
+  "goBackA": {
     "defaultMessage": "Ir a inicio"
   },
   "notFoundP": {
     "defaultMessage": "Esta página no existe."
+  },
+  "offlineP": {
+    "defaultMessage": "Esta página no se puede alcanzar."
   },
   "openColab": {
     "defaultMessage": "Abrir en Colab"

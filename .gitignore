@@ -40,3 +40,14 @@ yarn-error.log*
 # post-build scripts
 public/rss.xml
 public/sitemap.xml
+
+# pwa files
+public/sw.js
+public/sw.js.map
+public/workbox-*.js
+public/workbox-*.js.map
+public/worker-*.js
+public/worker-*.js.map
+public/fallback-*.js
+public/fallback-*.js.map
+
