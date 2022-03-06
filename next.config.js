@@ -23,6 +23,11 @@ const nextConfig = {
     locales: ['en', 'es'],
     defaultLocale: 'en',
   },
+  pwa: {
+    dest: 'public',
+    disable: process.env.NODE_ENV === 'development',
+    runtimeCaching,
+  },
   async headers() {
     return [
       {
@@ -83,12 +88,6 @@ const nextConfig = {
       });
     }
     return config;
-  },
-  pwa: {
-    dest: 'public',
-    register: true,
-    disable: process.env.NODE_ENV === 'development',
-    runtimeCaching,
   },
 };
 
