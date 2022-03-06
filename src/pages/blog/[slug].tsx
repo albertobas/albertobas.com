@@ -28,7 +28,6 @@ const DynamicBlogPost = ({ post, relatedPosts, locale, locales }: Props) => {
   if (isFallback) {
     return <Loading />;
   }
-  console.log(post.frontMatter.topic);
   return (
     <BlogPost
       headings={post.headings}
