@@ -32,7 +32,7 @@ const NotFound = () => {
           })}
         />
         <ILink href={'/'} className={styles.internal}>
-          <FormattedMessage id="notFoundA" defaultMessage="Go back home" />
+          <FormattedMessage id="goBackA" defaultMessage="Go back home" />
         </ILink>
       </div>
     </>
