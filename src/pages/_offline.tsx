@@ -4,6 +4,7 @@ import ILink from 'src/components/utils/ILink';
 import Intro from 'src/components/utils/Intro';
 import SEO from 'src/components/utils/SEO';
 import styles from 'src/styles/modules/utils.module.css';
+import { dictKeys } from 'src/utils/dict';
 import { useLocale, useLocales } from 'src/utils/hooks';
 
 const NotFound = () => {
@@ -25,7 +26,7 @@ const NotFound = () => {
       />
       <div className={styles.containerMargin}>
         <Intro
-          heading="404"
+          heading={dictKeys['fallback'][locale]}
           paragraph={intl.formatMessage({
             id: 'offlineP',
             defaultMessage: 'This page cannot be reached.',
