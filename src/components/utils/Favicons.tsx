@@ -22,6 +22,7 @@ const Favicons = () => {
       <link rel="apple-touch-icon" href="/favicons/favicon_167x167.png" sizes="167x167" type="image/png" />
       <link rel="apple-touch-icon" href="/favicons/favicon_180x180.png" sizes="180x180" type="image/png" />
       <link rel="mask-icon" href="/favicons/favicon.svg" color="#066dd3" />
+      <meta name="theme-color" content="#f9fafb" />
       <meta name="msapplication-TileColor" content="#ffffff" />
       <meta name="msapplication-TileImage" content="/favicons/favicon_144x144.png" />
       <meta name="msapplication-config" content="/favicons/browserconfig.xml" />

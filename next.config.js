@@ -2,6 +2,7 @@
 
 const { SubresourceIntegrityPlugin } = require('webpack-subresource-integrity');
 const withPWA = require('next-pwa');
+const runtimeCaching = require('next-pwa/cache');
 const ContentSecurityPolicy = `
   default-src 'self'; 
   child-src 'self'; 
@@ -87,6 +88,7 @@ const nextConfig = {
     dest: 'public',
     register: true,
     disable: process.env.NODE_ENV === 'development',
+    runtimeCaching,
   },
 };
 
