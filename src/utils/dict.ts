@@ -22,6 +22,7 @@ export const dictKeys = {
   tags: { en: 'Tags', es: 'Etiquetas' },
   tech: { en: 'Tech stack', es: 'Stack tecnológico' },
   '404': { en: 'Page not found', es: 'Página no encontrada' },
+  fallback: { en: 'Fallback page', es: 'Página de último recurso' },
 };
 
 /* crypto-blockchain */
@@ -31,8 +32,8 @@ export const dictCB = {
     label: { en: 'Crypto and Blockchain', es: 'Cripto y Cadena de bloques' },
   },
   dapp: {
-    description: { en: '', es: '' },
-    label: { en: 'Decentralized application', es: 'Aplicación descentralizada' },
+    description: { en: 'Decentralized application', es: 'Aplicación descentralizada' },
+    label: { en: 'DApp', es: 'DApp' },
   },
   defi: {
     description: { en: 'Decentralized finance', es: 'Finanzas descentralizadas' },
@@ -44,6 +45,14 @@ export const dictCB = {
       es: 'El ERC-20 introduce un estándar para los tokens fungibles',
     },
     label: { en: 'ERC20', es: 'ERC20' },
+  },
+  ethereum: {
+    description: { en: '', es: '' },
+    label: { en: 'Ethereum', es: 'Ethereum' },
+  },
+  'ethers-js': {
+    description: { en: '', es: '' },
+    label: { en: 'Ethers.js', es: 'Ethers.js' },
   },
   'fungible-token': {
     description: { en: '', es: '' },
