@@ -8,7 +8,6 @@ export default class MyDocument extends Document {
       <Html>
         <Head>
           <Favicons />
-          <link rel="manifest" href="/manifest.json" />
         </Head>
         <body>
           <Main />
