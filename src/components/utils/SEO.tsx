@@ -124,8 +124,8 @@ export default memo(function SEO({ pageKey, asPath, description, locale, locales
     : pageKey === 'home'
     ? `${siteName} - ${intl.formatMessage({ id: 'slogan', defaultMessage: 'DeFi developer' })}`
     : `${dictKeys[pageKey][locale]} - ${siteName}`;
-  const url = canonical + asPath;
-  const urlEs = canonical + '/es' + asPath;
+  const url = asPath ? canonical + asPath : canonical;
+  const urlEs = asPath ? canonical + '/es' + asPath : canonical + '/es';
   const languageAlternates = [];
   locales.forEach((localeParam) => {
     if (localeParam !== locale) {
