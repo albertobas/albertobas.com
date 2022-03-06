@@ -26,7 +26,7 @@ const Favicons = () => {
       <meta name="msapplication-TileColor" content="#ffffff" />
       <meta name="msapplication-TileImage" content="/favicons/favicon_144x144.png" />
       <meta name="msapplication-config" content="/favicons/browserconfig.xml" />
-      <link rel="manifest" href="/favicons/manifest.json" />
+      <link rel="manifest" href="/manifest.json" />
     </>
   );
 };
