@@ -23,7 +23,7 @@ Furthermore, this website is entirely translated to spanish.
 - `src/components/*`: React.js components in `.tsx`.
 - `src/pages/*`: static pages.
 - `src/styles/*`: CSSModules files, postcss mixins and a global css file.
-- `src/utils/*`: helper functions, interfaces, hooks, constants and dictionaries used in some translations and options lists.
+- `src/utils/*`: helper functions, interfaces, hooks, contexts, constants and dictionaries used in some translations and options lists.
 - `lang/*`: JSON files used as a source for translations. The JSON file corresponding to the `defaultLocale` is generated running `npm run extract-languages`.
 - `compiled-lang/*`: JSON files generated running `npm run compile-languages`, obtaining translations from `lang/*` and used for formatting messages.
 - `scripts/*`: Javascript files used for creating an RSS feed and a sitemap in the `postbuild` script.
