@@ -11,7 +11,7 @@ import {
   getSelectPlaceholder,
 } from 'src/utils/helpers/select';
 import { useIntl } from 'react-intl';
-import { useThemeContext } from '../context/ThemeProvider';
+import { useThemeContext } from 'src/utils/context/ThemeProvider';
 
 type Props = {
   instanceId: string;

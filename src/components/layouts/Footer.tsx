@@ -12,7 +12,7 @@ import {
   hrefEmail,
 } from 'src/utils/constants';
 import Dropdown from 'src/components/utils/Dropdown';
-import { useMobileContext } from 'src/components/context/MobileProvider';
+import { useMobileContext } from 'src/utils/context/MobileProvider';
 import { Language } from 'src/utils/interfaces/languages';
 import { join } from 'path';
 import { dictKeys, dictLocales } from 'src/utils/dict';

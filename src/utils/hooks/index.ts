@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import { Dispatch, SetStateAction, useCallback, useEffect, useState } from 'react';
-import { useMobileContext } from 'src/components/context/MobileProvider';
+import { useMobileContext } from 'src/utils/context/MobileProvider';
 import { Language } from 'src/utils/interfaces/languages';
 import { canonical } from 'src/utils/constants';
 import { dictTopics, dictKeys } from 'src/utils/dict';

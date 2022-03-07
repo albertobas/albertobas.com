@@ -7,8 +7,8 @@ import { defaultSeoConfig } from 'next-seo.config';
 import ES_MESSAGES from 'compiled-lang/es.json';
 import EN_MESSAGES from 'compiled-lang/en.json';
 import SiteLayout from 'src/components/layouts/SiteLayout';
-import MobileProvider from 'src/components/context/MobileProvider';
-import ThemeProvider from 'src/components/context/ThemeProvider';
+import MobileProvider from 'src/utils/context/MobileProvider';
+import ThemeProvider from 'src/utils/context/ThemeProvider';
 import Head from 'next/head';
 
 const messages: Record<string, typeof EN_MESSAGES | typeof ES_MESSAGES> = {

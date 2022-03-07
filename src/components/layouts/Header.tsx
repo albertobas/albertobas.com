@@ -2,7 +2,7 @@ import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
 import styles from 'src/styles/modules/layout/header.module.css';
 import { headerNavKeys } from 'src/utils/constants';
-import { useMobileContext } from 'src/components/context/MobileProvider';
+import { useMobileContext } from 'src/utils/context/MobileProvider';
 import { Language } from 'src/utils/interfaces/languages';
 import BurgerButton from 'src/components/utils/BurgerButton';
 import { dictKeys, dictLocales } from 'src/utils/dict';

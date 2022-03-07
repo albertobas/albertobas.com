@@ -1,5 +1,5 @@
 import Header from 'src/components/layouts/Header';
-import { useMobileContext } from 'src/components/context/MobileProvider';
+import { useMobileContext } from 'src/utils/context/MobileProvider';
 import styles from 'src/styles/modules/layout/sitelayout.module.css';
 import dynamic from 'next/dynamic';
 const Footer = dynamic(() => import('src/components/layouts/Footer'));

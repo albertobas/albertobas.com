@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import { headerNavKeys } from 'src/utils/constants';
 import styles from 'src/styles/modules/components/utils/mobilemenu.module.css';
-import { useMobileContext } from 'src/components/context/MobileProvider';
+import { useMobileContext } from 'src/utils/context/MobileProvider';
 import { Language } from 'src/utils/interfaces/languages';
 import { join } from 'path';
 import { dictKeys } from 'src/utils/dict';

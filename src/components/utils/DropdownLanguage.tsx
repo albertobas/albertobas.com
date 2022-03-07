@@ -11,7 +11,7 @@ import {
   getSelectMenuList,
 } from 'src/utils/helpers/select';
 import { Theme } from 'src/utils/interfaces/select';
-import { useThemeContext } from '../context/ThemeProvider';
+import { useThemeContext } from 'src/utils/context/ThemeProvider';
 
 type Props = {
   instanceId: string;
