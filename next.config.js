@@ -1,8 +1,7 @@
 /** @type {import('next').NextConfig} */
 
 const { SubresourceIntegrityPlugin } = require('webpack-subresource-integrity');
-const withPWA = require('next-pwa');
-const runtimeCaching = require('next-pwa/cache');
+// const withPWA = require('next-pwa');
 const ContentSecurityPolicy = `
   default-src 'self'; 
   child-src 'self'; 
@@ -23,12 +22,11 @@ const nextConfig = {
     locales: ['en', 'es'],
     defaultLocale: 'en',
   },
-  pwa: {
+  /*pwa: {
     dest: 'public',
     mode: 'production',
     disable: process.env.NODE_ENV === 'development',
-    runtimeCaching,
-  },
+  },*/
   async headers() {
     return [
       {
@@ -92,4 +90,4 @@ const nextConfig = {
   },
 };
 
-module.exports = withPWA(nextConfig);
+module.exports = nextConfig; //withPWA(nextConfig);
