@@ -34,10 +34,6 @@
 .mdx,
 .intro {
   width: 100%;
-  color: var(--black-100);
-  @mixin isDark {
-    color: var(--gray-100);
-  }
 }
 .toc > h2,
 .mdx > h1,
@@ -147,10 +143,11 @@
   margin: 0;
   list-style-type: disc;
 }
-.mdx > ul > li::marker {
-  color: var(--black-100);
+.mdx > ul > li::marker,
+.toc > nav > ul li::marker {
+  color: var(--gray-300-l);
   @mixin isDark {
-    color: var(--gray-400);
+    color: var(--gray-600);
   }
 }
 .tags {
@@ -183,6 +180,10 @@
   @mixin $text-base;
   letter-spacing: 0.05em;
   font-weight: 600;
+}
+.mdx,
+.intro,
+.toc > nav > ul > li > a {
   color: var(--black-100);
   @mixin isDark {
     color: var(--gray-100);
@@ -198,12 +199,6 @@
   max-width: 350px;
   @mixin isDark {
     border-color: var(--black-300);
-  }
-}
-.toc > nav ul li::marker {
-  color: var(--gray-300-l);
-  @mixin isDark {
-    color: var(--gray-600);
   }
 }
 .toc > nav > ul > li:not(:first-of-type) {

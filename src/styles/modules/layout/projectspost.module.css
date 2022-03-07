@@ -11,12 +11,6 @@
 .content img {
   border-radius: var(--border-radius);
 }
-.mdx {
-  color: var(--black-100);
-  @mixin isDark {
-    color: var(--gray-100);
-  }
-}
 .mdx a {
   color: var(--blue-300);
   @mixin isDark {
@@ -151,6 +145,13 @@
 .tags > ul > li {
   margin: 0 0.2rem 0.3rem 0;
 }
+.mdx,
+.toc > nav > ul > li > a {
+  color: var(--black-100);
+  @mixin isDark {
+    color: var(--gray-100);
+  }
+}
 .toc > nav > ul {
   padding-left: 1.5rem;
   list-style-type: disc;
@@ -159,10 +160,6 @@
   @mixin $text-base;
   letter-spacing: 0.05em;
   font-weight: 600;
-  color: var(--blue-300);
-  @mixin isDark {
-    color: var(--blue-200);
-  }
 }
 .hr {
   margin-top: 3.75rem;
@@ -176,7 +173,8 @@
     border-color: var(--black-300);
   }
 }
-.toc > nav ul li::marker {
+.mdx > ul > li::marker,
+.toc > nav > ul li::marker {
   color: var(--gray-300-l);
   @mixin isDark {
     color: var(--gray-600);
