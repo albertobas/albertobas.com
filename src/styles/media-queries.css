@@ -1,9 +1,8 @@
-@custom-media --computerOnly only screen and (min-width: 1024.1px);
-@custom-media --laptop only screen and (max-width: 1024px);
-@custom-media --tablet only screen and (max-width: 768px);
-@custom-media --mobile-xl only screen and (max-width: 640px);
-@custom-media --mobile-l only screen and (max-width: 425px);
-@custom-media --mobile-m only screen and (max-width: 375px);
-@custom-media --mobile-s only screen and (max-width: 320px);
-@custom-media --mobile-xs only screen and (max-width: 280px);
-@custom-media --mobile-xxs only screen and (max-width: 260px);
+@custom-media --laptop only screen and (max-width: 1023.9px);
+@custom-media --tablet only screen and (max-width: 767.9px);
+@custom-media --mobile-xl only screen and (max-width: 639.9px);
+@custom-media --mobile-l only screen and (max-width: 424.9px);
+@custom-media --mobile-m only screen and (max-width: 374.9px);
+@custom-media --mobile-s only screen and (max-width: 319.9px);
+@custom-media --mobile-xs only screen and (max-width: 279.9px);
+@custom-media --mobile-xxs only screen and (max-width: 259.9px);
