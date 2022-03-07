@@ -183,9 +183,9 @@
   @mixin $text-base;
   letter-spacing: 0.05em;
   font-weight: 600;
-  color: var(--blue-300);
+  color: var(--black-100);
   @mixin isDark {
-    color: var(--blue-200);
+    color: var(--gray-100);
   }
 }
 .hr {
@@ -243,6 +243,7 @@
   }
 }
 .toc a:hover,
+.tocAside a:hover,
 .layoutColabGithub a:hover {
   text-decoration: underline;
 }
