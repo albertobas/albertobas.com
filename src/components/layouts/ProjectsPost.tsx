@@ -42,6 +42,7 @@ const ProjectsPost = ({
   tech,
   relatedProjects,
   github,
+  link,
   headings,
   locale,
   locales,
@@ -110,32 +111,26 @@ const ProjectsPost = ({
                 )}
               </div>
             )}
-            {github &&
-              (github.file && github.file.endsWith('.ipynb') ? (
-                <div className={styles.layoutColabGithub}>
+            {
+              <div className={styles.layoutLinkGithub}>
+                {link && (
                   <div>
-                    <ILink href={hrefColab + '/' + github.repo + '/blob/main/' + github.file}>
+                    <ILink href={link}>
                       <SVG icon="colab" />
-                      <FormattedMessage id="openColab" defaultMessage="Open in Colab" />
+                      <FormattedMessage id="goToWeb" defaultMessage="Go to website" />
                     </ILink>
                   </div>
-                  <div>
-                    <ILink href={hrefGithub + '/' + github.repo + '/blob/main/' + github.file}>
-                      <SVG icon="github" />
-                      <FormattedMessage id="viewGithub" defaultMessage="View on GitHub" />
-                    </ILink>
-                  </div>
-                </div>
-              ) : (
-                <div className={styles.layoutColabGithub}>
+                )}
+                {github && (
                   <div>
                     <ILink href={hrefGithub + '/' + github.repo}>
                       <SVG icon="github" />
                       <FormattedMessage id="viewGithub" defaultMessage="View on GitHub" />
                     </ILink>
                   </div>
-                </div>
-              ))}
+                )}
+              </div>
+            }
           </div>
           {(tags || tech) && (
             <div className={styles.tags}>

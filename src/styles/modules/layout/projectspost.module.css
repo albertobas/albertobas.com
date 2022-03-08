@@ -95,7 +95,7 @@
   justify-content: space-between;
   align-items: center;
 }
-.layoutColabGithub {
+.layoutLinkGithub {
   margin-top: 1rem;
   @mixin $text-base;
   display: flex;
@@ -105,10 +105,10 @@
   text-align: left;
 }
 
-.layoutColabGithub > div {
+.layoutLinkGithub > div {
   margin-bottom: 0.75rem;
 }
-.layoutColabGithub > div > a {
+.layoutLinkGithub > div > a {
   font-family: var(--font-mono);
   letter-spacing: -0.02em;
   @mixin $text-sm;
@@ -118,7 +118,7 @@
   font-weight: 500;
   cursor: ne-resize;
 }
-.layoutColabGithub > div > a > svg {
+.layoutLinkGithub > div > a > svg {
   margin-right: 0.5rem;
   display: inline-block;
   fill: currentColor;
@@ -126,11 +126,8 @@
     fill: currentColor;
   }
 }
-.layoutColabGithub > div:not(:last-of-type) {
-  margin-right: 1rem;
-}
-.meta > div:not(:last-of-type) {
-  margin-right: 1rem;
+.layoutLinkGithub > div:not(:last-of-type) {
+  margin-right: 1.5rem;
 }
 .tags {
   margin-top: 1rem;
@@ -203,10 +200,10 @@
   }
 }
 .toc a:hover,
-.layoutColabGithub a:hover {
+.layoutLinkGithub a:hover {
   text-decoration: underline;
 }
-.layoutColabGithub > div > a:hover {
+.layoutLinkGithub > div > a:hover {
   color: #000;
   @mixin isDark {
     color: #fff;
