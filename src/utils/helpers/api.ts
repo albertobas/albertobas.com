@@ -41,7 +41,6 @@ export async function getCards(section: Section, locale: string) {
       readingTime: readingTime(source),
       datePublished: data.datePublished,
       dateModified: data.dateModified ? data.dateModified : null,
-      approach: data.approach ? data.approach : null,
       tags: data.tags ? data.tags : null,
       tech: data.tech ? data.tech : null,
       image: data.image ? data.image : null,

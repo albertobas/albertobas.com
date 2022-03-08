@@ -61,18 +61,15 @@ export function cardSearch(cards: MdxMetadataCard[], query: string | null, local
       (card) =>
         (card.title && card.title.toLowerCase().indexOf(query.toLowerCase()) > -1) ||
         (card.description && card.description.toLowerCase().indexOf(query.toLowerCase()) > -1) ||
-        (card.approach &&
-          dictTopics[card.approach as DictTopics]?.label[locale].toLowerCase().indexOf(query.toLowerCase()) > -1) ||
-        (card.approach &&
-          dictTopics[card.approach as DictTopics]?.description[locale].toLowerCase().indexOf(query.toLowerCase()) >
-            -1) ||
         (card.field &&
           dictTopics[card.field as DictTopics]?.label[locale].toLowerCase().indexOf(query.toLowerCase()) > -1) ||
         (card.field &&
           dictTopics[card.field as DictTopics]?.description[locale].toLowerCase().indexOf(query.toLowerCase()) > -1) ||
         (card.section && dictKeys[card.section as DictKeys][locale]?.toLowerCase().indexOf(query.toLowerCase()) > -1) ||
         (card.topic &&
-          dictTopics[card.topic as DictTopics]?.label[locale].toLowerCase().indexOf(query.toLowerCase()) > -1)
+          dictTopics[card.topic as DictTopics]?.label[locale].toLowerCase().indexOf(query.toLowerCase()) > -1) ||
+        (card.topic &&
+          dictTopics[card.topic as DictTopics]?.description[locale].toLowerCase().indexOf(query.toLowerCase()) > -1)
     );
   } else return cards;
 }

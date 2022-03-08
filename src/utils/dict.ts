@@ -6,7 +6,7 @@ export const dictLocales = {
 /* Keys */
 export const dictKeys = {
   about: { en: 'About', es: 'Sobre mí' },
-  approach: { en: 'Approach', es: 'Enfoque' },
+  //approach: { en: 'Approach', es: 'Enfoque' },
   blog: { en: 'Blog', es: 'Blog' },
   projects: { en: 'Projects', es: 'Proyectos' },
   field: { en: 'Field', es: 'Campo' },

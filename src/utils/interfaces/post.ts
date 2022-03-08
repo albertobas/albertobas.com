@@ -12,12 +12,12 @@ export type MdxMetadataPost = {
   readingTime: ReadTimeResults;
   datePublished: string;
   introduction?: string;
-  approach?: string;
   tags?: string;
   tech?: string;
   image?: { name: string; height: number; width: number };
   dateModified?: string;
   github?: { repo: string; file?: string };
+  link?: string;
 };
 
 export type MdxPost = {
@@ -35,7 +35,6 @@ export type MdxMetadataCard = {
   description: string;
   readingTime: ReadTimeResults;
   datePublished: string;
-  approach?: string;
   tags?: string;
   tech?: string;
   image?: { name: string; height: number; width: number };
