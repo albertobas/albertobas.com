@@ -62,6 +62,9 @@
   "goBackA": {
     "defaultMessage": "Go back home"
   },
+  "goToWeb": {
+    "defaultMessage": "Go to website"
+  },
   "introSectionH1": {
     "defaultMessage": "A page about blockchain, data science and Web3"
   },
@@ -91,9 +94,6 @@
   },
   "notFoundP": {
     "defaultMessage": "This page does not exist."
-  },
-  "offlineP": {
-    "defaultMessage": "This page cannot be reached."
   },
   "openColab": {
     "defaultMessage": "Open in Colab"

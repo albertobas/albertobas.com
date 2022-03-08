@@ -47,11 +47,23 @@
   "firstPage": {
     "defaultMessage": "Primera página"
   },
+  "footerContact": {
+    "defaultMessage": "Contacto"
+  },
+  "footerSections": {
+    "defaultMessage": "Secciones"
+  },
   "footerWebNote": {
     "defaultMessage": "Esta página no le rastrea. Su <openSource></openSource> es abierto."
   },
   "fullList": {
     "defaultMessage": "Lista completa"
+  },
+  "goBackA": {
+    "defaultMessage": "Ir a inicio"
+  },
+  "goToWeb": {
+    "defaultMessage": "Ir al sitio web"
   },
   "introSectionH1": {
     "defaultMessage": "Una página sobre cadena de bloques, ciencia de datos y Web3"
@@ -80,14 +92,8 @@
   "nextPage": {
     "defaultMessage": "Página siguiente"
   },
-  "goBackA": {
-    "defaultMessage": "Ir a inicio"
-  },
   "notFoundP": {
     "defaultMessage": "Esta página no existe."
-  },
-  "offlineP": {
-    "defaultMessage": "Esta página no se puede alcanzar."
   },
   "openColab": {
     "defaultMessage": "Abrir en Colab"
@@ -146,9 +152,6 @@
   "searchTags": {
     "defaultMessage": "Busca etiquetas..."
   },
-  "footerSections": {
-    "defaultMessage": "Secciones"
-  },
   "select": {
     "defaultMessage": "Elija..."
   },
@@ -160,9 +163,6 @@
   },
   "smartContracts": {
     "defaultMessage": "contratos inteligentes"
-  },
-  "footerContact": {
-    "defaultMessage": "Contacto"
   },
   "sortBy": {
     "defaultMessage": "Ordenar por..."
