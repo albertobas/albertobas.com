@@ -6,7 +6,7 @@ import { Language } from 'src/utils/interfaces/languages';
 import { MdxMetadataCard } from 'src/utils/interfaces/post';
 import { getCards } from 'src/utils/helpers/api';
 import SEO from 'src/components/utils/SEO';
-import { getItemsFromCards, sortCardList } from 'src/utils/helpers/post';
+import { getItemsFromCards, sortCardList, sortItemArray } from 'src/utils/helpers/post';
 import { ItemExtended } from 'src/utils/interfaces/architecture';
 import styles from 'src/styles/modules/pages/home.module.css';
 import { dictKeys } from 'src/utils/dict';
@@ -78,7 +78,7 @@ export const getStaticProps: GetStaticProps = async ({ locale, locales }) => {
       props: {
         blogCards: sortCardList(blogCards).slice(0, 6),
         projectsCards: sortCardList(projectsCards).slice(0, 4),
-        tags: [...tags, ...tech],
+        tags: [...tags, ...tech].sort(sortItemArray),
         locale: locale,
         locales: locales,
       },

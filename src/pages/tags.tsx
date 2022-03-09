@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl';
 import Intro from 'src/components/utils/Intro';
 import SEO from 'src/components/utils/SEO';
 import { getCards } from 'src/utils/helpers/api';
-import { getItemsFromCards } from 'src/utils/helpers/post';
+import { getItemsFromCards, sortItemArray } from 'src/utils/helpers/post';
 import { ItemExtended } from 'src/utils/interfaces/architecture';
 import { Language } from 'src/utils/interfaces/languages';
 import SearchListTags from 'src/components/tags/SearchListTags';
@@ -58,7 +58,7 @@ export const getStaticProps: GetStaticProps = async ({ locale, locales }) => {
     const tech = getItemsFromCards([...blogCards, ...projectsCards], 'tech', locale as Language) as ItemExtended[];
     return {
       props: {
-        tags: [...tags, ...tech],
+        tags: [...tags, ...tech].sort(sortItemArray),
         locale,
         locales,
       },
