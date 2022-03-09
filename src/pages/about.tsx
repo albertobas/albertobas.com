@@ -89,7 +89,7 @@ const AboutPage = () => {
             id="aboutP3"
             defaultMessage="In regards to data science, I have knowledge of parametric and non-parametric modeling in <supervisedlearning></supervisedlearning>, 
             and of clustering and PCA techniques in unsupervised learning. I usually code in <python></python> and use libraries such as <scikitlearn></scikitlearn>, 
-            <xgboost></xgboost>, <lightgbm></lightgbm>. I have experience of implementing and optimizing feed-forward and <cnn></cnn> as well as recurrent (<lstm></lstm>, <gru></gru>) 
+            <xgboost></xgboost>, <lightgbm></lightgbm>. I have experience of implementing and optimizing feed-forward and <cnn></cnn> as well as recurrent (<lstm></lstm> and <gru></gru>) 
             and recursive networks. I primarily use <pytorch></pytorch> but also TensorFlow and Keras. I perform <eda></eda> using python libraries (<pandas></pandas>, <numpy></numpy>, 
             <scipy></scipy>, <matplotlib></matplotlib> and <seaborn></seaborn>)."
             values={{
