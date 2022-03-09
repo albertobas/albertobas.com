@@ -1,0 +1,640 @@
+---
+field: 'defi'
+title: 'End-to-end guide to create an ERC20 token specific dapp'
+description: 'Decentralized application to operate with a mintable ERC20 token.'
+introduction: "<p>In this post I'll be developing a decentralized application to operate with a mintable ERC20 token.</p><p>The purpose is then to understand the end-to-end process of writing a smart contract in Solidity and developing a specific front-end to interact with this contract.</p>"
+tags: 'ethereum,defi,dapp,smart-contracts,erc20,fungible-token'
+tech: 'solidity,typescript,hardhat,react-js,ethers-js,mocha,chai,waffle'
+datePublished: '2022-03-09'
+github: { repo: 'mintable-erc20-dapp' }
+---
+
+## Setup
+
+I use [npm 7 workspaces](https://docs.npmjs.com/cli/v7/using-npm/workspaces 'npm 7 workspaces') to create a monorepo in order to simplify our development environment.
+
+```bash
+$ mkdir mintable-erc20-dapp
+$ cd mintable-erc20-dapp
+$ npm init --yes
+```
+
+Then edit the package.json:
+
+```diff:package.json
+{
+  "name": "mintable-erc20-dapp",
+  "version": "1.0.0",
+  "description": "",
+- "main": "index.js",
++	"workspaces": [
++		"hardhat",
++		"react-app"
++	],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
+```
+
+Now let's create the workspaces folders:
+
+```bash
+$ npm init -y -w hardhat
+$ npm init -y -w react-app
+```
+
+We are ready to install the dependencies. I'll start with the Hardhat environment:
+
+```bash
+$ npm install --save-dev -w hardhat @nomiclabs/hardhat-ethers
+$ @nomiclabs/hardhat-waffle @typechain/ethers-v5 @typechain/hardhat
+$ @types/chai @types/mocha @types/node chai ethereum-waffle
+$ ethers hardhat ts-node typechain typescript
+```
+
+And now let's install the `react-app` dependencies:
+
+```bash
+$ npm install -w react-app @chakra-ui/react @emotion/react @emotion/styled @types/node
+$ @types/react @types/react-dom ethers formik react react-dom react-scripts
+$ typescript web3modal
+```
+
+Lastly, I will add some scripts that will be handy:
+
+```diff:hardhat/package.json
+"scripts": {
+- "test": "echo \"Error: no test specified\" && exit 1"
++ "test": "hardhat test",
++ "node": "hardhat node",
++ "compile": "hardhat compile",
++ "share": "hardhat run scripts/shareFiles.ts",
++ "deploy": "hardhat run --network localhost scripts/deploy.ts",
++ "mint": "hardhat mint --network localhost",
+},
+```
+
+```diff:react-app/package.json
+"scripts": {
+- "test": "echo \"Error: no test specified\" && exit 1"
++ "start": "react-scripts start",
++ "build": "react-scripts build",
++ "eject": "react-scripts eject",
++ "type-check": "tsc --pretty --noEmit",
+},
+```
+
+```diff:package.json
+"scripts": {
+-	"test": "echo \"Error: no test specified\" && exit 1"
++ "node": "npm run node --workspace=hardhat",
++ "test-hardhat": "npm run test --workspace=hardhat",
++ "compile-share-deploy": "npm run compile --workspace=hardhat && npm run share --workspace=hardhat && npm run deploy --workspace=hardhat",
++ "mint": "npm run mint --workspace=hardhat",
++ "start-app": "npm start --workspace=react-app",
+}
+```
+
+## Writing the contract
+
+The smart contract is written in Solidity and complies with the [EIP-20 standard](https://eips.ethereum.org/EIPS/eip-20 'EIP-20: Token Standard') specifications.
+
+```solidity:hardhat/contracts/MintableERC20.sol
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.4;
+
+contract MintableERC20 {
+    string public name;
+    string public symbol;
+    uint8 public decimals;
+    address public minter;
+    uint256 public totalSupply;
+    mapping(address => uint256) private _balances;
+    mapping(address => mapping(address => uint256)) private _allowances;
+
+    constructor(string memory name_, string memory symbol_) {
+        name = name_;
+        symbol = symbol_;
+        decimals = 18;
+        minter = msg.sender;
+    }
+
+    error InsufficientBalance(uint256 requested, uint256 available);
+    event Transfer(address indexed sender, address indexed receiver, uint256 amount);
+    event Approval(address indexed owner, address indexed spender, uint256 amount);
+
+    function balanceOf(address account) public view returns (uint256) {
+        return _balances[account];
+    }
+
+    function mint(address receiver, uint256 amount) public {
+        require(msg.sender == minter, 'Only the owner is authorized to mint tokens');
+        totalSupply += amount;
+        _balances[receiver] += amount;
+        emit Transfer(address(0), receiver, amount);
+    }
+
+    function approve(address spender, uint256 amount) public returns (bool) {
+        _approve(msg.sender, spender, amount);
+        return true;
+    }
+
+    function _approve(
+        address owner,
+        address spender,
+        uint256 amount
+    ) public returns (bool) {
+        require(owner != address(0), 'Transfer from zero address is not permitted');
+        require(spender != address(0), 'Transfer to zero address is not permitted');
+        _allowances[owner][spender] = amount;
+        emit Approval(owner, spender, amount);
+        return true;
+    }
+
+    function allowance(address owner, address spender) public view returns (uint256) {
+        return _allowances[owner][spender];
+    }
+
+    function transfer(address receiver, uint256 amount) public returns (bool) {
+        _transfer(msg.sender, receiver, amount);
+        return true;
+    }
+
+    function transferFrom(
+        address sender,
+        address receiver,
+        uint256 amount
+    ) public returns (bool) {
+        _transfer(sender, receiver, amount);
+        uint256 _allowance = _allowances[sender][msg.sender];
+        require(_allowance >= amount, 'There is no allowance to transfer this amount');
+        _approve(sender, msg.sender, _allowance - amount);
+        return true;
+    }
+
+    function _transfer(
+        address sender,
+        address receiver,
+        uint256 amount
+    ) internal {
+        require(sender != address(0), 'Transfer from zero address is not permitted');
+        require(receiver != address(0), 'Transfer to zero address is not permitted');
+        if (amount > balanceOf(sender))
+            revert InsufficientBalance({ requested: amount, available: balanceOf(msg.sender) });
+        _balances[sender] -= amount;
+        _balances[receiver] += amount;
+        emit Transfer(sender, receiver, amount);
+    }
+}
+```
+
+When the contract gets deployed, its state variables will be initialised, two of which are passed as arguments to the constructor function, namely `name` and `symbol`.
+
+The logic of the contract is fairly simple.
+
+Only the deployer address will be permitted to mint tokens.
+
+In order to transfer tokens, it is required that the `sender` address does possess at least the same amount of tokens it intends to transfer.
+
+In case that an address requests for another address to transfer an amount of tokens, it will need to be previously allowed, i.e., before `transferFrom` is called, the `spender` address will have to be approved so that it can get the requested amount of tokens from the `owner`.
+
+The transactions as well as the approvals will emit an `Event`. Later, I will use the transaction event to keep track of the balance of the current account in the decentralized app.
+
+## Testing the contract
+
+These operations may be better understood by testing the contract.
+
+I use a hardhat plugin for integration with [Waffle](https://hardhat.org/plugins/nomiclabs-hardhat-waffle.html) and another for [Ethers.js](https://hardhat.org/plugins/nomiclabs-hardhat-ethers.html) to write the required tests with [Mocha](https://mochajs.org/) alongside [Chai](https://www.chaijs.com/).
+
+This tests are structured in three main `describe` calls:
+
+```typescript:hardhat/test/mintableerc20.spec.ts
+describe('TFT', function () {
+  let MintableERC20Factory: ContractFactory,
+    tft: Contract,
+    owner: SignerWithAddress,
+    acc2: SignerWithAddress,
+    acc3: SignerWithAddress;
+  before('Get Factory and Signers', async () => {
+    MintableERC20Factory = await ethers.getContractFactory('MintableERC20');
+    [owner, acc2, acc3] = await ethers.getSigners();
+  });
+  beforeEach('Deploy factory', async () => {
+    tft = await MintableERC20Factory.deploy('Test Fungible Token', 'TFT');
+    await tft.deployed();
+  });
+  describe('Error handling', () => {
+    it('Shoud revert unouthorized minter', async () => {
+      const amount = ethers.utils.parseUnits('1000', 'ether');
+      await expect(tft.connect(acc2).mint(acc3.address, amount)).to.be.revertedWith(
+        'Only the owner is authorized to mint tokens'
+      );
+    });
+    it('Shoud revert invalid transfer due to lack of funds', async () => {
+      const amount = ethers.utils.parseUnits('1000', 'ether');
+      await expect(tft.connect(acc2).transfer(acc3.address, amount)).to.be.revertedWith(
+        `InsufficientBalance(${amount}, 0)`
+      );
+    });
+    it('Shoud revert invalid transfer due to no allowance', async () => {
+      const amount = ethers.utils.parseUnits('1000', 'ether');
+      await tft.mint(acc2.address, amount);
+      await expect(tft.connect(acc3).transferFrom(acc2.address, acc3.address, amount)).to.be.revertedWith(
+        'There is no allowance to transfer this amount'
+      );
+    });
+  });
+  describe('Minting', () => {
+    it('Should mint tokens correctly', async () => {
+      const amount = ethers.utils.parseUnits('1000', 'ether');
+      await tft.mint(acc2.address, amount);
+      const acc2Balance = await tft.balanceOf(acc2.address);
+      expect(acc2Balance).to.equal(amount);
+    });
+  });
+  describe('Transactions', () => {
+    it('Should transfer tokens correctly', async () => {
+      const amount = ethers.utils.parseUnits('1000', 'ether');
+      const initialAcc2Balance = await tft.balanceOf(acc2.address);
+      const initialAcc3Balance = await tft.balanceOf(acc3.address);
+      await tft.mint(acc2.address, amount);
+      await tft.connect(acc2).transfer(acc3.address, amount);
+      const acc2Balance = await tft.balanceOf(acc2.address);
+      const acc3Balance = await tft.balanceOf(acc3.address);
+      expect(acc2Balance).to.equal(initialAcc2Balance);
+      expect(acc3Balance).to.equal(initialAcc3Balance.add(amount));
+    });
+
+    it('Should transfer tokens from correctly', async () => {
+      const amount = ethers.utils.parseUnits('1000', 'ether');
+      const initialAcc2Balance = await tft.balanceOf(acc2.address);
+      const initialAcc3Balance = await tft.balanceOf(acc3.address);
+      await tft.mint(acc2.address, amount);
+      await tft.connect(acc2).approve(acc3.address, amount);
+      await tft.connect(acc3).transferFrom(acc2.address, acc3.address, amount);
+      const acc2Balance = await tft.balanceOf(acc2.address);
+      const acc3Balance = await tft.balanceOf(acc3.address);
+      expect(acc2Balance).to.equal(initialAcc2Balance);
+      expect(acc3Balance).to.equal(initialAcc3Balance.add(amount));
+    });
+  });
+});
+```
+
+Before running the script we need to create a hardhat configuration file.
+
+> In case we use Metamask we'll need to either assign in `hardhat.config.ts` `1337` to the `chainId` of our local network, or set the `chainId` of `localhost` in Metamask to `31337`:
+
+```typescript:hardhat/hardhat.config.ts
+import { HardhatUserConfig } from "hardhat/types";
+import "@typechain/hardhat";
+import "@nomiclabs/hardhat-ethers";
+import "@nomiclabs/hardhat-waffle";
+
+const config: HardhatUserConfig = {
+  solidity: '0.8.4',
+  networks: {
+    hardhat: {
+      chainId: 1337, // https://hardhat.org/metamask-issue.html
+    },
+  },
+};
+```
+
+Now let's run the script `test-hardhat`:
+
+```bash
+$ npm run test-hardhat
+
+> mintable-erc20-dapp@1.0.0 test-hardhat
+> npm run test --workspace=hardhat
+
+
+> hardhat@1.0.0 test
+> hardhat test
+
+Generating typings for: 1 artifacts in dir: typechain-types for target: ethers-v5
+Successfully generated 5 typings!
+Compiled 1 Solidity file successfully
+
+
+  TFT
+    Error handling
+      ✔ Shoud revert unouthorized minter (53ms)
+      ✔ Shoud revert invalid transfer due to lack of funds
+      ✔ Shoud revert invalid transfer due to no allowance (55ms)
+    Minting
+      ✔ Should mint tokens correctly
+    Transactions
+      ✔ Should transfer tokens correctly (94ms)
+      ✔ Should transfer tokens from correctly (93ms)
+
+
+  6 passing (2s)
+```
+
+As we can see, `hardhat test` will compile the solidity contract and generate typings beforehand. This will create the folders `artifacts`, `cache`, and `typechain-types`.
+
+We are mostly interested in `MintableERC20.json` under `/hardhat/artifacts/contracts/MintableERC20.sol`, and `MintableERC20.ts` under `/hardhat/typechain-types`, as they contain the [ABI](https://docs.soliditylang.org/en/v0.8.4/abi-spec.html) and the typings that have been generated, respectively.
+
+We'll use them in our React application to interact with the smart contract using Ethers.js.
+
+As our front-end application is in a different workspace we'll have to write a copy of this files in the `react-app` workspace in order to be able to reach them:
+
+```typescript:hardhat/scripts/shareFiles.ts
+async function shareFiles() {
+  const hardhatContractsPath = join(__dirname, '../artifacts/contracts');
+  const hardhatContractsTypePath = join(__dirname, '../typechain-types');
+  const reactContractsPath = join(__dirname, '../../react-app/src/utils/contracts');
+  const reactContractsTypesPath = join(__dirname, '../../react-app/src/utils/types');
+  const contractsList = readdirSync(hardhatContractsPath).filter((path) => /\.sol$/.test(path));
+  contractsList.forEach((slug) => {
+    const contractSlug = slug.replace(/\.sol/, '');
+    const contractJSON = contractSlug + '.json';
+    const contractJSONPath = join(reactContractsPath, contractJSON);
+    const contractType = contractSlug + '.ts';
+    const contractTypePath = join(reactContractsTypesPath, contractType);
+    const artifact = artifacts.readArtifactSync(contractSlug);
+    if (!existsSync(reactContractsPath)) {
+      mkdirSync(reactContractsPath, { recursive: true });
+    }
+    writeFileSync(contractJSONPath, JSON.stringify(artifact, null, 2));
+    const typeData = readFileSync(join(hardhatContractsTypePath, contractType), 'utf8');
+    if (!existsSync(reactContractsTypesPath)) {
+      mkdirSync(reactContractsTypesPath, { recursive: true });
+    }
+    writeFileSync(contractTypePath, typeData);
+  });
+  const contractTypeCommon = 'common.ts';
+  const contractTypeCommonPath = join(reactContractsTypesPath, contractTypeCommon);
+  const typeCommonData = readFileSync(join(hardhatContractsTypePath, contractTypeCommon), 'utf8');
+  if (!existsSync(reactContractsTypesPath)) {
+    mkdirSync(reactContractsTypesPath, { recursive: true });
+  }
+  writeFileSync(contractTypeCommonPath, typeCommonData);
+  return {
+    contractsNum: contractsList.length,
+    reactContractsPath: reactContractsPath,
+    reactContractsTypesPath: reactContractsTypesPath,
+  };
+}
+```
+
+In order to have tokens at our disposal it is only needed a Hardhat task to mint and send tokens to a specified address.
+
+This is easily accomplished by adding a simple script under the `tasks` folder.
+
+> To simplify the process, a pre-specified amount of 1000000 tokens is set.
+
+```typescript:hardhat/tasks/mint.ts
+task('mint', 'Mint TFT and internally transfer it to an address')
+  .addPositionalParam('receiver', 'The address that will receive them')
+  .setAction(async ({ receiver }, hre) => {
+    if (hre.network.name === 'hardhat') {
+      console.warn(
+        'The faucet has been run to the Hardhat Network, so it got automatically created ' +
+          "and destroyed. Use the Hardhat option '--network localhost'"
+      );
+    }
+    if (receiver === undefined) {
+      console.warn('A recieiver address is required');
+    }
+    const addressesFilePath = join(__dirname, '../../react-app/src/utils/contracts/contracts-addresses.json');
+
+    if (!existsSync(addressesFilePath)) {
+      console.error('You need to deploy your contract first');
+      return;
+    }
+
+    const addressesJson = readFileSync(addressesFilePath, 'utf-8');
+    const address: string = JSON.parse(addressesJson)['MintableERC20'];
+
+    if ((await hre.ethers.provider.getCode(address)) === '0x') {
+      console.error('You need to deploy your contract first');
+      return;
+    }
+    const token = await hre.ethers.getContractAt('MintableERC20', address);
+
+    const amount = '1000000';
+    const tftAmount = hre.ethers.utils.parseUnits(amount);
+    const tx = await token.mint(receiver, tftAmount);
+    await tx.wait();
+
+    console.log(`${amount} TFTs transferred to ${receiver}`);
+  });
+```
+
+Lastly, we just need to import this file in our hardhat configuration:
+
+```diff:hardhat/hardhat.config.ts
+import { HardhatUserConfig } from "hardhat/types";
+import "@typechain/hardhat";
+import "@nomiclabs/hardhat-ethers";
+import "@nomiclabs/hardhat-waffle";
++ require("./tasks/mint");
+```
+
+## Deploying the contract
+
+In Hardhat we can deploy a contract in a `localhost` network. We need to start a local node and deploy, in our case `npm run node` and `npm run compile-share-deploy` respectively.
+
+The former command will ensure our React app has the current contract address, typings and ABI after compiling the solidity file and deploying it in the `localhost` network.
+
+```bash
+npm run compile-share-deploy
+
+> mintable-erc20-dapp@1.0.0 compile-share-deploy
+> npm run compile --workspace=hardhat && npm run share --workspace=hardhat && npm run deploy --workspace=hardhat
+
+
+> hardhat@1.0.0 compile
+> hardhat compile
+
+Nothing to compile
+No need to generate any newer typings.
+
+> hardhat@1.0.0 share
+> hardhat run scripts/shareFiles.ts
+
+No need to generate any newer typings.
+  ✓ 1 contract(s) copied to /.../mintable-erc20-dapp/react-app/src/utils/contracts
+  ✓ 1 contract(s) type(s) copied to /.../mintable-erc20-dapp/react-app/src/utils/types
+  ✓ Contract type required module common.ts copied to /.../mintable-erc20-dapp/react-app/src/utils/types
+
+> hardhat@1.0.0 deploy
+> hardhat run --network localhost scripts/deploy.ts
+
+No need to generate any newer typings.
+  ✓ MintableERC20 deployed to: 0x...
+  ✓ 1 contract address(es) has(have) been copied to /.../mintable-erc20-dapp/react-app/src/utils/contracts
+```
+
+## Front-end
+
+Our front-end is a simple React.js application written in Typescript that consists of three main components to show the balance, to make transactions and to check the history of incoming and outgoing transactions.
+
+In order for our dapp to work it is needed that a browser crypto wallet is installed and injects the `ethereum` property to the `window`.
+
+If either a different account or a different chain are set in our ethereum provider, the page will reload.
+
+```typescript:react-app/src/utils/hooks/index.ts {3, 7-8}
+export const useAccountAndChainChange = () => {
+  const handleAccountsChanged = () => {
+    window.location.reload();
+  };
+  useEffect(() => {
+    if (window.ethereum) {
+      window.ethereum.on('accountsChanged', handleAccountsChanged);
+      window.ethereum.on('chainChanged', handleAccountsChanged);
+    }
+    return () => window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
+  }, []);
+};
+```
+
+Once we start the react application we are requested to enable Ethereum which will fetch an account address and will create two contracts.
+
+```typescript:react-app/src/utils/helpers.ts
+export const fetchData = async () => {
+  const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+
+  const provider = new ethers.providers.JsonRpcProvider();
+  const contract = new ethers.Contract(addresses['MintableERC20'], mintableErc20.abi, provider);
+
+  const web3Modal = new Web3Modal();
+  const connection = await web3Modal.connect();
+  const userProvider = new ethers.providers.Web3Provider(connection);
+  const signer = userProvider.getSigner();
+  const signerContract = new ethers.Contract(addresses['MintableERC20'], mintableErc20.abi, signer) as MintableERC20;
+
+  return { accounts, contract, signerContract };
+};
+```
+
+Using the Ethers.js library I create two [contract objects](https://docs.ethers.io/v5/api/contract), one to perform read-only operations and another one to perform transactions.
+
+To create both contracts it is needed to pass a contract address, a contract interface (or ABI) and either a signer or a provider.
+
+For the read-only contract a `JsonRpcProvider` is passed, and a signer for the contract that will be used to sign operations to change the state of the blockchain.
+
+I keep the account address and both contracts in [`ContractContext`](https://www.github.com/albertobas/mintable-erc20-dapp/blob/main/react-app/src/components/context/ContractContext.tsx) which will provide us with them in any of the components that are descendants to `ContractProvider`.
+
+Once the data in the context is defined, the components [`Balance`](https://www.github.com/albertobas/mintable-erc20-dapp/blob/main/react-app/src/components/Balance.tsx), [`TransferFrom`](https://www.github.com/albertobas/mintable-erc20-dapp/blob/main/react-app/src/components/TransferFrom.tsx) and [`Panels`](https://www.github.com/albertobas/mintable-erc20-dapp/blob/main/react-app/src/components/Panels.tsx) will be rendered.
+
+They show the TFT (Test Fungible Token, our token) balance of the context account address in the contract, a form to transfer TFTs and a panel with incoming and outgoing transactions respectively.
+
+I set listeners inside `useEffect`s in custom hooks to keep all three main components up to date with the state in the blockchain (also `TransferFrom`, since the input data is validated using the `Formik` library).
+
+In order to keep the balance synched with the state of the `_balance` mapping of our account in `MintableERC20.sol`, we use the event `Transfer` in our contract to create two filters:
+
+- `filterReceived`: this filter will keep all the transactions to our account (including the mint operations).
+
+- `filterSent`: this filter will keep all the transactions from our account.
+
+We then set listeners to these events to update our application balance state.
+
+```typescript:react-app/src/utils/hooks/index.ts {11-12, 15-16}
+export const useBalance = () => {
+  const [balance, setBalance] = useState<BigNumber>(BigNumber.from(0));
+  const { ctxtAccount, ctxtReadContract } = useContractContext();
+  const callbackBalance = useCallback(async () => {
+    if (ctxtReadContract && ctxtAccount) {
+      const _balance = await ctxtReadContract.balanceOf(ctxtAccount);
+      setBalance(_balance);
+    }
+  }, [ctxtReadContract, ctxtAccount]);
+  useEffect(() => {
+    const filterReceived = ctxtReadContract?.filters.Transfer(null, ctxtAccount, null);
+    const filterSent = ctxtReadContract?.filters.Transfer(ctxtAccount, null, null);
+    const getBalance = () => callbackBalance().catch((error) => console.log(error));
+    if (filterReceived && filterSent) {
+      ctxtReadContract?.on(filterReceived, getBalance);
+      ctxtReadContract?.on(filterSent, getBalance);
+    }
+    return () => {
+      if (filterReceived && filterSent) {
+        ctxtReadContract?.off(filterReceived, getBalance);
+        ctxtReadContract?.off(filterSent, getBalance);
+      }
+    };
+  }, [callbackBalance, ctxtAccount, ctxtReadContract]);
+  return balance;
+};
+```
+
+A similar operation is performed in `useTransactions`, however, here the listeners will set the state of the transfers to an `Event` array.
+
+```typescript:react-app/src/utils/hooks/index.ts {15-16, 29-30}
+export const useTransactions = () => {
+  const [transfersIn, setTransfersIn] = useState<Event[] | null>(null);
+  const [transfersOut, setTransfersOut] = useState<Event[] | null>(null);
+  const { ctxtAccount, ctxtReadContract } = useContractContext();
+  const callbackEvent = useCallback(
+    async (filter: EventFilter | undefined) => {
+      if (filter) {
+        const _events = await ctxtReadContract?.queryFilter(filter, 0, 'latest');
+        return _events ? _events : null;
+      } else return null;
+    },
+    [ctxtReadContract]
+  );
+  useEffect(() => {
+    const filterReceived = ctxtReadContract?.filters.Transfer(null, ctxtAccount, null);
+    const filterSent = ctxtReadContract?.filters.Transfer(ctxtAccount, null, null);
+    const getReceived = () =>
+      callbackEvent(filterReceived)
+        .then((_events) => {
+          setTransfersIn(_events);
+          console.log('You have received a transaction, please click on the received tab in the transaction panel.');
+        })
+        .catch((error) => console.error(error));
+    const getSent = () =>
+      callbackEvent(filterSent)
+        .then((_events) => setTransfersOut(_events))
+        .catch((error) => console.error(error));
+    if (filterReceived && filterSent) {
+      ctxtReadContract?.on(filterReceived, getReceived);
+      ctxtReadContract?.on(filterSent, getSent);
+    }
+    return () => {
+      if (filterReceived && filterSent) {
+        ctxtReadContract?.off(filterReceived, getReceived);
+        ctxtReadContract?.off(filterSent, getSent);
+      }
+    };
+  }, [ctxtReadContract, ctxtAccount, callbackEvent]);
+  return { transfersIn, transfersOut };
+};
+```
+
+We map over these arrays in `Panels` to show the transactions.
+
+Below we can see the mapping of our outgoing transactions. The receiver address corresponds to `event.args[1]` and the amount of TFT sent corresponds to `event.args[2]`.
+
+```typescript:react-app/src/components/Panels.tsx {10, 12}
+{transfersOut && (
+  <Tbody>
+    {transfersOut
+      .slice(0)
+      .reverse()
+      .map((event) => {
+        return (
+          event.args && (
+            <Tr key={event.transactionHash} fontSize="sm">
+              <Td textAlign="center">{event.args[1]}</Td>
+              <Td textAlign="right" paddingRight="2%">
+                {formatAmount(event.args[2])}
+              </Td>
+            </Tr>
+          )
+        );
+      })}
+  </Tbody>
+)}
+```
+
+Now that we have all the logic implemented, we'd only need to run `npm run start-app`.
