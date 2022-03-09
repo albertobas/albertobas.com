@@ -524,7 +524,7 @@ Para crear ambos contratos, es necesario pasar una dirección de contrato, una i
 
 Para el contrato de solo lectura se pasa un `JsonRpcProvider`, y un _signer_ para el contrato que se usará para firmar operaciones para cambiar el estado de la cadena de bloques.
 
-Guardo la dirección de la cuenta y ambos contratos en [`ContractContext`](https://www.github.com/albertobas/mintable-erc20-dapp/blob/main/react-app/src/components/context/ContractContext.tsx) que nos los proporcionará en cualquiera de los componentes que son descendientes de `ContractProvider`.
+Guardo la dirección de la cuenta y ambos contratos en [`ContractContext`](https://www.github.com/albertobas/mintable-erc20-dapp/blob/main/react-app/src/utils/context/ContractContext.tsx) que nos los proporcionará en cualquiera de los componentes que son descendientes de `ContractProvider`.
 
 Una vez el contexto cuente con estos datos los componentes [`Balance`](https://www.github.com/albertobas/mintable-erc20-dapp/blob/main/react-app/src/components/Balance.tsx), [`TransferFrom`](https://www.github.com/albertobas/mintable-erc20-dapp/blob/main/react-app/src/components/TransferFrom.tsx) y [`Panels`](https://www.github.com/albertobas/mintable-erc20-dapp/blob/main/react-app/src/components/Panels.tsx) se renderizarán.
 

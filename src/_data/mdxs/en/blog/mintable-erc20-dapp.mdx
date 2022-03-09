@@ -524,7 +524,7 @@ To create both contracts it is needed to pass a contract address, a contract int
 
 For the read-only contract a `JsonRpcProvider` is passed, and a signer for the contract that will be used to sign operations to change the state of the blockchain.
 
-I keep the account address and both contracts in [`ContractContext`](https://www.github.com/albertobas/mintable-erc20-dapp/blob/main/react-app/src/components/context/ContractContext.tsx) which will provide us with them in any of the components that are descendants to `ContractProvider`.
+I keep the account address and both contracts in [`ContractContext`](https://www.github.com/albertobas/mintable-erc20-dapp/blob/main/react-app/src/utils/context/ContractContext.tsx) which will provide us with them in any of the components that are descendants to `ContractProvider`.
 
 Once the data in the context is defined, the components [`Balance`](https://www.github.com/albertobas/mintable-erc20-dapp/blob/main/react-app/src/components/Balance.tsx), [`TransferFrom`](https://www.github.com/albertobas/mintable-erc20-dapp/blob/main/react-app/src/components/TransferFrom.tsx) and [`Panels`](https://www.github.com/albertobas/mintable-erc20-dapp/blob/main/react-app/src/components/Panels.tsx) will be rendered.
 
