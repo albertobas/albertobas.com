@@ -69,7 +69,7 @@
     "defaultMessage": "A page about blockchain, data science and Web3"
   },
   "introSectionP": {
-    "defaultMessage": "Hi!, I'm Alberto Bas, a DeFi developer by profession and telecommunications technical engineer by training. I post in this page some <projects></projects> and <blog></blog> about cryptography, blockchain, and data science."
+    "defaultMessage": "Hi!, I'm Alberto Bas, a DeFi developer and telecommunications technical engineer by training. I post in this page some <projects></projects> and <blog></blog> about cryptography, blockchain, and data science."
   },
   "introSectionPBlog": {
     "defaultMessage": "articles"

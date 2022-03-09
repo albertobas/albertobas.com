@@ -34,7 +34,7 @@ const HomePage = ({ blogCards, projectsCards, tags, locale, locales }: Props) =>
         <p>
           <FormattedMessage
             id="introSectionP"
-            defaultMessage="Hi!, I'm Alberto Bas, a DeFi developer by profession and telecommunications technical engineer by training. I post in this page some <projects></projects> and <blog></blog> about cryptography, blockchain, 
+            defaultMessage="Hi!, I'm Alberto Bas, a DeFi developer and telecommunications technical engineer by training. I post in this page some <projects></projects> and <blog></blog> about cryptography, blockchain, 
             and data science."
             values={{
               blog: () => (
