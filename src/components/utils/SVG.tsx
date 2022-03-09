@@ -21,7 +21,15 @@ import {
 } from 'react-icons/fa';
 import { HiMail } from 'react-icons/hi';
 import { FiSliders } from 'react-icons/fi';
-import { BiWindow, BiWindows, BiChevronRight, BiChevronsRight, BiChevronLeft, BiChevronsLeft } from 'react-icons/bi';
+import {
+  BiWindow,
+  BiWindows,
+  BiChevronRight,
+  BiChevronsRight,
+  BiChevronLeft,
+  BiChevronsLeft,
+  BiLink,
+} from 'react-icons/bi';
 import { AiOutlineClockCircle } from 'react-icons/ai';
 import { GoSearch } from 'react-icons/go';
 import {
@@ -81,6 +89,7 @@ export const dictIcons = {
     icon: SiJupyter,
     name: 'Jupyter',
   },
+  link: { icon: BiLink, name: '' },
   linkedin: { icon: FaLinkedin, name: '' },
   longArrowAltRight: { icon: FaLongArrowAltRight, name: '' },
   moon: { icon: FaMoon, name: '' },

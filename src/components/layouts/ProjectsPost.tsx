@@ -116,7 +116,7 @@ const ProjectsPost = ({
                 {link && (
                   <div>
                     <ILink href={link}>
-                      <SVG icon="colab" />
+                      <SVG icon="link" />
                       <FormattedMessage id="goToWeb" defaultMessage="Go to website" />
                     </ILink>
                   </div>
