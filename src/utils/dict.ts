@@ -6,7 +6,6 @@ export const dictLocales = {
 /* Keys */
 export const dictKeys = {
   about: { en: 'About', es: 'Sobre mí' },
-  //approach: { en: 'Approach', es: 'Enfoque' },
   blog: { en: 'Blog', es: 'Blog' },
   projects: { en: 'Projects', es: 'Proyectos' },
   field: { en: 'Field', es: 'Campo' },
@@ -49,10 +48,6 @@ export const dictCB = {
   ethereum: {
     description: { en: '', es: '' },
     label: { en: 'Ethereum', es: 'Ethereum' },
-  },
-  'ethers-js': {
-    description: { en: '', es: '' },
-    label: { en: 'Ethers.js', es: 'Ethers.js' },
   },
   'fungible-token': {
     description: { en: '', es: '' },
@@ -187,6 +182,10 @@ export const dictFL = {
   'frameworks-libraries': {
     description: { en: '', es: '' },
     label: { en: 'Frameworks and libraries', es: 'Entornos de trabajo y librerías' },
+  },
+  'ethers-js': {
+    description: { en: '', es: '' },
+    label: { en: 'Ethers.js', es: 'Ethers.js' },
   },
   hardhat: { description: { en: '', es: '' }, label: { en: 'Hardhat', es: 'Hardhat' } },
   jupyter: {
