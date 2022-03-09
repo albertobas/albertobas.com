@@ -11,6 +11,13 @@
 .content img {
   border-radius: var(--border-radius);
 }
+.mdx {
+  width: 100%;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+  hyphens: auto;
+}
 .mdx a {
   color: var(--blue-300);
   @mixin isDark {
