@@ -101,7 +101,7 @@ Por último, añadamos unos scripts que nos serán útiles:
 
 ## Redacción del contrato
 
-El contrato inteligente está escrito en Solidity y cumple con el [estándar EIP-20](https://eips.ethereum.org/EIPS/eip-20 'EIP-20: Token Standard') specifications.
+El contrato inteligente está escrito en Solidity y cumple con las especificaciones del [estándar EIP-20](https://eips.ethereum.org/EIPS/eip-20 'EIP-20: Token Standard').
 
 ```solidity:hardhat/contracts/MintableERC20.sol
 // SPDX-License-Identifier: MIT
@@ -491,7 +491,10 @@ export const useAccountAndChainChange = () => {
       window.ethereum.on('accountsChanged', handleAccountsChanged);
       window.ethereum.on('chainChanged', handleAccountsChanged);
     }
-    return () => window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
+    return () => {
+      window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
+      window.ethereum.removeListener('chainChanged', handleAccountsChanged);
+    };
   }, []);
 };
 ```
