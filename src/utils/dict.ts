@@ -69,7 +69,7 @@ export const dictDS = {
     description: { en: 'Analysis of bivariate data', es: 'Análisis de datos bivariantes' },
     label: { en: 'Bivariate analysis', es: 'Análisis bivariante' },
   },
-  /*classification: {
+  classification: {
     description: {
       en: 'Statistical learning problem that involves predicting a categorical value',
       es: 'Problema de aprendizaje estadístico cuyo objeto es predecir un valor categórico',
@@ -82,7 +82,7 @@ export const dictDS = {
       es: 'Red neuronal convolucional es una clase de red neuronal artificial',
     },
     label: { en: 'Convolution neural network', es: 'Red neuronal convolucional' },
-  },*/
+  },
   'data-preprocessing': {
     description: { en: '', es: '' },
     label: { en: 'Data preprocessing', es: 'Procesado de datos' },
@@ -99,11 +99,12 @@ export const dictDS = {
     description: { en: 'Elastic net regression model', es: 'Modelo de regresión Elastic Net' },
     label: { en: 'Elastic Net', es: 'Elastic Net' },
   },
+  embedding: { description: { en: '', es: '' }, label: { en: 'Embedding', es: 'Embedding' } },
   'exploratory-data-analysis': {
     description: { en: '', es: '' },
     label: { en: 'Exploratory data analysis', es: 'Análisis exploratorio de datos' },
   },
-  //gru: { description: { en: '', es: '' }, label: { en: 'GRU', es: 'GRU' } },
+  gru: { description: { en: '', es: '' }, label: { en: 'GRU', es: 'GRU' } },
   'kernel-ridge': {
     description: { en: '', es: '' },
     label: { en: 'Kernel Ridge', es: 'Kernel Ridge' },
@@ -113,15 +114,15 @@ export const dictDS = {
     description: { en: 'Light Gradient Boosting Machine regressor', es: 'Regresor Light Gradient Boosting Machine' },
     label: { en: 'LGBM regressor', es: 'Regresor LGBM' },
   },
-  //lstm: { description: { en: '', es: '' }, label: { en: 'LSTM', es: 'LSTM' } },
+  lstm: { description: { en: '', es: '' }, label: { en: 'LSTM', es: 'LSTM' } },
   'machine-learning': {
     description: { en: '', es: '' },
     label: { en: 'Machine learning', es: 'Aprendizaje automático' },
   },
-  /*'natural-language-processing': {
+  'natural-language-processing': {
     description: { en: '', es: '' },
     label: { en: 'Natural Language processing', es: 'Procesado de lenguaje natural' },
-  },*/
+  },
   'random-forest-regressor': {
     description: { en: '', es: '' },
     label: { en: 'Random forest regressor', es: 'Regresor de bosque aleatorio' },
@@ -134,13 +135,13 @@ export const dictDS = {
     label: { en: 'Regression', es: 'Regresión' },
   },
   ridge: { description: { en: '', es: '' }, label: { en: 'Ridge', es: 'Ridge' } },
-  /*'recurrent-neural-network': {
+  'recurrent-neural-network': {
     description: {
       en: 'Recurrent neural network is a class of artificial neural network',
       es: 'Red neuronal recurrente es una clase de red neuronal artificial',
     },
     label: { en: 'Recurrent Neural Network', es: 'Red neuronal recurrente' },
-  },*/
+  },
   'supervised-learning': {
     description: { en: '', es: '' },
     label: { en: 'Supervised learning', es: 'Aprendizaje supervisado' },
@@ -197,7 +198,7 @@ export const dictFL = {
   'next-js': { description: { en: '', es: '' }, label: { en: 'Next.js', es: 'Next.js' } },
   numpy: { description: { en: '', es: '' }, label: { en: 'Numpy', es: 'Numpy' } },
   pandas: { description: { en: '', es: '' }, label: { en: 'Pandas', es: 'Pandas' } },
-  //pytorch: { description: { en: '', es: '' }, label: { en: 'Pytorch', es: 'Pytorch' } },
+  pytorch: { description: { en: '', es: '' }, label: { en: 'Pytorch', es: 'Pytorch' } },
   'react-js': { description: { en: '', es: '' }, label: { en: 'React.js', es: 'React.js' } },
   'scikit-learn': {
     description: { en: '', es: '' },
