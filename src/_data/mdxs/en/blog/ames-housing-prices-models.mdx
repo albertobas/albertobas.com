@@ -43,7 +43,7 @@ pd.set_option('max_columns', 200)
 
 ## Data preprocessing
 
-In this section I explain how the data are preprocessed right before being fed to the chains. All the classes that I use in the pipelines for preprocessing the data can be found [here](utils/preprocessing.py 'Preprocessing classes').
+In this section I explain how the data are preprocessed right before being fed to the chains. All the classes that I use in the pipelines for preprocessing the data can be found [here](https://www.github.com/albertobas/ames-housing-prices/blob/main/utils/preprocessing.py 'Preprocessing classes').
 
 ```python
 X_train = fetch_openml(name="house_prices", as_frame=True, data_home='data')['frame']
@@ -487,7 +487,7 @@ The reason for passing this list of categories is to prevent the estimators from
 
 ## Modelling
 
-I have written [three classes](utils/validation.py 'Validation classes') that are used in this section:
+I have written [three classes](https://www.github.com/albertobas/ames-housing-prices/blob/main/utils/validation.py 'Validation classes') that are used in this section:
 
 - `PipeTunerCV`, which is used to optimize the parameters passed from the estimators in the pipelines, prevailing the values of this parameters with lower cross-validated RMSE over the others. Also, I include some methods to plot the coefficients of pipelines with Ridge, the Lasso and ElasticNet regressors, and the feature importance of the Random Forest Regressor.
 

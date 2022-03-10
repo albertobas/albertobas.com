@@ -59,7 +59,7 @@ print(sample[890:1010]) # edit start and end indexes to see more text
 
 </CellOut>
 
-When [reading the files](utils/preprocessing.py), any header with a mention of the corresponding label is thus removed. Furthermore, the _Path_ and _Xref_ headers and the headers that contain e-mail addresses are also removed.
+When [reading the files](https://www.github.com/albertobas/20-news-classification/blob/main/utils/preprocessing.py), any header with a mention of the corresponding label is thus removed. Furthermore, the _Path_ and _Xref_ headers and the headers that contain e-mail addresses are also removed.
 
 The texts are split to form a data set and a validation set.
 
@@ -82,7 +82,7 @@ y_val = [category_index[c] for c in y_val]
 OUTPUT_DIM = len(category_index)
 ```
 
-I have written a [vectorizer](utils/preprocessing.py) to transform the texts to sequences. The method is simple, first an object is instantiated, set in this case with a max length per sequence of 200 tokens and a maximum of 20000 tokens in the vocabulary.
+I have written a [vectorizer](https://www.github.com/albertobas/20-news-classification/blob/main/utils/preprocessing.py) to transform the texts to sequences. The method is simple, first an object is instantiated, set in this case with a max length per sequence of 200 tokens and a maximum of 20000 tokens in the vocabulary.
 
 Then the `fit` method of the object takes the training array as an argument to form the vocabulary which will be used every time an array is passed to the `transform` method. Transforming an array is tokenizing a string and vectorizing it mapping from the vocabulary.
 
@@ -111,7 +111,7 @@ frame_val = TwentyNewsDataset(x_val_vectorized, torch.LongTensor(y_val))
 
 ## Modelling
 
-In this section four models are trained, two convolutional networks and two recurrent networks, using [this validation functions](utils/validation.py).
+In this section four models are trained, two convolutional networks and two recurrent networks, using [this validation functions](https://www.github.com/albertobas/20-news-classification/blob/main/utils/validation.py).
 
 All of the models implemented share a similar workflow, i.e., a multidimensional representation of the sequences, a process of learning high-level features in the data and a last phase of classifying the estimations.
 

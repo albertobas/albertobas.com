@@ -59,7 +59,7 @@ print(sample[890:1010]) # edit start and end indexes to see more text
 
 </CellOut>
 
-Al [leer los archivos](utils/preprocessing.py), se elimina cualquier encabezado con una mención de la clase correspondiente. Además, también se eliminan los encabezados _Path_ y _Xref_ y los encabezados que contienen direcciones de correo electrónico.
+Al [leer los archivos](https://www.github.com/albertobas/20-news-classification/blob/main/utils/preprocessing.py), se elimina cualquier encabezado con una mención de la clase correspondiente. Además, también se eliminan los encabezados _Path_ y _Xref_ y los encabezados que contienen direcciones de correo electrónico.
 
 Los textos se dividen para formar un conjunto de datos y un conjunto de validación.
 
@@ -83,7 +83,7 @@ y_val = [category_index[c] for c in y_val]
 OUTPUT_DIM = len(category_index)
 ```
 
-He escrito un [vectorizador](utils/preprocessing.py) para transformar los textos en secuencias. El método es simple, primero se instancia un objeto, configurado en este caso con una longitud máxima por secuencia de 200 tokens y un vocabulario con un número máximo de tokens de 20000.
+He escrito un [vectorizador](https://www.github.com/albertobas/20-news-classification/blob/main/utils/preprocessing.py) para transformar los textos en secuencias. El método es simple, primero se instancia un objeto, configurado en este caso con una longitud máxima por secuencia de 200 tokens y un vocabulario con un número máximo de tokens de 20000.
 
 Luego, el método `.fit` del objeto toma la matriz de entrenamiento como argumento para formar el vocabulario que se usará cada vez que se pase una matriz al método transform`. Transformar una matriz es tokenizar una cadena de caracteres y vectorizarla mapeando desde el vocabulario.
 
@@ -112,7 +112,7 @@ frame_val = TwentyNewsDataset(x_val_vectorized, torch.LongTensor(y_val))
 
 ## Modelado
 
-En esta sección se entrenan cuatro modelos, dos redes convolucionales y dos redes recurrentes, usando [estas funciones de validación] (utils/validation.py).
+En esta sección se entrenan cuatro modelos, dos redes convolucionales y dos redes recurrentes, usando [estas funciones de validación](https://www.github.com/albertobas/20-news-classification/blob/main/utils/validation.py).
 
 Todos los modelos implementados comparten un flujo de trabajo similar, es decir, una representación multidimensional de las secuencias, un proceso de aprendizaje de características de alto nivel en los datos y una última fase de clasificación de las estimaciones.
 
