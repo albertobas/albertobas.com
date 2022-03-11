@@ -11,7 +11,7 @@ github: { repo: 'mintable-erc20-dapp' }
 
 ## Configuración
 
-Utilizo [npm 7 workspaces](https://docs.npmjs.com/cli/v7/using-npm/workspaces 'npm 7 workspaces') para crear un mono repositorio con el fin de simplificar nuestro entorno de desarrollo.
+En esta guía se utiliza [npm 7 workspaces](https://docs.npmjs.com/cli/v7/using-npm/workspaces 'npm 7 workspaces') para crear un mono repositorio con el fin de simplificar nuestro entorno de desarrollo.
 
 > Nota: esta aplicación no consiste de código listo para producción. Su implemementación es meramente para propósitos de aprendizaje.
 
@@ -19,111 +19,111 @@ Utilizo [npm 7 workspaces](https://docs.npmjs.com/cli/v7/using-npm/workspaces 'n
 
 2. Cree una nueva carpeta y navegue a ella. Además, cree un nuevo proyecto Node con `npm init`.
 
-```bash
-$ mkdir mintable-erc20-dapp
-$ cd mintable-erc20-dapp
-$ npm init
-```
+   ```bash
+   $ mkdir mintable-erc20-dapp
+   $ cd mintable-erc20-dapp
+   $ npm init
+   ```
 
 3. Luego edite el package.json:
 
-```diff:package.json
-{
-  "name": "mintable-erc20-dapp",
-  "version": "1.0.0",
-  "description": "",
-- "main": "index.js",
-+	"workspaces": [
-+		"hardhat",
-+		"react-app"
-+	],
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
-}
-```
+   ```diff:package.json
+   {
+     "name": "mintable-erc20-dapp",
+     "version": "1.0.0",
+     "description": "",
+   - "main": "index.js",
+   +	"workspaces": [
+   +		"hardhat",
+   +		"react-app"
+   +	],
+     "scripts": {
+       "test": "echo \"Error: no test specified\" && exit 1"
+     },
+     "keywords": [],
+     "author": "",
+     "license": "ISC"
+   }
+   ```
 
 4. Ahora cree las carpetas de los _workspaces_:
 
-```bash
-$ npm init -w hardhat
-$ npm init -w react-app
-```
+   ```bash
+   $ npm init -w hardhat
+   $ npm init -w react-app
+   ```
 
 5. Instale las dependencias del entorno Hardhat:
 
-```bash
-$ npm install --save-dev -w hardhat @nomiclabs/hardhat-ethers
-$ @nomiclabs/hardhat-waffle @typechain/ethers-v5 @typechain/hardhat
-$ @types/chai @types/mocha @types/node chai ethereum-waffle
-$ ethers hardhat ts-node typechain typescript
-```
+   ```bash
+   $ npm install --save-dev -w hardhat @nomiclabs/hardhat-ethers
+   $ @nomiclabs/hardhat-waffle @typechain/ethers-v5 @typechain/hardhat
+   $ @types/chai @types/mocha @types/node chai ethereum-waffle
+   $ ethers hardhat ts-node typechain typescript
+   ```
 
 6. Ahora instale las dependencias de `react-app`:
 
-```bash
-$ npm install -w react-app @chakra-ui/react @emotion/react @emotion/styled @types/node
-$ @types/react @types/react-dom ethers formik react react-dom react-scripts
-$ typescript web3modal
-```
+   ```bash
+   $ npm install -w react-app @chakra-ui/react @emotion/react @emotion/styled
+   $ @types/node @types/react @types/react-dom ethers formik react react-dom
+   $ react-scripts typescript web3modal
+   ```
 
 7. Añada unos scripts que serán útiles:
 
-```diff:hardhat/package.json
-"scripts": {
-- "test": "echo \"Error: no test specified\" && exit 1"
-+ "test": "hardhat test",
-+ "node": "hardhat node",
-+ "compile": "hardhat compile",
-+ "share": "hardhat run scripts/shareFiles.ts",
-+ "deploy": "hardhat run --network localhost scripts/deploy.ts",
-+ "mint": "hardhat mint --network localhost",
-},
-```
+   ```diff:hardhat/package.json
+   "scripts": {
+   - "test": "echo \"Error: no test specified\" && exit 1"
+   + "test": "hardhat test",
+   + "node": "hardhat node",
+   + "compile": "hardhat compile",
+   + "share": "hardhat run scripts/shareFiles.ts",
+   + "deploy": "hardhat run --network localhost scripts/deploy.ts",
+   + "mint": "hardhat mint --network localhost",
+   },
+   ```
 
-```diff:react-app/package.json
-"scripts": {
-- "test": "echo \"Error: no test specified\" && exit 1"
-+ "start": "react-scripts start",
-+ "build": "react-scripts build",
-+ "eject": "react-scripts eject",
-+ "type-check": "tsc --pretty --noEmit",
-},
-```
+   ```diff:react-app/package.json
+   "scripts": {
+   - "test": "echo \"Error: no test specified\" && exit 1"
+   + "start": "react-scripts start",
+   + "build": "react-scripts build",
+   + "eject": "react-scripts eject",
+   + "type-check": "tsc --pretty --noEmit",
+   },
+   ```
 
-```diff:package.json
-"scripts": {
--	"test": "echo \"Error: no test specified\" && exit 1"
-+ "node": "npm run node --workspace=hardhat",
-+ "test-hardhat": "npm run test --workspace=hardhat",
-+ "compile-share-deploy": "npm run compile --workspace=hardhat && npm run share --workspace=hardhat && npm run deploy --workspace=hardhat",
-+ "mint": "npm run mint --workspace=hardhat",
-+ "start-app": "npm start --workspace=react-app",
-}
-```
+   ```diff:package.json
+   "scripts": {
+   -	"test": "echo \"Error: no test specified\" && exit 1"
+   + "node": "npm run node --workspace=hardhat",
+   + "test-hardhat": "npm run test --workspace=hardhat",
+   + "compile-share-deploy": "npm run compile --workspace=hardhat && npm run share --workspace=hardhat && npm run deploy --workspace=hardhat",
+   + "mint": "npm run mint --workspace=hardhat",
+   + "start-app": "npm start --workspace=react-app",
+   }
+   ```
 
 8. Por último, cree un archivo de configuración de Hardhat e importe los plugins.
 
-> En caso de utilizar Metamask necesitaremos o bien asignar en `hardhat.config.ts` `1337` a la `chainId` de nuestra red local, o bien configurar la `chainId` de `localhost` en Metamask a `31337`:
+   > En caso de utilizar Metamask necesitaremos o bien asignar en `hardhat.config.ts` `1337` a la `chainId` de nuestra red local, o bien configurar la `chainId` de `localhost` en Metamask a `31337`:
 
-```typescript:hardhat/hardhat.config.ts
-import { HardhatUserConfig } from "hardhat/types";
-import "@typechain/hardhat";
-import "@nomiclabs/hardhat-ethers";
-import "@nomiclabs/hardhat-waffle";
+   ```typescript:hardhat/hardhat.config.ts
+   import { HardhatUserConfig } from "hardhat/types";
+   import "@typechain/hardhat";
+   import "@nomiclabs/hardhat-ethers";
+   import "@nomiclabs/hardhat-waffle";
 
-const config: HardhatUserConfig = {
-  solidity: '0.8.4',
-  networks: {
-    hardhat: {
-      chainId: 1337, // https://hardhat.org/metamask-issue.html
-    },
-  },
-};
-```
+   const config: HardhatUserConfig = {
+     solidity: '0.8.4',
+     networks: {
+       hardhat: {
+         chainId: 1337, // https://hardhat.org/metamask-issue.html
+       },
+     },
+   };
+   ```
 
 ## Redacción del contrato
 
