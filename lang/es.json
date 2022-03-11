@@ -141,16 +141,16 @@
     "defaultMessage": "Revertir"
   },
   "searchPosts": {
-    "defaultMessage": "Busca entradas..."
+    "defaultMessage": "Busque entradas..."
   },
   "searchPostsProjects": {
-    "defaultMessage": "Busca entradas y proyectos..."
+    "defaultMessage": "Busque entradas y proyectos..."
   },
   "searchProjects": {
-    "defaultMessage": "Busca proyectos..."
+    "defaultMessage": "Busque proyectos..."
   },
   "searchTags": {
-    "defaultMessage": "Busca etiquetas..."
+    "defaultMessage": "Busque etiquetas..."
   },
   "select": {
     "defaultMessage": "Elija..."
