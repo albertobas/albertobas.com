@@ -42,9 +42,11 @@
 .mdx > h2,
 .mdx > h3,
 .mdx > h4,
-.mdx > h5,
 .similar > h2 {
   margin: 2em 0 1em;
+}
+.mdx > h5 {
+  margin: 2.5rem 0 1.25rem;
 }
 .toc > h2,
 .mdx > h2,
