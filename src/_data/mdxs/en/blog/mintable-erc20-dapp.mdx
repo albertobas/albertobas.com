@@ -13,13 +13,19 @@ github: { repo: 'mintable-erc20-dapp' }
 
 I use [npm 7 workspaces](https://docs.npmjs.com/cli/v7/using-npm/workspaces 'npm 7 workspaces') to create a monorepo in order to simplify our development environment.
 
+> Note: this application is not production ready code. Its implementation is solely for learning purposes.
+
+1. Download and install [Node.js and npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm).
+
+2. Create a new directory and navigate to it. Also, create a new Node project with `npm init`.
+
 ```bash
 $ mkdir mintable-erc20-dapp
 $ cd mintable-erc20-dapp
-$ npm init --yes
+$ npm init
 ```
 
-Then edit the package.json:
+3. Edit the package.json:
 
 ```diff:package.json
 {
@@ -40,14 +46,14 @@ Then edit the package.json:
 }
 ```
 
-Now let's create the workspaces folders:
+4. Create the workspaces folders:
 
 ```bash
-$ npm init -y -w hardhat
-$ npm init -y -w react-app
+$ npm init -w hardhat
+$ npm init -w react-app
 ```
 
-We are ready to install the dependencies. I'll start with the Hardhat environment:
+5. Install the Hardhat environment dependencies:
 
 ```bash
 $ npm install --save-dev -w hardhat @nomiclabs/hardhat-ethers
@@ -56,7 +62,7 @@ $ @types/chai @types/mocha @types/node chai ethereum-waffle
 $ ethers hardhat ts-node typechain typescript
 ```
 
-And now let's install the `react-app` dependencies:
+6. Now install the `react-app` dependencies:
 
 ```bash
 $ npm install -w react-app @chakra-ui/react @emotion/react @emotion/styled @types/node
@@ -64,7 +70,7 @@ $ @types/react @types/react-dom ethers formik react react-dom react-scripts
 $ typescript web3modal
 ```
 
-Lastly, I will add some scripts that will be handy:
+7. Add some scripts that will be handy:
 
 ```diff:hardhat/package.json
 "scripts": {
@@ -97,6 +103,26 @@ Lastly, I will add some scripts that will be handy:
 + "mint": "npm run mint --workspace=hardhat",
 + "start-app": "npm start --workspace=react-app",
 }
+```
+
+8. Lastly, create a hardhat configuration file and import the plugins.
+
+> In case we use Metamask we'll need to either assign in `hardhat.config.ts` `1337` to the `chainId` of our local network, or set the `chainId` of `localhost` in Metamask to `31337`:
+
+```typescript:hardhat/hardhat.config.ts
+import { HardhatUserConfig } from "hardhat/types";
+import "@typechain/hardhat";
+import "@nomiclabs/hardhat-ethers";
+import "@nomiclabs/hardhat-waffle";
+
+const config: HardhatUserConfig = {
+  solidity: '0.8.4',
+  networks: {
+    hardhat: {
+      chainId: 1337, // https://hardhat.org/metamask-issue.html
+    },
+  },
+};
 ```
 
 ## Writing the contract
@@ -208,7 +234,7 @@ The transactions as well as the approvals will emit an `Event`. Later, I will us
 
 These operations may be better understood by testing the contract.
 
-I use a hardhat plugin for integration with [Waffle](https://hardhat.org/plugins/nomiclabs-hardhat-waffle.html) and another for [Ethers.js](https://hardhat.org/plugins/nomiclabs-hardhat-ethers.html) to write the required tests with [Mocha](https://mochajs.org/) alongside [Chai](https://www.chaijs.com/).
+In this guide a hardhat plugin for integration with [Waffle](https://hardhat.org/plugins/nomiclabs-hardhat-waffle.html) and another for [Ethers.js](https://hardhat.org/plugins/nomiclabs-hardhat-ethers.html) are used to write the required tests with [Mocha](https://mochajs.org/) alongside [Chai](https://www.chaijs.com/).
 
 This tests are structured in three main `describe` calls:
 
@@ -285,27 +311,7 @@ describe('TFT', function () {
 });
 ```
 
-Before running the script we need to create a hardhat configuration file.
-
-> In case we use Metamask we'll need to either assign in `hardhat.config.ts` `1337` to the `chainId` of our local network, or set the `chainId` of `localhost` in Metamask to `31337`:
-
-```typescript:hardhat/hardhat.config.ts
-import { HardhatUserConfig } from "hardhat/types";
-import "@typechain/hardhat";
-import "@nomiclabs/hardhat-ethers";
-import "@nomiclabs/hardhat-waffle";
-
-const config: HardhatUserConfig = {
-  solidity: '0.8.4',
-  networks: {
-    hardhat: {
-      chainId: 1337, // https://hardhat.org/metamask-issue.html
-    },
-  },
-};
-```
-
-Now let's run the script `test-hardhat`:
+Now run the script `test-hardhat`:
 
 ```bash
 $ npm run test-hardhat
@@ -428,7 +434,7 @@ task('mint', 'Mint TFT and internally transfer it to an address')
   });
 ```
 
-Lastly, we just need to import this file in our hardhat configuration:
+Lastly, it is just needed to import this file in the hardhat configuration:
 
 ```diff:hardhat/hardhat.config.ts
 import { HardhatUserConfig } from "hardhat/types";
@@ -440,7 +446,7 @@ import "@nomiclabs/hardhat-waffle";
 
 ## Deploying the contract
 
-In Hardhat we can deploy a contract in a `localhost` network. We need to start a local node and deploy, in our case `npm run node` and `npm run compile-share-deploy` respectively.
+In Hardhat we can deploy a contract in a `localhost` network. It is needed to start a local node and deploy the contract. In this app `npm run node` and `npm run compile-share-deploy`, respectively.
 
 Furthermore, the latter command will ensure our React app has the current contract address, typings and ABI after compiling the solidity file and deploying it in the `localhost` network.
 
@@ -640,4 +646,4 @@ Below we can see the mapping of our outgoing transactions. The receiver address 
 )}
 ```
 
-Now that we have all the logic implemented, we'd only need to run `npm run start-app`.
+Now that all the logic is implemented, just run `npm run start-app`.
