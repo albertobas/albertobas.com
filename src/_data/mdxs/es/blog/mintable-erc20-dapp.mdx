@@ -489,17 +489,17 @@ Si se establece una cuenta diferente o una cadena diferente en nuestro proveedor
 
 ```typescript:react-app/src/utils/hooks/index.ts {3, 7-8}
 export const useAccountAndChainChange = () => {
-  const handleAccountsChanged = () => {
+  const handleChange = () => {
     window.location.reload();
   };
   useEffect(() => {
     if (window.ethereum) {
-      window.ethereum.on('accountsChanged', handleAccountsChanged);
-      window.ethereum.on('chainChanged', handleAccountsChanged);
+      window.ethereum.on('accountsChanged', handleChange);
+      window.ethereum.on('chainChanged', handleChange);
     }
     return () => {
-      window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
-      window.ethereum.removeListener('chainChanged', handleAccountsChanged);
+      window.ethereum.removeListener('accountsChanged', handleChange);
+      window.ethereum.removeListener('chainChanged', handleChange);
     };
   }, []);
 };
