@@ -18,8 +18,12 @@
 .containerTransparent {
   opacity: 0;
 }
-.container > svg,
-.containerTransparent > svg {
-  padding: 0.5rem;
+.container > a,
+.container > a > svg,
+.containerTransparent > a > svg {
   display: block;
+}
+.container > a > svg,
+.containerTransparent > a > svg {
+  padding: 0.5rem;
 }
