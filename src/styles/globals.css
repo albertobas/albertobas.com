@@ -9,8 +9,7 @@
   --blue-500: #044789;
   --purple-100: #c586c0;
   --purple-200: #bd75b7;
-  --purple-300: #bb2bb9;
-  --purple-400: #a626a4;
+  --purple-300: #a626a4;
   --green-200: #18a055;
   --green-300: #137e43;
   --gray-100-l: #f3f4f6;
@@ -333,7 +332,7 @@ pre[class*='language-']:not(pre[class='language-bash'], pre[class='language-diff
 .token.regex,
 .token.attr-value,
 .token.attr-value > .token.punctuation {
-  color: #d6341f;
+  color: #c02f1c;
   @mixin isDark {
     color: #ce9078;
   }
@@ -343,7 +342,7 @@ pre[class*='language-']:not(pre[class='language-bash'], pre[class='language-diff
 .token.function {
   color: #1056ef;
   @mixin isDark {
-    color: #5889f4;
+    color: var(--blue-200);
   }
 }
 .token.url {
@@ -357,7 +356,7 @@ pre[class*='language-']:not(pre[class='language-bash'], pre[class='language-diff
 .language-solidity .token.boolean {
   color: #1056ef;
   @mixin isDark {
-    color: #5889f4;
+    color: #4078f2;
   }
 }
 .language-solidity .token.version.number {
@@ -380,7 +379,7 @@ pre[class*='language-']:not(pre[class='language-bash'], pre[class='language-diff
   }
 }
 .language-solidity .token.token.operator {
-  color: var(--purple-400);
+  color: var(--purple-300);
   @mixin isDark {
     color: var(--purple-200);
   }
@@ -401,7 +400,7 @@ pre[class*='language-']:not(pre[class='language-bash'], pre[class='language-diff
 }
 /* CSS overrides */
 .language-css .token.selector {
-  color: #d6341f;
+  color: #c02f1c;
   @mixin isDark {
     color: #ce9078;
   }
@@ -427,14 +426,14 @@ pre[class*='language-']:not(pre[class='language-bash'], pre[class='language-diff
 }
 .language-css .token.important,
 .language-css .token.atrule .token.rule {
-  color: var(--purple-400);
+  color: var(--purple-300);
   @mixin isDark {
     color: var(--purple-200);
   }
 }
 /* JS overrides */
 .language-javascript .token.operator {
-  color: var(--purple-400);
+  color: var(--purple-300);
   @mixin isDark {
     color: var(--purple-200);
   }
@@ -453,7 +452,7 @@ pre[class*='language-']:not(pre[class='language-bash'], pre[class='language-diff
   }
 }
 .language-json .token.null.keyword {
-  color: #d6341f;
+  color: #c02f1c;
   @mixin isDark {
     color: #ce9078;
   }
@@ -470,7 +469,7 @@ pre[class*='language-']:not(pre[class='language-bash'], pre[class='language-diff
 .language-markdown .token.url > .token.content {
   color: #1056ef;
   @mixin isDark {
-    color: #5889f4;
+    color: #4078f2;
   }
 }
 .language-markdown .token.url > .token.url,
@@ -495,13 +494,13 @@ pre[class*='language-']:not(pre[class='language-bash'], pre[class='language-diff
   }
 }
 .language-markdown .token.bold .token.content {
-  color: #d6341f;
+  color: #c02f1c;
   @mixin isDark {
     color: #ce9078;
   }
 }
 .language-markdown .token.italic .token.content {
-  color: var(--purple-400);
+  color: var(--purple-300);
   @mixin isDark {
     color: var(--purple-200);
   }
