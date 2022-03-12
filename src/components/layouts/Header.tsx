@@ -23,8 +23,7 @@ export default function Header() {
   const handleLocaleTransition = (nextLocale: Item) => {
     router.push(router.asPath, router.asPath, { locale: nextLocale.value });
   };
-  const handleNavKey = (url: string, e: React.MouseEvent) => {
-    e.preventDefault();
+  const handleNavKey = (url: string) => {
     url === router.asPath ? setMobileMenu(false) : router.push(url, url, { locale: locale });
   };
   const localeItems: Item[] = Object.keys(dictLocales).map((key) => {
@@ -36,7 +35,7 @@ export default function Header() {
       <header className={styles.header}>
         <div className={styles.logo}>
           {isMobileMenu ? (
-            <a href={'/'} onClick={(e) => handleNavKey('/', e)} aria-label="Logo">
+            <a onClick={() => handleNavKey('/')} aria-label="Logo">
               <Logo />
             </a>
           ) : (

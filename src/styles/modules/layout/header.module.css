@@ -9,6 +9,7 @@
   padding-bottom: 1.75rem;
 }
 .logo > a {
+  cursor: pointer;
   display: block;
   width: fit-content;
 }
