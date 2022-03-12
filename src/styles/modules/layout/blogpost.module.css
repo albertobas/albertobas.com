@@ -179,18 +179,6 @@
 .tocAsideTransparent {
   opacity: 0;
 }
-.tocAside h2,
-.tocAsideTransparent h2,
-.tocAside li,
-.tocAsideTransparent li {
-  margin: 0;
-  font-size: 1rem;
-  line-height: 1rem;
-}
-.tocAside li,
-.tocAsideTransparent li {
-  margin-top: 0.75rem;
-}
 .tags {
   margin-top: 0.75rem;
 }
@@ -221,6 +209,18 @@
   @mixin $text-base;
   letter-spacing: 0.05em;
   font-weight: 600;
+}
+.tocAside > h2,
+.tocAsideTransparent > h2,
+.tocAside > nav > ul > li,
+.tocAsideTransparent > nav > ul > li {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1rem;
+}
+.tocAside > nav > ul > li,
+.tocAsideTransparent > nav > ul > li {
+  margin-top: 0.75rem;
 }
 .mdx,
 .intro,
