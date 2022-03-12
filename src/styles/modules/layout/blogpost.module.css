@@ -168,7 +168,7 @@
   top: 4rem;
   left: calc(50vw + 400px);
   overflow: hidden;
-  border-left: 3px solid var(--gray-100-l);
+  border-left: 3px solid var(--gray-200-l);
   @mixin isDark {
     border-color: var(--gray-800);
   }
