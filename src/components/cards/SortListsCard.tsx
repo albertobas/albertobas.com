@@ -148,19 +148,13 @@ const SortListsCard = ({
           </div>
           <div className={styles.paginationWrapper}>
             <div className={styles.paginationMargin}>
-              <Pagination
-                totalPages={totalPagesBlog}
-                currentPage={pageNumBlog}
-                setCurrentPage={setPageNumBlog}
-                locale={locale}
-              />
+              <Pagination totalPages={totalPagesBlog} currentPage={pageNumBlog} setCurrentPage={setPageNumBlog} />
             </div>
             <div className={styles.paginationMobileMargin}>
               <Pagination
                 totalPages={totalPagesProjects}
                 currentPage={pageNumProjects}
                 setCurrentPage={setPageNumProjects}
-                locale={locale}
                 isMobile
               />
             </div>
@@ -180,7 +174,6 @@ const SortListsCard = ({
                 totalPages={totalPagesProjects}
                 currentPage={pageNumProjects}
                 setCurrentPage={setPageNumProjects}
-                locale={locale}
               />
             </div>
             <div className={styles.paginationMobile}>
@@ -188,7 +181,6 @@ const SortListsCard = ({
                 totalPages={totalPagesProjects}
                 currentPage={pageNumProjects}
                 setCurrentPage={setPageNumProjects}
-                locale={locale}
                 isMobile
               />
             </div>

@@ -47,16 +47,10 @@ const PaginationSection = ({
   return (
     <div className={styles.paginationWrapper}>
       <div className={styles.pagination}>
-        <Pagination totalPages={totalPages} currentPage={pageNum} setCurrentPage={setPageNum} locale={locale} />
+        <Pagination totalPages={totalPages} currentPage={pageNum} setCurrentPage={setPageNum} />
       </div>
       <div className={styles.paginationMobile}>
-        <Pagination
-          totalPages={totalPages}
-          currentPage={pageNum}
-          setCurrentPage={setPageNum}
-          locale={locale}
-          isMobile
-        />
+        <Pagination totalPages={totalPages} currentPage={pageNum} setCurrentPage={setPageNum} isMobile />
       </div>
       {isMounted && (
         <div className={styles.cardsPerPage}>
