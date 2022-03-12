@@ -11,7 +11,7 @@ import { useDelayedRender } from 'src/utils/hooks';
 const MobileMenu = ({ locale }: { locale: Language }) => {
   const router = useRouter();
   const { isMobileMenu, setMobileMenu } = useMobileContext();
-  const { isMenuMounted, isMenuRendered } = useDelayedRender(isMobileMenu);
+  const { isMounted, isRendered } = useDelayedRender(isMobileMenu);
   const handleNavKey = (url: string, e: React.MouseEvent) => {
     e.preventDefault();
     url === router.asPath ? setMobileMenu(false) : router.push(url, url, { locale: locale });
@@ -19,8 +19,8 @@ const MobileMenu = ({ locale }: { locale: Language }) => {
   const keys = ['home', ...headerNavKeys];
   return (
     <>
-      {isMenuMounted && (
-        <div className={isMenuRendered ? `${styles.menu} ${styles.menuRendered}` : styles.menu}>
+      {isMounted && (
+        <div className={isRendered ? `${styles.menu} ${styles.menuRendered}` : styles.menu}>
           <nav className={styles.nav}>
             <ul className={styles.ul}>
               {keys.map((item, idx) => (

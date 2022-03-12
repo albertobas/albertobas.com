@@ -139,17 +139,17 @@ export function useLocales() {
 }
 
 export function useDelayedRender(active: boolean) {
-  const [isMenuMounted, setIsMenuMounted] = useState<boolean>(false);
-  const [isMenuRendered, setIsMenuRendered] = useState<boolean>(false);
+  const [isMounted, setIsMounted] = useState<boolean>(false);
+  const [isRendered, setIsRendered] = useState<boolean>(false);
   useEffect(() => {
     if (active) {
-      const timeout = setTimeout(() => setIsMenuRendered(true), 100);
-      setIsMenuMounted(true);
+      const timeout = setTimeout(() => setIsRendered(true), 100);
+      setIsMounted(true);
       return () => clearTimeout(timeout);
     } else {
-      setIsMenuMounted(false);
-      setIsMenuRendered(false);
+      setIsMounted(false);
+      setIsRendered(false);
     }
   }, [active]);
-  return { isMenuMounted, isMenuRendered };
+  return { isMounted, isRendered };
 }
