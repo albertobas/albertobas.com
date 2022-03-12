@@ -19,7 +19,7 @@ import {
   FaMoon,
   FaSun,
 } from 'react-icons/fa';
-import { HiMail } from 'react-icons/hi';
+import { HiArrowUp, HiMail } from 'react-icons/hi';
 import { FiSliders } from 'react-icons/fi';
 import {
   BiWindow,
@@ -73,6 +73,7 @@ export default memo(function SVG({ icon, dim, rotate }: Props) {
 export type IconList = keyof typeof dictIcons;
 export const dictIcons = {
   arrowRight: { icon: FaArrowRight, name: '' },
+  arrowUp: { icon: HiArrowUp, name: '' },
   chevronDown: { icon: FaChevronDown, name: '' },
   chevronLeft: { icon: BiChevronLeft, name: '' },
   chevronRight: { icon: BiChevronRight, name: '' },
