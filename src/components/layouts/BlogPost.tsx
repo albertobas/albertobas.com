@@ -166,7 +166,7 @@ const BlogPost = ({
         )}
         {headings.length > 0 && (
           <div className={styles.toc}>
-            <TOC headings={headings} />
+            <TOC headings={headings} behavior={readingTime.minutes > 15 ? 'auto' : 'smooth'} />
           </div>
         )}
         <div ref={refMdx} className={styles.mdx}>
@@ -175,7 +175,7 @@ const BlogPost = ({
       </article>
       {headings.length > 0 && isMounted && (
         <div className={isRendered ? styles.tocAside : styles.tocAsideTransparent}>
-          <TOC headings={headings} />
+          <TOC headings={headings} behavior={readingTime.minutes > 15 ? 'auto' : 'smooth'} />
         </div>
       )}
       {isMounted && <ScrollToTop isVisible={isRendered} />}
