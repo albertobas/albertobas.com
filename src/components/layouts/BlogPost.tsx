@@ -21,6 +21,7 @@ import TOC from 'src/components/utils/TOC';
 import MDX from 'src/components/MDX/MDX';
 import { useInView } from 'react-intersection-observer';
 import ScrollToTop from '../utils/ScrollToTop';
+import { useDelayedRender } from 'src/utils/hooks';
 const SectionCards = dynamic(() => import('src/components/home-page/SectionCards'));
 
 type Props = MdxMetadataPost & {
@@ -59,6 +60,7 @@ const BlogPost = ({
   const asPath = useRouter().asPath;
   const [refMdx, inViewMdx] = useInView({ triggerOnce: false, rootMargin: '0px 0px -100%' });
   const [refRelated, inViewRelated] = useInView({ triggerOnce: false, rootMargin: '0px 0px 0px' });
+  const { isMounted, isRendered } = useDelayedRender(inViewMdx && !inViewRelated);
   return (
     <>
       <ArticleSEO
@@ -172,12 +174,12 @@ const BlogPost = ({
           {children}
         </div>
       </article>
-      {headings.length > 0 && (
-        <div className={inViewMdx && !inViewRelated ? styles.tocAside : styles.tocAsideTransparent}>
+      {headings.length > 0 && isMounted && (
+        <div className={isRendered ? styles.tocAside : styles.tocAsideTransparent}>
           <TOC headings={headings} />
         </div>
       )}
-      <ScrollToTop isVisible={inViewMdx && !inViewRelated} />
+      {isMounted && <ScrollToTop isVisible={isRendered} />}
       <div ref={refRelated} className={styles.related}>
         {relatedPosts.length > 0 && (
           <>
