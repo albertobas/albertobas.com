@@ -1,6 +1,5 @@
 import { useRouter } from 'next/router';
 import Image from 'next/image';
-import dynamic from 'next/dynamic';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useMemo } from 'react';
 import { Headings, MdxMetadataCard, MdxMetadataPost } from 'src/utils/interfaces/post';
@@ -18,8 +17,7 @@ import Tag from 'src/components/tags/Tag';
 import ILink from '../utils/ILink';
 import { useInView } from 'react-intersection-observer';
 import ScrollToTop from '../utils/ScrollToTop';
-
-const SectionCards = dynamic(() => import('src/components/home-page/SectionCards'));
+import SectionCards from 'src/components/home-page/SectionCards';
 
 type Props = MdxMetadataPost & {
   children: React.ReactNode;
