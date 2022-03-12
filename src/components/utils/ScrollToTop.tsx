@@ -7,7 +7,7 @@ const ScrollToTop = ({ isVisible = true }: { isVisible?: boolean }) => {
   };
   return (
     <div className={isVisible ? styles.container : styles.containerTransparent} onClick={handleScrollUp}>
-      <SVG icon="arrowUp" />
+      <SVG icon="arrowUp" dim={{ width: 2, height: 2 }} />
     </div>
   );
 };
