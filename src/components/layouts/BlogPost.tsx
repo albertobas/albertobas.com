@@ -19,6 +19,8 @@ import { ItemExtended } from 'src/utils/interfaces/architecture';
 import ILink from 'src/components/utils/ILink';
 import TOC from 'src/components/utils/TOC';
 import MDX from 'src/components/MDX/MDX';
+import { useInView } from 'react-intersection-observer';
+import ScrollToTop from '../utils/ScrollToTop';
 const SectionCards = dynamic(() => import('src/components/home-page/SectionCards'));
 
 type Props = MdxMetadataPost & {
@@ -55,6 +57,8 @@ const BlogPost = ({
   );
   const intl = useIntl();
   const asPath = useRouter().asPath;
+  const [refMdx, inViewMdx] = useInView({ triggerOnce: false, rootMargin: '0px 0px -100%' });
+  const [refRelated, inViewRelated] = useInView({ triggerOnce: false, rootMargin: '0px 0px 0px' });
   return (
     <>
       <ArticleSEO
@@ -164,20 +168,30 @@ const BlogPost = ({
             <TOC headings={headings} />
           </div>
         )}
-        <div className={styles.mdx}>{children}</div>
+        <div ref={refMdx} className={styles.mdx}>
+          {children}
+        </div>
       </article>
-      {relatedPosts.length > 0 && (
-        <div className={styles.related}>
-          <hr className={styles.hr} />
-          <SectionCards
-            cards={relatedPosts}
-            section={section}
-            heading={intl.formatMessage({ id: 'relatedPosts', defaultMessage: 'Related posts' })}
-            locale={locale}
-            isLinkDisabled
-          />
+      {headings.length > 0 && (
+        <div className={inViewMdx && !inViewRelated ? styles.tocAside : styles.tocAsideTransparent}>
+          <TOC headings={headings} />
         </div>
       )}
+      <ScrollToTop isVisible={inViewMdx && !inViewRelated} />
+      <div ref={refRelated} className={styles.related}>
+        {relatedPosts.length > 0 && (
+          <>
+            <hr className={styles.hr} />
+            <SectionCards
+              cards={relatedPosts}
+              section={section}
+              heading={intl.formatMessage({ id: 'relatedPosts', defaultMessage: 'Related posts' })}
+              locale={locale}
+              isLinkDisabled
+            />
+          </>
+        )}
+      </div>
     </>
   );
 };

@@ -11,11 +11,13 @@ import SVG from 'src/components/utils/SVG';
 import DateFormatter from 'src/components/utils/DateFormatter';
 import { ArticleSEO } from 'src/components/utils/SEO';
 import { getItemsFromCards } from 'src/utils/helpers/post';
-import { hrefColab, hrefGithub } from 'src/utils/constants';
+import { hrefGithub } from 'src/utils/constants';
 import { ItemExtended } from 'src/utils/interfaces/architecture';
 import TOC from 'src/components/utils/TOC';
 import Tag from 'src/components/tags/Tag';
 import ILink from '../utils/ILink';
+import { useInView } from 'react-intersection-observer';
+import ScrollToTop from '../utils/ScrollToTop';
 
 const SectionCards = dynamic(() => import('src/components/home-page/SectionCards'));
 
@@ -53,6 +55,9 @@ const ProjectsPost = ({
   );
   const asPath = useRouter().asPath;
   const intl = useIntl();
+
+  const [refMdx, inViewMdx] = useInView({ triggerOnce: false, rootMargin: '0px 0px -100%' });
+  const [refRelated, inViewRelated] = useInView({ triggerOnce: false, rootMargin: '0px 0px 0px' });
   return (
     <>
       <ArticleSEO
@@ -150,21 +155,26 @@ const ProjectsPost = ({
               <TOC headings={headings} isProjects behavior="smooth" />
             </div>
           )}
-          <div className={styles.mdx}>{children}</div>
+          <div ref={refMdx} className={styles.mdx}>
+            {children}
+          </div>
         </div>
       </article>
-      {relatedProjects.length > 0 && (
-        <div className={styles.related}>
-          <hr className={styles.hr} />
-          <SectionCards
-            cards={relatedProjects}
-            section={section}
-            heading={intl.formatMessage({ id: 'relatedProjects', defaultMessage: 'Related projects' })}
-            locale={locale}
-            isLinkDisabled
-          />
-        </div>
-      )}
+      <ScrollToTop isVisible={inViewMdx && !inViewRelated} />
+      <div ref={refRelated} className={styles.related}>
+        {relatedProjects.length > 0 && (
+          <>
+            <hr className={styles.hr} />
+            <SectionCards
+              cards={relatedProjects}
+              section={section}
+              heading={intl.formatMessage({ id: 'relatedProjects', defaultMessage: 'Related projects' })}
+              locale={locale}
+              isLinkDisabled
+            />
+          </>
+        )}
+      </div>
     </>
   );
 };
