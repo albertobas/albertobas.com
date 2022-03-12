@@ -18,6 +18,7 @@ import ILink from '../utils/ILink';
 import { useInView } from 'react-intersection-observer';
 import ScrollToTop from '../utils/ScrollToTop';
 import SectionCards from 'src/components/home-page/SectionCards';
+import { useDelayedRender } from 'src/utils/hooks';
 
 type Props = MdxMetadataPost & {
   children: React.ReactNode;
@@ -53,9 +54,9 @@ const ProjectsPost = ({
   );
   const asPath = useRouter().asPath;
   const intl = useIntl();
-
   const [refMdx, inViewMdx] = useInView({ triggerOnce: false, rootMargin: '0px 0px -100%' });
   const [refRelated, inViewRelated] = useInView({ triggerOnce: false, rootMargin: '0px 0px 0px' });
+  const { isMounted, isRendered } = useDelayedRender(inViewMdx && !inViewRelated);
   return (
     <>
       <ArticleSEO
@@ -158,7 +159,7 @@ const ProjectsPost = ({
           </div>
         </div>
       </article>
-      <ScrollToTop isVisible={inViewMdx && !inViewRelated} />
+      {isMounted && <ScrollToTop isVisible={isRendered} />}
       <div ref={refRelated} className={styles.related}>
         {relatedProjects.length > 0 && (
           <>
