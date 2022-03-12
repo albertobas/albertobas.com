@@ -167,12 +167,12 @@ const BlogPost = ({
         <div className={styles.mdx}>{children}</div>
       </article>
       {relatedPosts.length > 0 && (
-        <div className={styles.similar}>
+        <div className={styles.related}>
           <hr className={styles.hr} />
           <SectionCards
             cards={relatedPosts}
             section={section}
-            heading={intl.formatMessage({ id: 'relatedPosts', defaultMessage: 'Similar posts' })}
+            heading={intl.formatMessage({ id: 'relatedPosts', defaultMessage: 'Related posts' })}
             locale={locale}
             isLinkDisabled
           />

@@ -10,7 +10,7 @@ import path from 'path';
 import fs from 'fs';
 import { getKeySet, shuffle } from 'src/utils/helpers/post';
 import { DictKeys, Section } from 'src/utils/interfaces/dict';
-import { Headings, MdxMetadataCard, MdxMetadataPost, SimilarPosts } from 'src/utils/interfaces/post';
+import { Headings, MdxMetadataCard, MdxMetadataPost, RelatedPosts } from 'src/utils/interfaces/post';
 import { dictCB, dictDS, dictWD } from 'src/utils/dict';
 
 const contentPath = path.join(process.cwd(), 'src/_data/mdxs');
@@ -114,7 +114,7 @@ export async function getPost(section: string, slug: string, locale: string) {
     return undefined;
   }
 }
-export async function getSimilarPosts(section: Section, reference: SimilarPosts, locale: string) {
+export async function getRelatedPosts(section: Section, reference: RelatedPosts, locale: string) {
   const cards = await getCards(section, locale);
   return shuffle(
     cards.filter((post) => reference.value && post[reference.key] === reference.value && post.slug != reference.slug)

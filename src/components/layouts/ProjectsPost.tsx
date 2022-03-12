@@ -154,12 +154,12 @@ const ProjectsPost = ({
         </div>
       </article>
       {relatedProjects.length > 0 && (
-        <div className={styles.similar}>
+        <div className={styles.related}>
           <hr className={styles.hr} />
           <SectionCards
             cards={relatedProjects}
             section={section}
-            heading={intl.formatMessage({ id: 'relatedProjects', defaultMessage: 'Similar projects' })}
+            heading={intl.formatMessage({ id: 'relatedProjects', defaultMessage: 'Related projects' })}
             locale={locale}
             isLinkDisabled
           />

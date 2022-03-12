@@ -1,5 +1,5 @@
 .container,
-.similar {
+.related {
   composes: container from 'src/styles/modules/utils.module.css';
 }
 .container {
@@ -42,7 +42,7 @@
 .mdx > h2,
 .mdx > h3,
 .mdx > h4,
-.similar > h2 {
+.related > h2 {
   margin: 2em 0 1em;
 }
 .mdx > h5 {
@@ -50,7 +50,7 @@
 }
 .toc > h2,
 .mdx > h2,
-.similar > h2 {
+.related > h2 {
   letter-spacing: 0;
 }
 .mdx > h1 code,

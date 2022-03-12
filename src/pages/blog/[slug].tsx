@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
-import { getPost, getSimilarPosts, getSlugsAndLocales } from 'src/utils/helpers/api';
+import { getPost, getRelatedPosts, getSlugsAndLocales } from 'src/utils/helpers/api';
 import { MdxPost, MdxMetadataCard } from 'src/utils/interfaces/post';
 import { Language } from 'src/utils/interfaces/languages';
 import BlogPost from 'src/components/layouts/BlogPost';
@@ -62,7 +62,7 @@ export const getStaticProps: GetStaticProps = async ({ locale, locales, params }
     if (!post) {
       return { notFound: true };
     } else {
-      const relatedPosts = await getSimilarPosts(
+      const relatedPosts = await getRelatedPosts(
         section,
         { key: 'field', value: post.frontMatter.field, slug: post.frontMatter.slug },
         locale

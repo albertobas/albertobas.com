@@ -132,10 +132,10 @@
     "defaultMessage": "min de lectura"
   },
   "relatedPosts": {
-    "defaultMessage": "Artículos similares"
+    "defaultMessage": "Artículos relacionados"
   },
   "relatedProjects": {
-    "defaultMessage": "Proyectos similares"
+    "defaultMessage": "Proyectos relacionados"
   },
   "reverse": {
     "defaultMessage": "Revertir"

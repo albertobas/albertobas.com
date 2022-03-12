@@ -132,10 +132,10 @@
     "defaultMessage": "min read"
   },
   "relatedPosts": {
-    "defaultMessage": "Similar posts"
+    "defaultMessage": "Related posts"
   },
   "relatedProjects": {
-    "defaultMessage": "Similar projects"
+    "defaultMessage": "Related projects"
   },
   "reverse": {
     "defaultMessage": "Reverse"

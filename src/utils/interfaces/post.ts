@@ -57,7 +57,7 @@ export type Headings = {
   children: { id: string | null; title: string | null }[];
 };
 
-export type SimilarPosts = {
+export type RelatedPosts = {
   key: keyof MdxMetadataCard;
   value: string | undefined;
   slug: string;
