@@ -1,7 +1,5 @@
-import { useRouter } from 'next/router';
 import { Dispatch, memo, SetStateAction } from 'react';
 import { useIntl } from 'react-intl';
-import { Language } from 'src/utils/interfaces/languages';
 import styles from 'src/styles/modules/components/utils/pagination.module.css';
 import SVG from 'src/components/utils/SVG';
 
@@ -9,12 +7,10 @@ type Props = {
   totalPages: number;
   currentPage: number;
   setCurrentPage: Dispatch<SetStateAction<number>>;
-  locale: Language;
   isMobile?: boolean;
 };
 
-const Pagination = ({ totalPages, currentPage, setCurrentPage, locale, isMobile }: Props) => {
-  const asPath = useRouter().asPath;
+const Pagination = ({ totalPages, currentPage, setCurrentPage, isMobile }: Props) => {
   const intl = useIntl();
   const shownPagesNum = 3;
   const isNotFirst = currentPage > 0;
@@ -26,23 +22,18 @@ const Pagination = ({ totalPages, currentPage, setCurrentPage, locale, isMobile 
     start = totalPages - shownPagesNum;
   }
   const handleFirst = (e: React.MouseEvent) => {
-    e.preventDefault();
     isNotFirst && setCurrentPage(0);
   };
   const handlePrev = (e: React.MouseEvent) => {
-    e.preventDefault();
     isNotFirst && setCurrentPage(currentPage - 1);
   };
   const handleNext = (e: React.MouseEvent) => {
-    e.preventDefault();
     isNotLast && setCurrentPage(currentPage + 1);
   };
   const handleLast = (e: React.MouseEvent) => {
-    e.preventDefault();
     isNotLast && setCurrentPage(totalPages - 1);
   };
   const handlePage = (e: React.MouseEvent, i: number) => {
-    e.preventDefault();
     const isCurrent = currentPage === i;
     !isCurrent && setCurrentPage(i);
   };
@@ -56,7 +47,7 @@ const Pagination = ({ totalPages, currentPage, setCurrentPage, locale, isMobile 
             styles.borderBetween
           }`}
           role="button"
-          href={asPath + '/#'}
+          href={'#'}
           tabIndex={0}
           onClick={(e) => handlePage(e, i)}
         >
@@ -73,7 +64,7 @@ const Pagination = ({ totalPages, currentPage, setCurrentPage, locale, isMobile 
             aria-label={intl.formatMessage({ id: 'firstPage', defaultMessage: 'First page' })}
             className={`${!isNotFirst ? styles.disabled : styles.interactive} ${styles.icons} ${styles.borderFirst}`}
             role="button"
-            href={asPath + '/#'}
+            href={'#'}
             tabIndex={0}
             onClick={handleFirst}
           >
@@ -90,7 +81,7 @@ const Pagination = ({ totalPages, currentPage, setCurrentPage, locale, isMobile 
               : `${!isNotFirst ? styles.disabled : styles.interactive} ${styles.icons} ${styles.borderBetween}`
           }
           role="button"
-          href={asPath + '/#'}
+          href={'#'}
           tabIndex={0}
           onClick={handlePrev}
         >
@@ -107,7 +98,7 @@ const Pagination = ({ totalPages, currentPage, setCurrentPage, locale, isMobile 
               : `${!isNotLast ? styles.disabled : styles.interactive} ${styles.icons} ${styles.borderBetween}`
           }
           role="button"
-          href={asPath + '/#'}
+          href={'#'}
           tabIndex={0}
           onClick={handleNext}
         >
@@ -120,7 +111,7 @@ const Pagination = ({ totalPages, currentPage, setCurrentPage, locale, isMobile 
             aria-label={intl.formatMessage({ id: 'lastPage', defaultMessage: 'Last page' })}
             className={`${!isNotLast ? styles.disabled : styles.interactive} ${styles.icons} ${styles.borderLast}`}
             role="button"
-            href={asPath + '/#'}
+            href={'#'}
             tabIndex={0}
             onClick={handleLast}
           >
