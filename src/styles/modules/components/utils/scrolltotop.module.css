@@ -7,7 +7,7 @@
   background-color: #fff;
   right: 1rem;
   bottom: 1rem;
-  transition: var(--transition);
+  transition: opacity var(--transition-duration);
   box-shadow: var(--shadow);
   @mixin isDark {
     box-shadow: var(--shadow-dark);
