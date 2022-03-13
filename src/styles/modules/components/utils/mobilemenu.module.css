@@ -9,14 +9,16 @@
   inset: 0px;
   opacity: 0;
   background: radial-gradient(circle at center, #f9fafb, 75%, var(--gray-200-l));
-  transition: opacity 200ms ease, transform 200ms ease;
+  transition: opacity var(--transition-duration) var(--transition-timing-function),
+    transform var(--transition-duration) var(--transition-timing-function);
   @mixin isDark {
     background: radial-gradient(circle at center, var(--black-400), 75%, #000);
   }
   li {
     transform: translateX(-100px);
     opacity: 0;
-    transition: opacity 200ms ease, transform 200ms ease;
+    transition: opacity var(--transition-duration) var(--transition-timing-function),
+      transform var(--transition-duration) var(--transition-timing-function);
   }
 }
 .menuRendered {

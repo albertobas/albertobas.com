@@ -161,13 +161,13 @@
 }
 .tocAside,
 .tocAsideTransparent {
-  transition: var(--transition);
+  transition: opacity var(--transition-duration);
   position: fixed;
   width: 15rem;
   max-height: calc(100vh - 8rem);
   top: 4rem;
   left: calc(50vw + 400px);
-  overflow: hidden;
+  overflow: auto;
 }
 .tocAside {
   opacity: 0.25;
@@ -206,16 +206,12 @@
 .tocAside > nav > ul li,
 .tocAsideTransparent > nav > ul li {
   font-size: 1rem;
-  line-height: 1rem;
+  line-height: 1.25;
 }
 .tocAside > h2,
 .tocAsideTransparent > h2 {
   margin: 0;
-  padding: 0.5rem 0 0.5rem 1rem;
-  border-left: 3px solid var(--gray-200-l);
-  @mixin isDark {
-    border-color: var(--black-200);
-  }
+  padding: 0 0.5rem 0.3rem calc(1rem + 3px);
 }
 .tocAside > nav ul,
 .tocAsideTransparent > nav ul {
@@ -258,11 +254,11 @@
 }
 .tocAside > nav > ul > li > a,
 .tocAsideTransparent > nav > ul > li > a {
-  padding: 0.5rem 1rem;
+  padding: 0.3rem 0.5rem 0.3rem 1rem;
 }
 .tocAside > nav > ul > li > ul > li > a,
 .tocAsideTransparent > nav > ul > li > ul > li > a {
-  padding: 0.5rem 0.5rem 0.5rem 2rem;
+  padding: 0.3rem 0.5rem 0.3rem 2rem;
 }
 
 .hr {
