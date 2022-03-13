@@ -48,6 +48,7 @@ html {
   font-size: 15px;
   font-weight: 400;
   background-color: #fff;
+  scroll-behavior: auto;
 }
 body {
   font-family: var(--font-sans);
@@ -57,7 +58,6 @@ body {
   font-feature-settings: 'kern';
   box-sizing: border-box;
   margin: 0px;
-  scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   color: var(--gray-700);
   background-color: #f9fafb;
