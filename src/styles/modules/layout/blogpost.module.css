@@ -85,7 +85,7 @@
   border-left: 5px solid var(--gray-300-l);
   @mixin isDark {
     background-color: var(--black-300);
-    border-left: 5px solid var(--gray-800);
+    border-left-color: var(--gray-800);
   }
 }
 .meta {
@@ -168,10 +168,6 @@
   top: 4rem;
   left: calc(50vw + 400px);
   overflow: hidden;
-  border-left: 3px solid var(--gray-200-l);
-  @mixin isDark {
-    border-color: var(--gray-800);
-  }
 }
 .tocAside {
   opacity: 0.25;
@@ -200,11 +196,6 @@
     color: var(--blue-200);
   }
 }
-.toc > nav > ul {
-  padding-left: 1.5rem;
-  list-style-type: disc;
-  margin: 0;
-}
 .toc > nav > ul > li > a {
   @mixin $text-base;
   letter-spacing: 0.05em;
@@ -212,42 +203,68 @@
 }
 .tocAside > h2,
 .tocAsideTransparent > h2,
-.tocAside > nav > ul > li,
-.tocAsideTransparent > nav > ul > li {
-  margin: 0;
+.tocAside > nav > ul li,
+.tocAsideTransparent > nav > ul li {
   font-size: 1rem;
   line-height: 1rem;
 }
-.tocAside > nav > ul > li,
-.tocAsideTransparent > nav > ul > li {
-  margin-top: 0.75rem;
+.tocAside > h2,
+.tocAsideTransparent > h2 {
+  margin: 0;
+  padding: 0.5rem 0 0.5rem 1rem;
+  border-left: 3px solid var(--gray-200-l);
+  @mixin isDark {
+    border-color: var(--black-200);
+  }
+}
+.tocAside > nav ul,
+.tocAsideTransparent > nav ul {
+  padding: 0;
+  list-style-type: none;
+  margin: 0;
+}
+.tocAside > nav > ul li,
+.tocAsideTransparent > nav > ul li {
+  margin: 0;
+}
+.toc > nav ul {
+  padding-left: 1.5rem;
+  margin: 0;
+}
+.toc > nav > ul {
+  list-style-type: disc;
+}
+.toc > nav > ul > li > ul {
+  list-style-type: none;
 }
 .mdx,
 .intro,
-.toc > nav > ul > li > a {
+.toc > nav > ul li > a {
   color: var(--black-100);
   @mixin isDark {
     color: var(--gray-100);
   }
 }
-.tocAside > nav > ul > li > a,
-.tocAsideTransparent > nav > ul > li > a {
+.tocAside > nav > ul li > a,
+.tocAsideTransparent > nav > ul li > a {
   color: var(--gray-800-l);
+  display: block;
+  border-radius: 0 var(--border-radius) var(--border-radius) 0;
+  border-left: 3px solid var(--gray-200-l);
   @mixin isDark {
     color: var(--gray-300);
+    border-color: var(--black-200);
   }
 }
-.tocAside > nav > ul,
-.tocAsideTransparent > nav > ul,
-.tocAside > h2,
-.tocAsideTransparent > h2 {
-  padding-left: 1rem;
+.tocAside > nav > ul > li > a,
+.tocAsideTransparent > nav > ul > li > a {
+  padding: 0.5rem 1rem;
 }
-.tocAside > nav > ul,
-.tocAsideTransparent > nav > ul {
-  list-style-type: none;
-  margin: 0;
+.tocAside > nav > ul > li > ul > li > a,
+.tocAsideTransparent > nav > ul > li > ul > li > a {
+  padding: 0.5rem 0.5rem 0.5rem 2rem;
 }
+
 .hr {
   margin-top: 3.75rem;
   border-top: 1px solid var(--gray-200-l);
@@ -260,6 +277,7 @@
     border-color: var(--black-300);
   }
 }
+.toc > nav > ul > li > ul > li,
 .toc > nav > ul > li:not(:first-of-type) {
   margin-top: 0.75rem;
 }
@@ -310,10 +328,15 @@
 .tocAside:hover {
   opacity: 1;
 }
-.tocAside > nav > ul > li > a:hover {
+.tocAside > nav ul > li > a:hover {
+  background-color: var(--gray-200-l);
   color: #000;
+  text-decoration: none;
+  border-left-color: #000;
   @mixin isDark {
     color: #fff;
+    background-color: var(--black-200);
+    border-left-color: #fff;
   }
 }
 .toc {
@@ -331,6 +354,7 @@
   .tags > ul > li {
     margin-bottom: 0.25rem;
   }
+  .toc > nav > ul > li > ul > li,
   .toc > nav > ul > li:not(:first-of-type) {
     margin-top: 1rem;
   }
