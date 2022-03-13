@@ -62,6 +62,7 @@ export const getMDX = (source: string) => {
             properties: {
               className: ['hashAnchor'],
             },
+            behavior: 'append',
           },
         ],
       ];
