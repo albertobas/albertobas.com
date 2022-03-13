@@ -56,7 +56,7 @@ const ProjectsPost = ({
   const intl = useIntl();
   const [refMdx, inViewMdx] = useInView({ triggerOnce: false, rootMargin: '0px 0px -100%' });
   const [refRelated, inViewRelated] = useInView({ triggerOnce: false, rootMargin: '0px 0px 0px' });
-  const { isMounted, isRendered } = useDelayedRender(inViewMdx && !inViewRelated);
+  const { isMounted, isRendered } = useDelayedRender(inViewMdx && !inViewRelated, 0, 0);
   return (
     <>
       <ArticleSEO

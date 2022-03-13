@@ -59,7 +59,7 @@ const BlogPost = ({
   const asPath = useRouter().asPath;
   const [refMdx, inViewMdx] = useInView({ triggerOnce: false, rootMargin: '0px 0px -100%' });
   const [refRelated, inViewRelated] = useInView({ triggerOnce: false, rootMargin: '0px 0px 0px' });
-  const { isMounted, isRendered } = useDelayedRender(inViewMdx && !inViewRelated);
+  const { isMounted, isRendered } = useDelayedRender(inViewMdx && !inViewRelated, 0, 250);
   return (
     <>
       <ArticleSEO

@@ -138,18 +138,21 @@ export function useLocales() {
   return locales as string[];
 }
 
-export function useDelayedRender(active: boolean) {
+export function useDelayedRender(active: boolean, enterDelay: number, exitDelay: number) {
   const [isMounted, setIsMounted] = useState<boolean>(false);
   const [isRendered, setIsRendered] = useState<boolean>(false);
   useEffect(() => {
     if (active) {
-      const timeout = setTimeout(() => setIsRendered(true), 100);
+      const enterTimeout = setTimeout(() => setIsRendered(true), enterDelay);
       setIsMounted(true);
-      return () => clearTimeout(timeout);
+      return () => clearTimeout(enterTimeout);
     } else {
-      setIsMounted(false);
+      const exitTimeout = setTimeout(() => {
+        setIsMounted(false);
+      }, exitDelay);
       setIsRendered(false);
+      return () => clearTimeout(exitTimeout);
     }
-  }, [active]);
+  }, [active, enterDelay, exitDelay]);
   return { isMounted, isRendered };
 }
