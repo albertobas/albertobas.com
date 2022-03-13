@@ -82,12 +82,12 @@ export async function getPost(section: string, slug: string, locale: string) {
       const id = slugs.slug(title);
       if (type.startsWith('## ')) {
         headings.push({ id, title, children: [] });
-      } /*else if (type.startsWith('### ') && headings.length > 0) {
-      headings[headings.length - 1].children.push({
-        id,
-        title,
-      });
-    }*/
+      } else if (type.startsWith('### ') && headings.length > 0) {
+        headings[headings.length - 1].children.push({
+          id,
+          title,
+        });
+      }
     }
     const { code, frontmatter } = await getMDX(source);
     if (frontmatter.introduction) {
