@@ -507,6 +507,8 @@ class Attention(nn.Module):
         return(x * weights.unsqueeze(-1)).sum(dim=1)
 ```
 
+#### LSTM
+
 ```python
 # Model parameters
 EMBEDDING_DIM = 128
