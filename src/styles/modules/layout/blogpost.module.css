@@ -276,7 +276,12 @@
 .toc > nav > ul > li:not(:first-of-type) {
   margin-top: 0.75rem;
 }
-.tags a:hover {
+.tags a:hover,
+.mdx a:hover,
+.intro a:hover,
+.toc a:hover,
+.tocAside a:hover,
+.layoutColabGithub a:hover {
   text-decoration: underline;
 }
 .tags a:active {
@@ -291,10 +296,6 @@
     color: #c586c0;
   }
 }
-.mdx a:hover,
-.intro a:hover {
-  text-decoration: underline;
-}
 .mdx a:active,
 .intro a:active {
   color: #000;
@@ -302,17 +303,12 @@
     color: #fff;
   }
 }
-.mdx a:visited,
-.intro a:active {
+.intro a:active,
+.mdx p a:visited {
   color: #bb2bb9;
   @mixin isDark {
     color: #c586c0;
   }
-}
-.toc a:hover,
-.tocAside a:hover,
-.layoutColabGithub a:hover {
-  text-decoration: underline;
 }
 .layoutColabGithub > div > a:hover {
   color: #000;
