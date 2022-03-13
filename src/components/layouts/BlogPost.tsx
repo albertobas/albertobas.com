@@ -117,13 +117,13 @@ const BlogPost = ({
             <div className={styles.layoutColabGithub}>
               <div>
                 <ILink href={hrefColab + '/' + github.repo + '/blob/main/' + github.file}>
-                  <SVG icon="colab" />
+                  <SVG icon="colab" dim={{ width: 1.1, height: 1.1 }} />
                   <FormattedMessage id="openColab" defaultMessage="Open in Colab" />
                 </ILink>
               </div>
               <div>
                 <ILink href={hrefGithub + '/' + github.repo + '/blob/main/' + github.file}>
-                  <SVG icon="github" />
+                  <SVG icon="github" dim={{ width: 1.1, height: 1.1 }} />
                   <FormattedMessage id="viewGithub" defaultMessage="View on GitHub" />
                 </ILink>
               </div>
@@ -132,7 +132,7 @@ const BlogPost = ({
             <div className={styles.layoutColabGithub}>
               <div>
                 <ILink href={hrefGithub + '/' + github.repo}>
-                  <SVG icon="github" />
+                  <SVG icon="github" dim={{ width: 1.1, height: 1.1 }} />
                   <FormattedMessage id="viewGithub" defaultMessage="View on GitHub" />
                 </ILink>
               </div>

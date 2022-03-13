@@ -120,7 +120,7 @@ const ProjectsPost = ({
                 {link && (
                   <div>
                     <ILink href={link}>
-                      <SVG icon="link" />
+                      <SVG icon="link" dim={{ width: 1.1, height: 1.1 }} />
                       <FormattedMessage id="goToWeb" defaultMessage="Go to website" />
                     </ILink>
                   </div>
@@ -128,7 +128,7 @@ const ProjectsPost = ({
                 {github && (
                   <div>
                     <ILink href={hrefGithub + '/' + github.repo}>
-                      <SVG icon="github" />
+                      <SVG icon="github" dim={{ width: 1.1, height: 1.1 }} />
                       <FormattedMessage id="viewGithub" defaultMessage="View on GitHub" />
                     </ILink>
                   </div>

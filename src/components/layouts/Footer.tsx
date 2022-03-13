@@ -121,7 +121,7 @@ const Footer = () => {
                         }
                         aria-label={item}
                       >
-                        <SVG icon={item as IconList} dim={{ width: 1.7, height: 1.7 }} />
+                        <SVG icon={item as IconList} dim={{ width: 1.5, height: 1.5 }} />
                       </ILink>
                     </span>
                   </Tooltip>
