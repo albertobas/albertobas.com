@@ -235,7 +235,8 @@
 }
 .mdx,
 .intro,
-.toc > nav > ul li > a {
+.toc > nav > ul li > a,
+.tocAside > nav > ul li > a {
   color: var(--black-100);
   @mixin isDark {
     color: var(--gray-100);
@@ -243,12 +244,10 @@
 }
 .tocAside > nav > ul li > a,
 .tocAsideTransparent > nav > ul li > a {
-  color: var(--gray-800-l);
   display: block;
   border-radius: 0 var(--border-radius) var(--border-radius) 0;
   border-left: 3px solid var(--gray-200-l);
   @mixin isDark {
-    color: var(--gray-300);
     border-color: var(--black-200);
   }
 }
