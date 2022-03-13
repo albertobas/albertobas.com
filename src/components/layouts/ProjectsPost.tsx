@@ -151,7 +151,7 @@ const ProjectsPost = ({
           )}
           {headings.length > 0 && (
             <div className={styles.toc}>
-              <TOC headings={headings} isProjects behavior="smooth" />
+              <TOC headings={headings} isProjects />
             </div>
           )}
           <div ref={refMdx} className={styles.mdx}>
