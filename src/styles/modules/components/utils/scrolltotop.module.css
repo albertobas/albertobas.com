@@ -27,3 +27,9 @@
 .containerTransparent > a > svg {
   padding: 0.5rem;
 }
+.container:hover {
+  box-shadow: var(--shadow-dark);
+  @mixin isDark {
+    box-shadow: var(--shadow);
+  }
+}
