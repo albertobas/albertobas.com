@@ -3,16 +3,18 @@ import matter from 'gray-matter';
 import { readdirSync, readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 
-async function getCards(section, locale) {
-  const contentPath = join(process.cwd(), 'src/_data/mdxs');
-  const files = readdirSync(join(contentPath, locale, section)).filter((path) => /\.mdx?$/.test(path));
+async function getCards(section) {
+  const contentPath = join(process.cwd(), 'src/data');
+  const files = readdirSync(join(contentPath, section)).filter((path) => /\.mdx?$/.test(path));
   return files.map((fileName) => {
-    const slug = fileName.replace('.mdx', '');
-    const source = readFileSync(join(contentPath, locale, section, fileName), 'utf8');
+    const locale = fileName.endsWith('.es.mdx') ? 'es' : 'en';
+    const slug = locale === 'en' ? fileName.replace('.mdx', '') : fileName.replace(`.${locale}.mdx`, '');
+    const source = readFileSync(join(contentPath, section, fileName), 'utf8');
     const { data, content } = matter(source);
     return {
       section: section,
       slug: slug,
+      locale,
       ...data,
     };
   });
@@ -28,24 +30,20 @@ async function generate() {
     site_url: canonical,
     feed_url: canonical + '/' + fileName,
   });
-  await Promise.all(
-    ['en', 'es'].map(async (locale) => {
-      const blogCards = await getCards('blog', locale);
-      const projectsCards = await getCards('projects', locale);
-      for (let card of [...blogCards, ...projectsCards]) {
-        const url =
-          locale === 'en'
-            ? canonical + '/' + card.section + '/' + card.slug
-            : canonical + '/' + locale + '/' + card.section + '/' + card.slug;
-        feed.item({
-          title: card.title,
-          url: url,
-          date: card.datePublished,
-          description: card.description,
-        });
-      }
-    })
-  );
+  const blogCards = await getCards('blog');
+  const projectsCards = await getCards('projects');
+  for (let card of [...blogCards, ...projectsCards]) {
+    const url =
+      card.locale === 'en'
+        ? canonical + '/' + card.section + '/' + card.slug
+        : canonical + '/' + card.locale + '/' + card.section + '/' + card.slug;
+    feed.item({
+      title: card.title,
+      url: url,
+      date: card.datePublished,
+      description: card.description,
+    });
+  }
   writeFileSync(join('public', fileName), feed.xml({ indent: true }));
 }
 

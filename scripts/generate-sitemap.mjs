@@ -5,10 +5,12 @@ import { globby } from 'globby';
 import prettier from 'prettier';
 
 async function getTags(section) {
-  const contentPath = join(process.cwd(), 'src/_data/mdxs');
-  const files = readdirSync(join(contentPath, 'en', section)).filter((path) => /\.mdx?$/.test(path));
+  const contentPath = join(process.cwd(), 'src/data');
+  const files = readdirSync(join(contentPath, section)).filter(
+    (path) => /\.mdx?$/.test(path) && /\.es.mdx?$/.test(path)
+  );
   return files.map((fileName) => {
-    const source = readFileSync(join(contentPath, 'en', section, fileName), 'utf8');
+    const source = readFileSync(join(contentPath, section, fileName), 'utf8');
     const { data, content } = matter(source);
     return {
       tags: data['tags'] + ',' + data['tech'],
@@ -38,7 +40,8 @@ async function generateSitemap() {
   const prettierConfig = await prettier.resolveConfig('./.prettierrc');
   const pages = await globby([
     'src/pages/**/*.tsx',
-    'src/_data/mdxs/en/**/*.mdx',
+    'src/data/**/*.mdx',
+    '!src/data/**/*.es.mdx',
     '!src/pages/**/[slug].tsx',
     '!src/pages/**/[tag].tsx',
     '!src/pages/_*.tsx',
@@ -53,7 +56,7 @@ async function generateSitemap() {
             const path = page
               .replace('src', '')
               .replace('/pages', '')
-              .replace('/_data', '')
+              .replace('/data', '')
               .replace('/mdxs', '')
               .replace('/en', '')
               .replace('.tsx', '')

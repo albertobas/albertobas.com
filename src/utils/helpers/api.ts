@@ -8,46 +8,28 @@ import { bundleMDX } from 'mdx-bundler';
 import matter from 'gray-matter';
 import path from 'path';
 import fs from 'fs';
-import { getKeySet, shuffle } from 'src/utils/helpers/post';
+import { getKeySet, shuffle, sortCardList } from 'src/utils/helpers/post';
 import { DictKeys, Section } from 'src/utils/interfaces/dict';
-import { Headings, MdxMetadataCard, MdxMetadataPost, RelatedPosts } from 'src/utils/interfaces/post';
-import { dictCB, dictDS, dictWD } from 'src/utils/dict';
+import { Headings, MdxMetadataCard, MdxMetadataPost, MdxPost, RelatedPosts } from 'src/utils/interfaces/post';
+import { dictCB, dictDS, dictTopics, dictWD } from 'src/utils/dict';
 
-const contentPath = path.join(process.cwd(), 'src/_data/mdxs');
+const contentPath = path.join(process.cwd(), 'src/data');
 
 const readDirMdxFiltered = (contentPath: string, locale: string, section: string) => {
-  return fs.readdirSync(path.join(contentPath, locale, section)).filter((path) => /\.mdx?$/.test(path));
+  if (locale === 'en') {
+    return fs
+      .readdirSync(path.join(contentPath, section))
+      .filter((path) => path.split('.').length === 2 && /\.mdx?$/.test(path));
+  } else {
+    const regex = new RegExp('.' + locale + '.mdx?$');
+    return fs
+      .readdirSync(path.join(contentPath, section))
+      .filter((path) => path.split('.').length > 2 && regex.test(path))
+      .map((file) => file.replace(`.${locale}`, ''));
+  }
 };
-export async function getCards(section: Section, locale: string) {
-  return readDirMdxFiltered(contentPath, locale, section).map((fileName) => {
-    const slug = fileName.replace('.mdx', '');
-    const source = fs.readFileSync(path.join(contentPath, locale, section, fileName), 'utf8');
-    const { data, content } = matter(source);
-    return {
-      slug: slug,
-      title: data.title,
-      section: section,
-      topic: data.field
-        ? Object.keys(dictCB).includes(data.field)
-          ? 'crypto-blockchain'
-          : Object.keys(dictDS).includes(data.field)
-          ? 'data-science'
-          : Object.keys(dictWD).includes(data.field)
-          ? 'web-development'
-          : null
-        : null,
-      field: data.field,
-      description: data.description,
-      readingTime: readingTime(source),
-      datePublished: data.datePublished,
-      dateModified: data.dateModified ? data.dateModified : null,
-      tags: data.tags ? data.tags : null,
-      tech: data.tech ? data.tech : null,
-      image: data.image ? data.image : null,
-    } as MdxMetadataCard;
-  });
-}
-export const getMDX = (source: string) => {
+
+const getMDX = (source: string) => {
   return bundleMDX({
     source: source,
     xdmOptions(options) {
@@ -70,9 +52,13 @@ export const getMDX = (source: string) => {
     },
   });
 };
-export async function getPost(section: string, slug: string, locale: string) {
+
+async function getPost(section: string, slug: string, locale: string) {
   try {
-    const source = fs.readFileSync(path.join(contentPath, locale, section, `${slug}.mdx`), 'utf-8');
+    const source = fs.readFileSync(
+      path.join(contentPath, section, `${locale === 'en' ? slug : `${slug}.${locale}`}.mdx`),
+      'utf-8'
+    );
     const regexp = new RegExp(/^(### |## )(.*)\n/, 'gm');
     const headings: Headings[] = [];
     const matches = source.matchAll(regexp);
@@ -110,28 +96,96 @@ export async function getPost(section: string, slug: string, locale: string) {
         ...frontmatter,
       } as MdxMetadataPost,
       headings,
-    };
+    } as MdxPost;
   } catch {
     return undefined;
   }
 }
-export async function getRelatedPosts(section: Section, reference: RelatedPosts, locale: string) {
+
+export async function getCards(section: Section, locale: string) {
+  return readDirMdxFiltered(contentPath, locale, section).map((fileName) => {
+    const slug = fileName.replace('.mdx', '');
+    const source = fs.readFileSync(
+      path.join(contentPath, section, `${locale === 'en' ? fileName : `${slug}.${locale}.mdx`}`),
+      'utf8'
+    );
+    const { data, content } = matter(source);
+    return {
+      slug: slug,
+      title: data.title,
+      section: section,
+      topic: data.field
+        ? Object.keys(dictCB).includes(data.field)
+          ? 'crypto-blockchain'
+          : Object.keys(dictDS).includes(data.field)
+          ? 'data-science'
+          : Object.keys(dictWD).includes(data.field)
+          ? 'web-development'
+          : null
+        : null,
+      field: data.field,
+      description: data.description,
+      readingTime: readingTime(source),
+      datePublished: data.datePublished,
+      dateModified: data.dateModified ? data.dateModified : null,
+      tags: data.tags ? data.tags : null,
+      tech: data.tech ? data.tech : null,
+      image: data.image ? data.image : null,
+    } as MdxMetadataCard;
+  });
+}
+
+async function getRelatedPosts(section: Section, reference: RelatedPosts, locale: string) {
   const cards = await getCards(section, locale);
   return shuffle(
     cards.filter((post) => reference.value && post[reference.key] === reference.value && post.slug != reference.slug)
   );
 }
-export async function getSlugsAndLocales(section: DictKeys, locales: string[]) {
-  const slugsAndLocales: { slug: string; locale: string }[] = [];
+
+export async function getProps(section: Section, slug: string, locale: string, locales: string[]) {
+  const post = await getPost(section, slug as string, locale);
+  if (!post) {
+    return undefined;
+  } else {
+    const related = await getRelatedPosts(
+      section,
+      { key: 'field', value: post.frontMatter.field, slug: post.frontMatter.slug },
+      locale
+    );
+    if (section === 'blog') return { post, relatedPosts: related.slice(0, 3), locale, locales };
+    else if (section === 'projects') {
+      return { post, relatedProjects: related.slice(0, 2), locale, locales };
+    } else return undefined;
+  }
+}
+
+export async function getPaths(section: DictKeys, locales: string[]) {
+  const paths: { params: { slug: string; locale: string } }[] = [];
   locales.forEach(function (locale) {
     readDirMdxFiltered(contentPath, locale, section).forEach(function (slug) {
-      slugsAndLocales.push({ slug: slug, locale: locale });
+      paths.push({ params: { slug: slug.replace(/\.mdx/, ''), locale: locale } });
     });
   });
-  return slugsAndLocales;
+  return paths;
 }
-export async function getTagsLocales(locales: string[]) {
-  const tagsLocales: { tag: string; locale: string }[] = [];
+
+export async function getPropsTags(tag: string, locale: string, locales: string[]) {
+  if (!Object.keys(dictTopics).includes(tag as string)) {
+    return undefined;
+  }
+  const blogCards = await getCards('blog', locale);
+  const projectsCards = await getCards('projects', locale);
+  const tagRelatedBlogCards = sortCardList(blogCards).filter(
+    (post) => post.tags?.split(',').includes(tag as string) || post.tech?.split(',').includes(tag as string)
+  );
+  const tagRelatedProjectsCards = sortCardList(projectsCards).filter(
+    (post) => post.tags?.split(',').includes(tag as string) || post.tech?.split(',').includes(tag as string)
+  );
+  return { tag, blogCards: tagRelatedBlogCards, projectsCards: tagRelatedProjectsCards, locale, locales };
+}
+
+export async function getPathsTags(locales: string[]) {
+  const paths: { params: { tag: string; locale: string } }[] = [];
   locales.map(async (locale) => {
     const blogCards: MdxMetadataCard[] = [];
     const projectsCards: MdxMetadataCard[] = [];
@@ -142,12 +196,14 @@ export async function getTagsLocales(locales: string[]) {
     const source = tags && tech ? [...tags, ...tech] : tags ? tags : tech ? tech : undefined;
     if (source) {
       source.map((tag) => {
-        tagsLocales.push({
-          tag: tag,
-          locale: locale,
+        paths.push({
+          params: {
+            tag: tag,
+            locale: locale,
+          },
         });
       });
     } else return;
   });
-  return tagsLocales;
+  return paths;
 }
