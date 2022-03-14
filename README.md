@@ -19,8 +19,8 @@ Furthermore, this website is entirely translated to spanish.
 
 ## Overview
 
-- `src/_data/*`: MDX files used for pages in **blog** and **projects**.
 - `src/components/*`: React.js components in `.tsx`.
+- `src/data/*`: MDX files used for pages in **blog** and **projects**.
 - `src/pages/*`: static pages.
 - `src/styles/*`: CSSModules files, postcss mixins and a global css file.
 - `src/utils/*`: helper functions, interfaces, hooks, contexts, constants and dictionaries used in some translations and options lists.
