@@ -1,9 +1,8 @@
 import { useRouter } from 'next/router';
 import { useIntl } from 'react-intl';
-import { getCards, getTagsLocales } from 'src/utils/helpers/api';
+import { getPathsTags, getPropsTags } from 'src/utils/helpers/api';
 import { MdxMetadataCard } from 'src/utils/interfaces/post';
 import { Language } from 'src/utils/interfaces/languages';
-import { sortCardList } from 'src/utils/helpers/post';
 import Intro from 'src/components/utils/Intro';
 import SEO from 'src/components/utils/SEO';
 import Breadcrumbs from 'src/components/utils/Breadcrumbs';
@@ -23,7 +22,7 @@ type Props = {
 };
 const pageKey = 'tags';
 
-const TagPage = ({ tag, blogCards, projectsCards, locale, locales }: Props) => {
+const DynamicTag = ({ tag, blogCards, projectsCards, locale, locales }: Props) => {
   const router = useRouter();
   const intl = useIntl();
   const { isFallback } = router;
@@ -58,34 +57,18 @@ const TagPage = ({ tag, blogCards, projectsCards, locale, locales }: Props) => {
   );
 };
 
-export default TagPage;
+export default DynamicTag;
 
 export const getStaticProps: GetStaticProps = async ({ locale, locales, params }) => {
   if (!params || !locale || !locales) {
     return { notFound: true };
   } else {
-    if (!Object.keys(dictTopics).includes(params.tag as string)) {
+    const props = await getPropsTags(params.tag as string, locale, locales);
+    if (!props) {
       return { notFound: true };
+    } else {
+      return { props };
     }
-    const blogCards = await getCards('blog', locale);
-    const projectsCards = await getCards('projects', locale);
-    const tagRelatedBlogCards = sortCardList(blogCards).filter(
-      (post) =>
-        post.tags?.split(',').includes(params.tag as string) || post.tech?.split(',').includes(params.tag as string)
-    );
-    const tagRelatedProjectsCards = sortCardList(projectsCards).filter(
-      (post) =>
-        post.tags?.split(',').includes(params.tag as string) || post.tech?.split(',').includes(params.tag as string)
-    );
-    return {
-      props: {
-        tag: params.tag,
-        blogCards: tagRelatedBlogCards,
-        projectsCards: tagRelatedProjectsCards,
-        locale,
-        locales,
-      },
-    };
   }
 };
 
@@ -93,16 +76,9 @@ export const getStaticPaths: GetStaticPaths = async ({ locales }) => {
   if (!locales) {
     throw new Error('Locales is undefined in getStaticPaths');
   } else {
-    const tagsLocales = await getTagsLocales(locales);
+    const paths = await getPathsTags(locales);
     return {
-      paths: tagsLocales.map((tagLocale) => {
-        return {
-          params: {
-            tag: tagLocale.tag,
-            locale: tagLocale.locale,
-          },
-        };
-      }),
+      paths,
       fallback: true,
     };
   }

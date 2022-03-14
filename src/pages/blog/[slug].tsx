@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
-import { getPost, getRelatedPosts, getSlugsAndLocales } from 'src/utils/helpers/api';
+import { getPaths, getProps } from 'src/utils/helpers/api';
 import { MdxPost, MdxMetadataCard } from 'src/utils/interfaces/post';
 import { Language } from 'src/utils/interfaces/languages';
 import BlogPost from 'src/components/layouts/BlogPost';
@@ -58,18 +58,11 @@ export const getStaticProps: GetStaticProps = async ({ locale, locales, params }
   if (!params || !locale || !locales) {
     return { notFound: true };
   } else {
-    const post: MdxPost | undefined = await getPost(section, params.slug as string, locale);
-    if (!post) {
+    const props = await getProps(section, params.slug as string, locale, locales);
+    if (!props) {
       return { notFound: true };
     } else {
-      const relatedPosts = await getRelatedPosts(
-        section,
-        { key: 'field', value: post.frontMatter.field, slug: post.frontMatter.slug },
-        locale
-      );
-      return {
-        props: { post, relatedPosts: relatedPosts.slice(0, 3), locale, locales },
-      };
+      return { props };
     }
   }
 };
@@ -78,17 +71,9 @@ export const getStaticPaths: GetStaticPaths = async ({ locales }) => {
   if (!locales) {
     throw new Error('Locales is undefined in getStaticPaths');
   } else {
-    const slugsAndLocales = await getSlugsAndLocales(section, locales);
-
+    const paths = await getPaths(section, locales);
     return {
-      paths: slugsAndLocales.map((slugAndLocale) => {
-        return {
-          params: {
-            slug: slugAndLocale.slug.replace(/\.mdx/, ''),
-            locale: slugAndLocale.locale,
-          },
-        };
-      }),
+      paths,
       fallback: true,
     };
   }
