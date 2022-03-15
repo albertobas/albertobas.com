@@ -57,8 +57,6 @@ async function generateSitemap() {
               .replace('src', '')
               .replace('/pages', '')
               .replace('/data', '')
-              .replace('/mdxs', '')
-              .replace('/en', '')
               .replace('.tsx', '')
               .replace('.mdx', '');
             const route = path === '/index' ? '' : path;
