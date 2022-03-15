@@ -8,10 +8,10 @@ import Dropdown from 'src/components/utils/Dropdown';
 import SVG, { IconList } from 'src/components/utils/SVG';
 import { sortKeysTags } from 'src/utils/constants';
 import { DictKeys } from 'src/utils/interfaces/dict';
-import Tag from 'src/components/tags/Tag';
 import { sortTags } from 'src/utils/helpers/tags';
 import Tooltip from 'src/components/utils/Tooltip';
 import { useFilterSort, useIsMounted } from 'src/utils/hooks';
+import Tags from 'src/components/tags/Tags';
 
 type Props = {
   tags: ItemExtended[];
@@ -84,14 +84,8 @@ const SortListTags = ({ tags, filteredSearch, locale }: Props) => {
           )}
         </div>
       </div>
-      <nav role="navigation">
-        <ul className={styles.layoutTags}>
-          {(sort ? sortedData : tags).map((tag) => (
-            <li key={tag.value}>
-              <Tag tag={tag} />
-            </li>
-          ))}
-        </ul>
+      <nav role="navigation" className={styles.layoutTags}>
+        <Tags tags={sort ? sortedData : tags} />
       </nav>
     </>
   );

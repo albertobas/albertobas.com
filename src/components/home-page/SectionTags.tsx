@@ -1,8 +1,8 @@
 import { ItemExtended } from 'src/utils/interfaces/architecture';
 import { Language } from 'src/utils/interfaces/languages';
 import styles from 'src/styles/modules/pages/home.module.css';
-import Tag from 'src/components/tags/Tag';
 import ILink from 'src/components/utils/ILink';
+import Tags from 'src/components/tags/Tags';
 
 type Props = {
   heading: string;
@@ -19,14 +19,8 @@ const SectionTags = ({ tags, heading, upperbound }: Props) => {
           {heading}
         </ILink>
       </h2>
-      <nav role="navigation" className={styles.nav}>
-        <ul className={styles.layoutTags}>
-          {(upperbound ? tags.slice(0, upperbound) : tags).map((tag) => (
-            <li key={tag.value}>
-              <Tag tag={tag} />
-            </li>
-          ))}
-        </ul>
+      <nav role="navigation" className={styles.layoutTags}>
+        <Tags tags={upperbound ? tags.slice(0, upperbound) : tags} />
       </nav>
     </>
   );

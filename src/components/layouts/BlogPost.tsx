@@ -11,9 +11,6 @@ import DateFormatter from 'src/components/utils/DateFormatter';
 import { ArticleSEO } from 'src/components/utils/SEO';
 import { getItemsFromCards } from 'src/utils/helpers/post';
 import { hrefColab, hrefGithub } from 'src/utils/constants';
-import { join } from 'path';
-import { toHashTag } from 'src/utils/helpers/tags';
-import Tooltip from 'src/components/utils/Tooltip';
 import { ItemExtended } from 'src/utils/interfaces/architecture';
 import ILink from 'src/components/utils/ILink';
 import TOC from 'src/components/utils/TOC';
@@ -22,6 +19,7 @@ import { useInView } from 'react-intersection-observer';
 import ScrollToTop from '../utils/ScrollToTop';
 import { useDelayedRender } from 'src/utils/hooks';
 import SectionCards from 'src/components/home-page/SectionCards';
+import Tags from 'src/components/tags/Tags';
 
 type Props = MdxMetadataPost & {
   children: React.ReactNode;
@@ -139,25 +137,9 @@ const BlogPost = ({
             </div>
           ))}
         {(tags || tech) && (
-          <div className={styles.tags}>
-            <ul>
-              {tagsArray?.map((tag) => {
-                return (
-                  <li key={tag.value}>
-                    <ILink href={join('/tags', tag.value)}>
-                      {tag.description ? (
-                        <Tooltip content={tag.description} placement="bottom">
-                          <span>{toHashTag(tag.label)}</span>
-                        </Tooltip>
-                      ) : (
-                        toHashTag(tag.label)
-                      )}
-                    </ILink>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
+          <nav role="navigation" className={styles.tags}>
+            <Tags tags={tagsArray} hash />
+          </nav>
         )}
         {introduction && (
           <div className={styles.intro}>

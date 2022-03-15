@@ -8,12 +8,12 @@ import SVG from 'src/components/utils/SVG';
 import { dictIcons, IconList } from 'src/components/utils/SVG';
 import { join } from 'path';
 import { DictTopics } from 'src/utils/interfaces/dict';
-import Tag from 'src/components/tags/Tag';
 import DateFormatter from 'src/components/utils/DateFormatter';
 import Tooltip from 'src/components/utils/Tooltip';
 import { ItemExtended } from 'src/utils/interfaces/architecture';
 import ILink from 'src/components/utils/ILink';
 import { useIntl } from 'react-intl';
+import Tags from 'src/components/tags/Tags';
 
 type Props = MdxMetadataCard & { locale: Language };
 
@@ -44,15 +44,9 @@ export default memo(function CardBlog({
         </h2>
         {description && <p className={styles.description}>{shortenText(description)}</p>}
         {(tags || tech) && (
-          <ul className={styles.layoutTags}>
-            {tagsArray?.map((tag) => {
-              return (
-                <li key={tag.value}>
-                  <Tag tag={tag as ItemExtended} />
-                </li>
-              );
-            })}
-          </ul>
+          <nav role="navigation" className={styles.layoutTags}>
+            <Tags tags={tagsArray} />
+          </nav>
         )}
         <div className={styles.layoutDate}>
           {false && tech && (

@@ -13,12 +13,12 @@ import { getItemsFromCards } from 'src/utils/helpers/post';
 import { hrefGithub } from 'src/utils/constants';
 import { ItemExtended } from 'src/utils/interfaces/architecture';
 import TOC from 'src/components/utils/TOC';
-import Tag from 'src/components/tags/Tag';
-import ILink from '../utils/ILink';
+import ILink from 'src/components/utils/ILink';
 import { useInView } from 'react-intersection-observer';
-import ScrollToTop from '../utils/ScrollToTop';
+import ScrollToTop from 'src/components/utils/ScrollToTop';
 import SectionCards from 'src/components/home-page/SectionCards';
 import { useDelayedRender } from 'src/utils/hooks';
+import Tags from 'src/components/tags/Tags';
 
 type Props = MdxMetadataPost & {
   children: React.ReactNode;
@@ -137,17 +137,9 @@ const ProjectsPost = ({
             }
           </div>
           {(tags || tech) && (
-            <div className={styles.tags}>
-              <ul>
-                {tagsArray?.map((tag) => {
-                  return (
-                    <li key={tag.value}>
-                      <Tag tag={tag as ItemExtended} />
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
+            <nav role="navigation" className={styles.tags}>
+              <Tags tags={tagsArray} />
+            </nav>
           )}
           {headings.length > 0 && (
             <div className={styles.toc}>
