@@ -188,7 +188,7 @@
 .tags > ul > li {
   margin: 0 0.75rem 0 0;
 }
-.tags > ul > li > a {
+.tags > ul > li > div > a {
   font-weight: 500;
   line-height: 1.9;
   color: var(--blue-300);

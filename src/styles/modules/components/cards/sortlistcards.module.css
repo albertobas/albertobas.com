@@ -87,7 +87,7 @@
   row-gap: 1rem;
   grid-auto-rows: 1fr;
 }
-.layoutTags {
+.layoutTags > ul {
   width: 100%;
   padding: 0;
   display: flex;
@@ -95,7 +95,7 @@
   align-items: center;
   justify-content: center;
 }
-.layoutTags > li {
+.layoutTags > ul > li {
   margin: 0 0.2rem 0.3rem;
 }
 .paginationWrapper {
@@ -123,7 +123,7 @@
   display: none;
 }
 @media (--laptop) {
-  .layoutTags > li {
+  .layoutTags > ul > li {
     margin: 0 0.25rem 0.6rem;
   }
 }

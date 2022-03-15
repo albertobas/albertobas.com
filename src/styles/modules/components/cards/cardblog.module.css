@@ -26,7 +26,7 @@
   @mixin $text-base;
   margin: 0.5rem 0 0;
 }
-.layoutTags {
+.layoutTags > ul {
   margin: 0.5rem 0 0;
   padding: 0;
   display: flex;
@@ -87,11 +87,6 @@
 .layout h2 > a:hover {
   text-decoration: underline;
 }
-/*@media (--laptop) {
-  .layoutTags > li {
-    margin: 0 0.25rem 0.6rem 0;
-  }
-}*/
 @media (--tablet) {
   .layout {
     padding: 1.5rem 1rem;
