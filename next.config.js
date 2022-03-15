@@ -1,7 +1,5 @@
 /** @type {import('next').NextConfig} */
 
-const { SubresourceIntegrityPlugin } = require('webpack-subresource-integrity');
-// const withPWA = require('next-pwa');
 const ContentSecurityPolicy = `
   default-src 'self'; 
   child-src 'self'; 
@@ -22,11 +20,6 @@ const nextConfig = {
     locales: ['en', 'es'],
     defaultLocale: 'en',
   },
-  /*pwa: {
-    dest: 'public',
-    mode: 'production',
-    disable: process.env.NODE_ENV === 'development',
-  },*/
   async headers() {
     return [
       {
@@ -69,15 +62,6 @@ const nextConfig = {
     ];
   },
   webpack(config, { dev, isServer }) {
-    if (!dev) {
-      config.output.crossOriginLoading = 'anonymous';
-      config.plugins.push(
-        new SubresourceIntegrityPlugin({
-          hashFuncNames: ['sha256', 'sha384'],
-          enabled: true,
-        })
-      );
-    }
     if (!dev && !isServer) {
       Object.assign(config.resolve.alias, {
         'react/jsx-runtime.js': 'preact/compat/jsx-runtime',
