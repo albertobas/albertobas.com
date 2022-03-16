@@ -69,10 +69,23 @@ export function cardSearch(cards: MdxMetadataCard[], query: string | null, local
         (card.topic &&
           dictTopics[card.topic as DictTopics]?.label[locale].toLowerCase().indexOf(query.toLowerCase()) > -1) ||
         (card.topic &&
-          dictTopics[card.topic as DictTopics]?.description[locale].toLowerCase().indexOf(query.toLowerCase()) > -1)
+          dictTopics[card.topic as DictTopics]?.description[locale].toLowerCase().indexOf(query.toLowerCase()) > -1) ||
+        (card.tags && getTagsString(card.tags, 'tags', locale).toLowerCase().indexOf(query.toLowerCase()) > -1) ||
+        (card.tech && getTagsString(card.tech, 'tech', locale).toLowerCase().indexOf(query.toLowerCase()) > -1)
     );
   } else return cards;
 }
+const getTagsString = (data: MdxMetadataCard[] | string, key: keyof MdxMetadataCard, locale: Language) => {
+  const keySet = getKeySet(data, key);
+  let tagsString = '';
+  keySet?.forEach(function (item) {
+    if (item && Object.keys(dictTopics).includes(item)) {
+      tagsString += dictTopics[item as DictTopics].description[locale];
+      (tagsString += dictTopics[item as DictTopics].label[locale]), (tagsString += item);
+    }
+  });
+  return tagsString;
+};
 export const getItemsFromCards = (data: MdxMetadataCard[] | string, key: keyof MdxMetadataCard, locale: Language) => {
   const keySet = getKeySet(data, key);
   const typeItemsArray: (Item | ItemExtended)[] = [];
