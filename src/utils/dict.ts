@@ -78,10 +78,10 @@ export const dictDS = {
   },
   'convolutional-neural-network': {
     description: {
-      en: 'Convolution neural network is a class of artificial neural network',
+      en: 'Convolutional neural network is a class of artificial neural network',
       es: 'Red neuronal convolucional es una clase de red neuronal artificial',
     },
-    label: { en: 'Convolution neural network', es: 'Red neuronal convolucional' },
+    label: { en: 'Convolutional neural network', es: 'Red neuronal convolucional' },
   },
   'data-preprocessing': {
     description: { en: '', es: '' },
