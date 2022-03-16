@@ -59,12 +59,12 @@
 .mdx > h4 code,
 .mdx > h5 code,
 .mdx > p code,
-.mdx > ul li > code,
-.mdx > ol li > code,
+.mdx > ul code,
+.mdx > ol code,
 .mdx > div > p code,
-.mdx blockquote > p > code,
+.mdx blockquote > p > code/*,
 .mdx > ul li > p > code,
-.mdx > ol li > p > code {
+.mdx > ol li > p > code*/ {
   font-size: 0.9em;
   padding: 0.1em 0.3em;
   background-color: #fff;
@@ -155,9 +155,9 @@
 }
 .mdx,
 .toc > nav > ul li > a {
-  color: var(--black-100);
+  color: var(--text-article);
   @mixin isDark {
-    color: var(--gray-100);
+    color: var(--text-article-dark);
   }
 }
 .toc > nav ul {
