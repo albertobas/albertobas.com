@@ -394,7 +394,7 @@ In order to have tokens at our disposal it is only needed a Hardhat task to mint
 
 This is easily accomplished by adding a simple [task](https://hardhat.org/guides/create-task.html) under the `/hardhat/tasks` folder.
 
-> To simplify the process, a pre-specified amount of 1000000 tokens is set.
+> To simplify the process, a pre-specified amount of 100 TFT (100x10<sup>18</sup> TFT) is set.
 
 ```typescript:hardhat/tasks/mint.ts
 task('mint', 'Mint TFT and internally transfer it to an address')
@@ -425,8 +425,8 @@ task('mint', 'Mint TFT and internally transfer it to an address')
     }
     const token = await hre.ethers.getContractAt('MintableERC20', address);
 
-    const amount = '1000000';
-    const tftAmount = hre.ethers.utils.parseUnits(amount);
+    const amount = '100';
+    const tftAmount = hre.ethers.utils.parseUnits(amount, 18);
     const tx = await token.mint(receiver, tftAmount);
     await tx.wait();
 
