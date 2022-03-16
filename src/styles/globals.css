@@ -37,7 +37,7 @@
   /* Others */
   --text-global: var(--gray-800);
   --text-global-dark: var(--gray-200);
-  --text-article: var(--black-100);
+  --text-article: var(--black-600);
   --text-article-dark: var(--gray-100);
   --border-radius: 0.3rem;
   --shadow: 0px 1px 5px var(--gray-300-l);

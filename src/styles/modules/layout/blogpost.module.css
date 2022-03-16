@@ -14,7 +14,10 @@
 .intro > p {
   margin: 1.25rem 0 0;
 }
-.intro > p,
+.intro > blockquote {
+  margin: 1.25rem 0.75em 0;
+}
+.intro p,
 .mdx p,
 .mdx li {
   line-height: 1.75;
@@ -55,18 +58,17 @@
 .related > h2 {
   letter-spacing: 0;
 }
+.intro code,
 .mdx > h1 code,
 .mdx > h2 code,
 .mdx > h3 code,
 .mdx > h4 code,
 .mdx > h5 code,
 .mdx > p code,
-.mdx > ul li > code,
-.mdx > ol li > code,
 .mdx > div > p code,
-.mdx blockquote > p > code/*,
+.container blockquote > p > code,
 .mdx > ul li > p > code,
-.mdx > ol li > p > code*/ {
+.mdx > ol li > p > code {
   font-size: 0.9em;
   padding: 0.1em 0.3em;
   background-color: #fff;
@@ -77,16 +79,18 @@
     background-color: #000;
   }
 }
-.mdx blockquote {
-  margin: 1.5em 0.75em;
+.container blockquote {
   padding: 0.5em 0.75em;
   background-color: var(--gray-100-l);
   border-radius: 0 var(--border-radius) var(--border-radius) 0;
   border-left: 5px solid var(--gray-300-l);
   @mixin isDark {
-    background-color: var(--black-300);
+    background-color: var(--black-400);
     border-left-color: var(--gray-800);
   }
+}
+.mdx blockquote {
+  margin: 1.25em 0.75em;
 }
 .meta {
   margin-top: 1.5rem;
