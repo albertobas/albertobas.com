@@ -121,7 +121,7 @@
 .layoutLinkGithub > div > a {
   font-family: var(--font-mono);
   letter-spacing: -0.02em;
-  @mixin $text-sm;
+  @mixin $text-xs;
   display: flex;
   flex-direction: row;
   align-items: center;
