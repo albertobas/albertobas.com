@@ -26,12 +26,12 @@ export const getSelectOption = (isDark: boolean, borderColor: Theme | undefined)
           ? '#fff'
           : isFocused
           ? 'fff'
-          : 'var(--gray-400)'
+          : 'var(--text-global-dark)'
         : isSelected
         ? '#fff'
         : isFocused
         ? '#000'
-        : 'var(--gray-800)',
+        : 'var(--text-global)',
       cursor: isDisabled ? 'not-allowed' : 'default',
     };
   };
@@ -122,7 +122,7 @@ export const getSelectLanguageControl = (
     borderRadius: 'var(--border-radius)',
     paddingLeft: 5,
     fontSize: placeholderFontSize ? placeholderFontSize : undefined,
-    color: isDark ? 'var(--gray-400)' : 'var(--gray-700)',
+    color: isDark ? 'var(text-global-dark)' : 'var(text-global)',
     ':hover': {
       borderColor: 'transparent',
       boxShadow: 'None',
@@ -192,7 +192,7 @@ export const getSelectLanguageDropdownClearIndicator = (isDark: boolean) => {
   return (provided: any) => ({
     ...provided,
     padding: '5px',
-    color: 'var(--gray-500)',
+    color: isDark ? 'var(--text-global-dark)' : 'var(--text-global)',
     ':hover': {
       color: isDark ? '#fff' : '#000',
     },

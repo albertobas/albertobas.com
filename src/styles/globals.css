@@ -35,6 +35,8 @@
   --black-500: #111111;
   --black-600: #0a0a0a;
   /* Others */
+  --text-global: var(--gray-800);
+  --text-global-dark: var(--gray-200);
   --border-radius: 0.3rem;
   --shadow: 0px 1px 5px var(--gray-300-l);
   --shadow-dark: 0px 1px 5px var(--black-200);
@@ -60,10 +62,10 @@ body {
   box-sizing: border-box;
   margin: 0px;
   -webkit-font-smoothing: antialiased;
-  color: var(--gray-800);
+  color: var(--text-global);
   background-color: #f9fafb;
   @mixin isDark {
-    color: var(--gray-200);
+    color: var(--text-global-dark);
     background-color: var(--black-500);
   }
 }

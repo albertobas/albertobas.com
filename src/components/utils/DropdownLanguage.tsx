@@ -47,7 +47,7 @@ const DropdownLanguage = ({
       clearIndicator: getSelectLanguageDropdownClearIndicator(isDark),
       singleValue: (base: any) => ({
         ...base,
-        color: isDark ? 'var(--gray-400)' : 'var(--gray-800)',
+        color: isDark ? 'var(--text-global-dark)' : 'var(--text-global)',
       }),
     };
   }, [value, backgroundColor, borderColor, isDark, placeholderFontSize]);

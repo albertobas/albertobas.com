@@ -14,7 +14,7 @@
   width: fit-content;
 }
 .navLangBurger {
-  margin-right: calc(-1rem + (11.6px / 2));
+  margin-right: calc(-1rem + (0.7733rem / 2));
   display: flex;
   align-items: center;
 }
