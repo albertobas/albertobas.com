@@ -3,7 +3,7 @@
     "defaultMessage": "Breve introducción de Alberto Bas"
   },
   "aboutP1": {
-    "defaultMessage": "Soy Alberto Bas, desarrollador español de finanzas descentralizadas. He escrito esta página para publicar y mostrarles algunos de los trabajos y proyectos acerca de criptografía y blockchain, y ciencia de datos."
+    "defaultMessage": "Soy Alberto Bas, he escrito esta página para publicar y mostrarles algunos de los trabajos y proyectos acerca de criptografía y blockchain, y ciencia de datos."
   },
   "aboutP2": {
     "defaultMessage": "Intento tratar sobre conceptos como <smartcontracts></smartcontracts>, préstamos rápidos, carteras criptográficas, ZK-SNARKs y otros generalmente sobre <defi></defi>, principalmente escribiendo aplicaciones descentralizadas que normalmente desarrollo utilizando componentes de <reactjs></reactjs> y <typescript></typescript>, en ocasiones utilizando <nextjs></nextjs>. Desarrollo contratos inteligente en los lenguajes <solidity></solidity> y Vyper. Los entornos de desarrollo que generalmente utilizo son <hardhat></hardhat> y Brownie."
@@ -69,7 +69,7 @@
     "defaultMessage": "Una página sobre cadena de bloques, ciencia de datos y Web3"
   },
   "introSectionP": {
-    "defaultMessage": "Hola!, soy Alberto Bas, un desarrollador de finanzas descentralizadas e ingeniero técnico de telecomunicaciones de formación. En esta página publico algunos de mis <projects></projects> y <blog></blog>. Espero disfrute de la lectura."
+    "defaultMessage": "Hola!, soy Alberto Bas, en esta página publico algunos de mis <projects></projects> y <blog></blog>. Espero disfrute de la lectura."
   },
   "introSectionPBlog": {
     "defaultMessage": "artículos"
@@ -157,9 +157,6 @@
   },
   "selectLabel": {
     "defaultMessage": "Elija "
-  },
-  "slogan": {
-    "defaultMessage": "Desarrollador de DeFi"
   },
   "smartContracts": {
     "defaultMessage": "contratos inteligentes"

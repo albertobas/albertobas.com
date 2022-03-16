@@ -34,7 +34,7 @@ const AboutPage = () => {
         <p>
           <FormattedMessage
             id="aboutP1"
-            defaultMessage="I'm Alberto Bas, a defi developer from Spain. I've written 
+            defaultMessage="I'm Alberto Bas, I've written 
             this page to gather and publish some work and projects mainly about cryptography, blockchain and data science."
           />
         </p>

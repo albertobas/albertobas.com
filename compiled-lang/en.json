@@ -1,6 +1,6 @@
 {
   "aboutDescription": "Brief introduction of Alberto Bas",
-  "aboutP1": "I'm Alberto Bas, a defi developer from Spain. I've written this page to gather and publish some work and projects mainly about cryptography, blockchain and data science.",
+  "aboutP1": "I'm Alberto Bas, I've written this page to gather and publish some work and projects mainly about cryptography, blockchain and data science.",
   "aboutP2": "I try to cover concepts like <smartcontracts></smartcontracts>, flash loans and swaps, crypto wallets, ZK-SNARKs and others mostly about <defi></defi> generally coding decentralized applications which I usually develop using <reactjs></reactjs> components and <typescript></typescript>, sometimes using <nextjs></nextjs>. I code smart contracts in <solidity></solidity> and Vyper. The development environments I usually use are <hardhat></hardhat> and Brownie.",
   "aboutP3": "In regards to data science, I have knowledge of parametric and non-parametric modeling in <supervisedlearning></supervisedlearning>, and of clustering and PCA techniques in unsupervised learning. I usually code in <python></python> and use libraries such as <scikitlearn></scikitlearn>, <xgboost></xgboost>, <lightgbm></lightgbm>. I have experience of implementing and optimizing feed-forward and <cnn></cnn> as well as recurrent (<lstm></lstm> and <gru></gru>) and recursive networks. I primarily use <pytorch></pytorch> but also TensorFlow and Keras. I perform <eda></eda> using python libraries (<pandas></pandas>, <numpy></numpy>, <scipy></scipy>, <matplotlib></matplotlib> and <seaborn></seaborn>).",
   "aboutP4": "You can contact me by <email></email> and on <github></github> and <linkedin></linkedin>.",
@@ -22,7 +22,7 @@
   "goBackA": "Go back home",
   "goToWeb": "Go to website",
   "introSectionH1": "A page about blockchain, data science and Web3",
-  "introSectionP": "Hi!, I'm Alberto Bas, a DeFi developer and telecommunications technical engineer by training. I post in this page some <projects></projects> and <blog></blog> about cryptography, blockchain, and data science.",
+  "introSectionP": "Hi!, I'm Alberto Bas, I post in this page some <projects></projects> and <blog></blog> about cryptography, blockchain, and data science.",
   "introSectionPBlog": "articles",
   "introSectionPProjects": "projects",
   "lastPage": "Last page",
