@@ -9,7 +9,7 @@ const Tags = ({ tags, hash }: { tags: ItemExtended[] | undefined; hash?: boolean
       {tags?.map((tag) => {
         return (
           <li key={tag.value}>
-            <Tooltip delay={500} placement="bottom">
+            <Tooltip content={tag.description} delay={500} placement="bottom">
               <div>{hash ? <HashTag tag={tag} /> : <Tag tag={tag} />}</div>
             </Tooltip>
           </li>
