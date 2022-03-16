@@ -38,12 +38,12 @@ export const dictCB = {
     description: { en: 'Decentralized finance', es: 'Finanzas descentralizadas' },
     label: { en: 'DeFi', es: 'DeFi' },
   },
-  erc20: {
+  'erc-20': {
     description: {
       en: 'The ERC-20 introduces a standard for Fungible Tokens',
       es: 'El ERC-20 introduce un estándar para los tokens fungibles',
     },
-    label: { en: 'ERC20', es: 'ERC20' },
+    label: { en: 'ERC-20', es: 'ERC-20' },
   },
   ethereum: {
     description: { en: '', es: '' },

@@ -1,12 +1,12 @@
 ---
 field: 'defi'
-title: 'End-to-end guide to create an ERC20 token specific dapp'
-description: 'Decentralized application to operate with a mintable ERC20 token.'
-introduction: "<p>In this post I'll be developing a decentralized application to operate with a mintable ERC20 token.</p><p>The purpose is then to understand the end-to-end process of writing a smart contract in Solidity and developing a specific front-end to interact with this contract.</p>"
-tags: 'ethereum,defi,dapp,smart-contracts,erc20,fungible-token'
+title: 'End-to-end guide to create an ERC-20 token specific dapp'
+description: 'Decentralized application to operate with a mintable ERC-20 token.'
+introduction: "<p>In this post I'll be developing a decentralized application to operate with a mintable ERC-20 token.</p><p>The purpose is then to understand the end-to-end process of writing a smart contract in Solidity and developing a specific front-end to interact with this contract.</p>"
+tags: 'ethereum,defi,dapp,smart-contracts,erc-20,fungible-token'
 tech: 'solidity,typescript,hardhat,react-js,ethers-js,mocha,chai,waffle'
 datePublished: '2022-03-09'
-github: { repo: 'mintable-erc20-dapp' }
+github: { repo: 'mintable-erc-20-dapp' }
 ---
 
 ## Setup
@@ -20,8 +20,8 @@ In this guide [npm 7 workspaces](https://docs.npmjs.com/cli/v7/using-npm/workspa
 2. Create a new directory and navigate to it. Also, create a new Node project with `npm init`.
 
    ```bash
-   $ mkdir mintable-erc20-dapp
-   $ cd mintable-erc20-dapp
+   $ mkdir mintable-erc-20-dapp
+   $ cd mintable-erc-20-dapp
    $ npm init
    ```
 
@@ -29,7 +29,7 @@ In this guide [npm 7 workspaces](https://docs.npmjs.com/cli/v7/using-npm/workspa
 
    ```diff:package.json
    {
-     "name": "mintable-erc20-dapp",
+     "name": "mintable-erc-20-dapp",
      "version": "1.0.0",
      "description": "",
    - "main": "index.js",
@@ -316,7 +316,7 @@ Now run the script `test-hardhat`:
 ```bash
 $ npm run test-hardhat
 
-> mintable-erc20-dapp@1.0.0 test-hardhat
+> mintable-erc-20-dapp@1.0.0 test-hardhat
 > npm run test --workspace=hardhat
 
 
@@ -453,7 +453,7 @@ Furthermore, the latter command will ensure our React app has the current contra
 ```bash
 $ npm run compile-share-deploy
 
-> mintable-erc20-dapp@1.0.0 compile-share-deploy
+> mintable-erc-20-dapp@1.0.0 compile-share-deploy
 > npm run compile --workspace=hardhat && npm run share --workspace=hardhat && npm run deploy --workspace=hardhat
 
 
@@ -467,16 +467,16 @@ No need to generate any newer typings.
 > hardhat run scripts/shareFiles.ts
 
 No need to generate any newer typings.
-  ✓ 1 contract(s) copied to /.../mintable-erc20-dapp/react-app/src/utils/contracts
-  ✓ 1 contract(s) type(s) copied to /.../mintable-erc20-dapp/react-app/src/utils/types
-  ✓ Contract type required module common.ts copied to /.../mintable-erc20-dapp/react-app/src/utils/types
+  ✓ 1 contract(s) copied to /.../mintable-erc-20-dapp/react-app/src/utils/contracts
+  ✓ 1 contract(s) type(s) copied to /.../mintable-erc-20-dapp/react-app/src/utils/types
+  ✓ Contract type required module common.ts copied to /.../mintable-erc-20-dapp/react-app/src/utils/types
 
 > hardhat@1.0.0 deploy
 > hardhat run --network localhost scripts/deploy.ts
 
 No need to generate any newer typings.
   ✓ MintableERC20 deployed to: 0x...
-  ✓ 1 contract address(es) has(have) been copied to /.../mintable-erc20-dapp/react-app/src/utils/contracts
+  ✓ 1 contract address(es) has(have) been copied to /.../mintable-erc-20-dapp/react-app/src/utils/contracts
 ```
 
 ## Front-end
@@ -530,9 +530,9 @@ To create both contracts it is needed to pass a contract address, a contract int
 
 For the read-only contract a `JsonRpcProvider` is passed, and a signer for the contract that will be used to sign operations to change the state of the blockchain.
 
-I keep the account address and both contracts in [`ContractContext`](https://www.github.com/albertobas/mintable-erc20-dapp/blob/main/react-app/src/utils/context/ContractContext.tsx) which will provide us with them in any of the components that are descendants to `ContractProvider`.
+I keep the account address and both contracts in [`ContractContext`](https://www.github.com/albertobas/mintable-erc-20-dapp/blob/main/react-app/src/utils/context/ContractContext.tsx) which will provide us with them in any of the components that are descendants to `ContractProvider`.
 
-Once the data in the context is defined, the components [`Balance`](https://www.github.com/albertobas/mintable-erc20-dapp/blob/main/react-app/src/components/Balance.tsx), [`TransferFrom`](https://www.github.com/albertobas/mintable-erc20-dapp/blob/main/react-app/src/components/TransferFrom.tsx) and [`Panels`](https://www.github.com/albertobas/mintable-erc20-dapp/blob/main/react-app/src/components/Panels.tsx) will be rendered.
+Once the data in the context is defined, the components [`Balance`](https://www.github.com/albertobas/mintable-erc-20-dapp/blob/main/react-app/src/components/Balance.tsx), [`TransferFrom`](https://www.github.com/albertobas/mintable-erc-20-dapp/blob/main/react-app/src/components/TransferFrom.tsx) and [`Panels`](https://www.github.com/albertobas/mintable-erc-20-dapp/blob/main/react-app/src/components/Panels.tsx) will be rendered.
 
 They show the TFT (Test Fungible Token, our token) balance of the context account address in the contract, a form to transfer TFTs and a panel with incoming and outgoing transactions respectively.
 
