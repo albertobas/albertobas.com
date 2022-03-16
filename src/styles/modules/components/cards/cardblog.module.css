@@ -69,7 +69,7 @@
   flex-direction: row;
   flex-wrap: wrap;
   align-items: center;
-  @mixin $text-sm;
+  @mixin $text-xs;
 }
 .layoutDate > div {
   margin-right: 1.5rem;

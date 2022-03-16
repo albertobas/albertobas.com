@@ -127,7 +127,7 @@
   flex-direction: row;
   font-family: var(--font-mono);
   letter-spacing: -0.02em;
-  @mixin $text-sm;
+  @mixin $text-xs;
   align-items: center;
   font-weight: 500;
   cursor: ne-resize;
@@ -163,9 +163,9 @@
 .tocAsideTransparent {
   transition: opacity var(--transition-duration);
   position: fixed;
-  width: 15rem;
+  width: 14rem;
   max-height: calc(100vh - 8rem);
-  top: 4rem;
+  top: 3rem;
   left: calc(50vw + 400px);
   overflow: auto;
 }
@@ -190,6 +190,7 @@
 }
 .tags > ul > li > div > a {
   font-weight: 500;
+  font-size: 0.875rem;
   line-height: 1.9;
   color: var(--blue-300);
   @mixin isDark {
@@ -205,8 +206,7 @@
 .tocAsideTransparent > h2,
 .tocAside > nav > ul li,
 .tocAsideTransparent > nav > ul li {
-  font-size: 1rem;
-  line-height: 1.25;
+  @mixin $text-sm;
 }
 .tocAside > h2,
 .tocAsideTransparent > h2 {

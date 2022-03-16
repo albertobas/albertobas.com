@@ -46,7 +46,7 @@
     monospace;
 }
 html {
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 400;
   background-color: #fff;
   scroll-behavior: auto;
@@ -60,10 +60,10 @@ body {
   box-sizing: border-box;
   margin: 0px;
   -webkit-font-smoothing: antialiased;
-  color: var(--gray-700);
+  color: var(--gray-800);
   background-color: #f9fafb;
   @mixin isDark {
-    color: var(--gray-300);
+    color: var(--gray-200);
     background-color: var(--black-500);
   }
 }
