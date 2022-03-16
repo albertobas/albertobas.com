@@ -41,9 +41,6 @@ const Footer = () => {
           <ILink href={'/'} aria-label="Logo">
             <Logo />
           </ILink>
-          <p>
-            <FormattedMessage id="slogan" defaultMessage="DeFi developer" />
-          </p>
         </div>
         {isMounted && (
           <div className={styles.dropdown}>

@@ -1,5 +1,4 @@
 import { ArticleJsonLd, NextSeo } from 'next-seo';
-import { useIntl } from 'react-intl';
 import { memo } from 'react';
 import { Language } from 'src/utils/interfaces/languages';
 import {
@@ -118,11 +117,10 @@ interface SEO {
 }
 
 export default memo(function SEO({ pageKey, asPath, description, locale, locales, title }: SEO) {
-  const intl = useIntl();
   const titlePageSite = title
     ? `${title} - ${siteName}`
     : pageKey === 'home'
-    ? `${siteName} - ${intl.formatMessage({ id: 'slogan', defaultMessage: 'DeFi developer' })}`
+    ? `${siteName}`
     : `${dictKeys[pageKey][locale]} - ${siteName}`;
   const url = asPath ? canonical + asPath : canonical;
   const urlEs = asPath ? canonical + '/es' + asPath : canonical + '/es';
