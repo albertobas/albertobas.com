@@ -22,32 +22,3 @@ const Tooltip: FC<TippyProps> = (props) => {
 };
 
 export default Tooltip;
-
-export const TooltipSource: FC<TippyProps> = ({ children, delay, singleton, placement }) => {
-  return (
-    <Tippy
-      render={(attrs, content) =>
-        content ? (
-          <div className={styles.tippyBox} {...attrs}>
-            <div className={styles.tippyContent}>{content}</div>
-          </div>
-        ) : (
-          <></>
-        )
-      }
-      singleton={singleton}
-      delay={delay}
-      placement={placement}
-    >
-      {children}
-    </Tippy>
-  );
-};
-
-export const TooltipTarget: FC<TippyProps> = ({ children, content, singleton }) => {
-  return (
-    <Tippy singleton={singleton} content={content}>
-      {children}
-    </Tippy>
-  );
-};
