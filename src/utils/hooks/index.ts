@@ -116,9 +116,7 @@ export function useFilterSort() {
       setFilter(null);
     }
   }, [itemString, locale]);
-  useEffect(() => {
-    translate();
-  }, [translate, locale]);
+  useEffect(translate, [translate, locale]);
   return [filter, setFilter] as [Item | null, Dispatch<SetStateAction<Item | null>>];
 }
 
