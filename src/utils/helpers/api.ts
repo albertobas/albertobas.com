@@ -9,7 +9,7 @@ import matter from 'gray-matter';
 import path from 'path';
 import fs from 'fs';
 import { getKeySet, shuffle, sortCardList } from 'src/utils/helpers/post';
-import { DictKeys, Section } from 'src/utils/interfaces/dict';
+import { Section } from 'src/utils/interfaces/dict';
 import { Headings, MdxMetadataCard, MdxMetadataPost, MdxPost, RelatedPosts } from 'src/utils/interfaces/post';
 import { dictCB, dictDS, dictTopics, dictWD } from 'src/utils/dict';
 
@@ -159,7 +159,7 @@ export async function getProps(section: Section, slug: string, locale: string, l
   }
 }
 
-export async function getPaths(section: DictKeys, locales: string[]) {
+export async function getPaths(section: Section, locales: string[]) {
   const paths: { params: { slug: string; locale: string } }[] = [];
   locales.forEach(function (locale) {
     readDirMdxFiltered(contentPath, locale, section).forEach(function (slug) {
