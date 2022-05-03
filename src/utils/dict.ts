@@ -57,6 +57,10 @@ export const dictCB = {
     description: { en: '', es: '' },
     label: { en: 'Smart contracts', es: 'Contratos inteligentes' },
   },
+  'the-graph': {
+    description: { en: '', es: '' },
+    label: { en: 'TheGraph', es: 'TheGraph' },
+  },
   /*'zk-snarks': {
     description: { en: '', es: '' },
     label: { en: 'ZK-SNARKs', es: 'ZK-SNARKs' },
@@ -188,6 +192,7 @@ export const dictFL = {
     description: { en: '', es: '' },
     label: { en: 'Ethers.js', es: 'Ethers.js' },
   },
+  graphql: { description: { en: '', es: '' }, label: { en: 'GraphQL', es: 'GraphQL' } },
   hardhat: { description: { en: '', es: '' }, label: { en: 'Hardhat', es: 'Hardhat' } },
   jupyter: {
     description: { en: 'Jupyter notebook', es: 'Cuaderno de Jupyter' },
@@ -200,17 +205,23 @@ export const dictFL = {
   pandas: { description: { en: '', es: '' }, label: { en: 'Pandas', es: 'Pandas' } },
   pytorch: { description: { en: '', es: '' }, label: { en: 'Pytorch', es: 'Pytorch' } },
   'react-js': { description: { en: '', es: '' }, label: { en: 'React.js', es: 'React.js' } },
+  redux: { description: { en: '', es: '' }, label: { en: 'Redux', es: 'Redux' } },
   'scikit-learn': {
     description: { en: '', es: '' },
     label: { en: 'Scikit-learn', es: 'Scikit-learn' },
   },
   scipy: { description: { en: '', es: '' }, label: { en: 'Scipy', es: 'Scipy' } },
   seaborn: { description: { en: '', es: '' }, label: { en: 'Seaborn', es: 'Seaborn' } },
+  'vite-js': { description: { en: '', es: '' }, label: { en: 'Vite.js', es: 'Vite.js' } },
   waffle: { description: { en: '', es: '' }, label: { en: 'Waffle', es: 'Waffle' } },
 };
 
 /* web development */
 export const dictWD = {
+  'hexagonal-architecture': {
+    description: { en: '', es: '' },
+    label: { en: 'Hexagonal architecture', es: 'Arquitectura hexagonal' },
+  },
   'web-development': {
     description: { en: '', es: '' },
     label: { en: 'Web development', es: 'Desarrollo web' },
