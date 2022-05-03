@@ -1,0 +1,427 @@
+---
+field: 'defi'
+title: 'How to build a DEXes analytics application'
+description: 'Introduction to obtaining and representing DEXes data using TheGraph and React.js.'
+introduction: "<p>Decentralized exchanges (DEXes) generate enormous quantities of data which are interesting to read but difficult to gather and represent.</p><p>Fortunately for us, [TheGraph](https://thegraph.com/ "Go to TheGraph website") comes to our rescue to ease a solution and make it possible to retrieve the minimum required amount of data that is needed in a simplistic manner using [GraphQL](https://graphql.org/ "Go to the GraphQL website"). Let's see.</p>"
+tags: 'defi,the-graph,hexagonal-architecture'
+tech: 'typescript,react-js,redux,vite-js,graphql'
+datePublished: '2022-05-03'
+github: { repo: 'dexes-analytics' }
+---
+
+## Solution
+
+In this post I'll try to explain how to build an application built with [Vite.js](https://vitejs.dev 'Go to the Vite.js website') that queries Uniswap v2 and v3 subgraphs from TheGraph using a basic GraphQL client, processes the data, stores them in a global state and represents them using React.js components.
+
+In order to address the development of this application, which may consist of an increasing number of exchanges, I've opted to adopt a clean architecture adapted to the front-end.
+
+My implementation is based on an hexagonal architecture in which the state exists outside the core and persists globally using [Redux toolkit](https://redux-toolkit.js.org/ 'Go to the Redux toolkit website').
+
+The core is where the business logic is defined, this is, entities, repositories, use cases and adapters.
+
+I thought of every DEX supported by the application as a new feature. Each feature consists of its core, data sources, a Redux state slice and ui components, helper functions and constants.
+
+Therefore, if the application was to escalate, supporting a new decentralized exchange would consist merely of adding a new folder with independent code in features.
+
+Inversely, removing an exchange would consist of getting rid of its correspondent feature, without affecting the rest of the logic.
+
+This approach also grants us a complete decoupling of the business logic, the user interface and the state of the application.
+
+So, for example, transitioning to a different user interface environment would be accomplished by editing only the ui folders.
+
+## Code flow
+
+Since this application is based on a number of features with the same structure, explaining the flow of the code when rendering one of them may be useful to explain the logic of the application.
+
+For instance, when going to [Uniswap v3 overview](https:// 'Uniswap V3 overview'), a React.js component will render and the `useUniswapV3PoolsTokens` hook will trigger four use cases or interactors:
+
+<Image alt="useUniswapV3PoolsTokens flow chart" src="/images/dexes-analytics/flow_chart_useUniswapV3PoolsTokens.svg" width={924} height={867} />
+
+Each interactor calls a method of a repository, which is implemented in a class in data sources. This method will query a TheGraph subgraph with a GraphQL client and will return a JSON-like object which, subsequently, is adapted to an interface common to all protocols.
+
+`queryBlocksEthereum` will conform a `Blocks` entity with timestamps numbers in seconds and block numbers for four timestamps: `current`, `t1D`, `t2D` and `t1W`.
+
+`queryEthPricesUniswapV3` will conform an entity `Ethers` with ether prices for the same four timestamps, that is used to calculate stats in `TokenFeatured`.
+
+```typescript:src/features/shared/tokens/core/entities/Tokens.ts {20,21,22,23}
+export interface Token {
+  address: string;
+  name: string;
+  symbol: string;
+  volume: number | null;
+  tvl: number;
+  derivedETH: number;
+}
+
+export interface Tokens {
+  current: Record<string, Token>;
+  t1D: Record<string, Token>;
+  t2D: Record<string, Token>;
+  t1W: Record<string, Token>;
+}
+
+export type TokenExtended = Token & {
+  volumeChange: number | null;
+  volume1W: number | null;
+  tvlChange: number | null;
+  price: number;
+  priceChange: number | null;
+  priceChangeWeek: number | null;
+};
+```
+
+Every feature, or supported protocol, gathers several features. Following the aforementioned example, let's have a look at each folder of the implemented Uniswap v3 protocol feature.
+
+The folder uniswapV3 gathers `pools`, `tokens`, `ethers` and the folder `shared` which contains the React component that uses the hook `useUniswapV3PoolsTokens` and renders the Overview page.
+
+> The logic to query the block numbers and timestamps is implemented along other code in the shared folder at the features folder level, since other protocols will share these code.
+
+Again, since the code flow is similar in all the features, in order to explain how the app works I'll narrow it down to explain the functioning of only one feature.
+
+In the following sections I'll focus on the main folders in `src/features/uniswapV3/tokens`, i.e., my approach to how to represent the 50 top tokens by their total value locked in Uniswap v3.
+
+## Core
+
+This is where the business logic in regards to the Uniswap v3 tokens lives. It consists of entities, repositories, interactors and adapters.
+
+### Entities
+
+The interface that represents the object returned by the Uniswap v3 subgraph:
+
+```typescript:src/features/uniswapV3/tokens/core/entities/TokensUniswapV3.ts
+interface TokenUniswapV3 {
+  id: string;
+  name: string;
+  symbol: string;
+  volumeUSD: string;
+  totalValueLockedUSD: string;
+  derivedETH: string;
+}
+
+export interface TokensUniswapV3 {
+  current: TokenUniswapV3[];
+  t1D: TokenUniswapV3[];
+  t2D: TokenUniswapV3[];
+  t1W: TokenUniswapV3[];
+}
+```
+
+### Repositories
+
+The interface that describes the method of the tokens repository.
+
+```typescript:src/features/uniswapV3/tokens/core/repositories/TokensUniswapV3.repository.ts
+import { Blocks } from 'src/features/shared/blocks/core/entities/Blocks';
+import { TokensUniswapV3 } from 'src/features/uniswapV3/tokens/core/entities/TokensUniswapV3';
+
+interface TokensUniswapV3Repository {
+  getByAddresses(endpoint: string, blocks: Blocks): Promise<TokensUniswapV3 | undefined>;
+}
+
+export default TokensUniswapV3Repository;
+```
+
+### Interactors
+
+This is the use case to generate a `Tokens` entity. It basically gets an _endpoint_ and a `Blocks` object and passes them to the `getByAddresses` method in `TokensUniswapV3Repository`.
+
+The implementation of the repository returns a promise of an object with the type `TokensUniswapV3` which is resolved here and adapted to the type `Tokens` thereafter.
+
+An instance of `TokensUniswapV3DataSource` could be created here. However, in order for our logic not to be affected by any change in the infrastructure, it gets an abstraction -a TokensUniswapV3Repository repository- instead of depending on a specific data source implementation.
+
+```typescript:src/features/uniswapV3/tokens/core/interactors/queryTokens/queryTokensUniswapV3.interactor.ts {7, 10, 11}
+import TokensUniswapV3Repository from 'src/features/uniswapV3/tokens/core/repositories/TokensUniswapV3.repository';
+import tokensUniswapV3Adapter from 'src/features/uniswapV3/tokens/core/adapters/tokensUniswapV3.adapter';
+import { Blocks } from 'src/features/shared/blocks/core/entities/Blocks';
+import { Tokens } from 'src/features/shared/tokens/core/entities/Tokens';
+
+const queryTokensUniswapV3 =
+  (tokensRepository: TokensUniswapV3Repository) =>
+  async (endpoint: string, blocks: Blocks): Promise<{ error: boolean; data: Tokens | null }> => {
+    try {
+      const data = await tokensRepository.getByAddresses(endpoint, blocks);
+      return { error: false, data: tokensUniswapV3Adapter(data) };
+    } catch (e) {
+      // if an error is thrown, it will be catched and true will be passed in error for our ui logic.
+      console.log(e);
+      return { error: true, data: null };
+    }
+  };
+
+export default queryTokensUniswapV3;
+```
+
+For this reason, the interactor that will be imported from our user interface will have the dependency -an instance to `TokensUniswapV3DataSource`- already injected:
+
+```typescript:src/features/uniswapV3/tokens/core/interactors/queryTokens/index.ts {6}
+import TokensUniswapV3DataSource from 'src/features/uniswapV3/tokens/dataSources/tokensUniswapV3.datasource';
+import queryTokensUniswapV3 from 'src/features/uniswapV3/tokens/core/interactors/queryTokens/queryTokensUniswapV3.interactor';
+
+const tokensRepository = new TokensUniswapV3DataSource();
+
+export default queryTokensUniswapV3(tokensRepository);
+```
+
+> In my opinion, this is a clean design for our inversion of control. I learnt it in this [YouTube video about hexagonal architecture](https://www.youtube.com/watch?v=b5ngTWAPNeg&t=150s '"Arquitectura Hexagonal en Node + Typescript"')
+
+### Adapters
+
+This is the adapter that I mentioned above. It is a simple function to convert the object received by the TheGraph subgraph to an object common to all protocols.
+
+This works as a standard so that the component rendering the tokens table always gets the same interface for the tokens data, no matter the protocol as it is intended that all the tokens table share the same columns.
+
+```typescript:src/features/uniswapV3/tokens/core/adapters/tokensUniswapV3.adapter.ts
+import { Token, Tokens } from 'src/features/shared/tokens/core/entities/Tokens';
+import { TokensUniswapV3 } from 'src/features/uniswapV3/tokens/core/entities/TokensUniswapV3';
+
+const tokensUniswapV3Adapter = (dataRaw: TokensUniswapV3 | undefined): Tokens | null => {
+  if (dataRaw) {
+    const data: Tokens = { current: {}, t1D: {}, t2D: {}, t1W: {} };
+    for (const key of Object.keys(dataRaw)) {
+      const tokensData: Record<string, Token> = {};
+      const tokens = dataRaw[key as keyof typeof dataRaw];
+      for (const token of tokens) {
+        tokensData[token.id] = {
+          name: token.name,
+          symbol: token.symbol,
+          address: token.id,
+          volume: parseFloat(token.volumeUSD),
+          tvl: parseFloat(token.totalValueLockedUSD),
+          derivedETH: parseFloat(token.derivedETH),
+        };
+      }
+      data[key as keyof typeof data] = tokensData;
+    }
+    return data;
+  } else return null;
+};
+
+export default tokensUniswapV3Adapter;
+```
+
+Also, this step may help as a barrier in case there was a change on the subgraph schema, as the only fields to be changed would be in the interface received, and this would not affect the rest of the code.
+
+## Data source
+
+The only data source in tokens is a class that implements the `TokensUniswapV3Repository`, which only requires the method `getByAddresses`.
+
+As seen above in interactors, this method queries the Uniswap V3 subgraph with a `GraphQLClient` and returns a promise of an object with the type `TokensUniswapV3`.
+
+A `Blocks` object is passed to `getByAddresses` because we need to query for four different timestamps, this is accomplished by setting the block number in the query.
+
+However, instead of querying the subgraph four times, once for every timestamp, we create a single query with the four timestamps as keys:
+
+```typescript:src/features/uniswapV3/tokens/core/dataSources/tokensUniswapV3.datasource.ts {24}
+import { gql, GraphQLClient } from 'graphql-request';
+import { Blocks } from 'src/features/shared/blocks/core/entities/Blocks';
+import TokensUniswapV3Repository from 'src/features/uniswapV3/tokens/core/repositories/TokensUniswapV3.repository';
+import { TokensUniswapV3 } from 'src/features/uniswapV3/tokens/core/entities/TokensUniswapV3';
+import { UNISWAP_V3_TOKENS_TO_HIDE } from 'src/features/uniswapV3/tokens/utils/constants';
+
+class TokensUniswapV3DataSource implements TokensUniswapV3Repository {
+  public async getByAddresses(endpoint: string, blocks: Blocks): Promise<TokensUniswapV3 | undefined> {
+    const client = new GraphQLClient(endpoint);
+    const getQuery = (blocksEntity: Blocks) => {
+      let tokensToHide = '';
+      UNISWAP_V3_TOKENS_TO_HIDE.map((address) => {
+        return (tokensToHide += `"${address}",`);
+      });
+      let TOKENS_UNISWAP_V3 = 'query TokensUniswapV3 {';
+      for (const blockKey of Object.keys(blocksEntity)) {
+        const blocks =
+          blockKey !== 'current'
+            ? blocksEntity[blockKey as keyof typeof blocksEntity]
+              ? `block: {number: ${blocksEntity[blockKey as keyof typeof blocksEntity]?.number}} ,`
+              : ''
+            : '';
+        const tokens = `
+          ${blockKey}: tokens(
+            where: {id_not_in: [${tokensToHide}]},
+            orderBy: totalValueLockedUSD,
+            orderDirection: desc,
+            first: 50,
+            ${blocks}
+            subgraphError: allow) {
+              id
+              name
+              symbol
+              volumeUSD
+              totalValueLockedUSD
+              derivedETH
+            }`;
+        TOKENS_UNISWAP_V3 += tokens;
+      }
+      TOKENS_UNISWAP_V3 += '}';
+      return gql`
+        ${TOKENS_UNISWAP_V3}
+      `;
+    };
+    return client.request(getQuery(blocks));
+  }
+}
+
+export default TokensUniswapV3DataSource;
+```
+
+Also, in order to discard certain tokens, I pass a list of tokens ids to `id_not_in` in the `where` condition.
+
+## State
+
+The state of the Uniswap v3 tokens feature is given by a Redux toolkit slice with only one reducer. This will get a `TokenState` object as the payload and update the state.
+
+```typescript:src/features/uniswapV3/state/tokensUniswapV3Slice.ts
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { TokensState } from 'src/features/shared/state/core/entities/Tokens';
+
+// initial state
+const initialState: TokensState = {
+  loading: null,
+  error: null,
+  data: null,
+};
+
+// slice
+const tokensUniswapV3Slice = createSlice({
+  name: 'tokensUniswapV3',
+  initialState,
+  reducers: {
+    setTokensUniswapV3(state, { payload: { loading, error, data } }: PayloadAction<TokensState>) {
+      state.loading = loading;
+      state.error = error;
+      if (typeof data !== 'undefined') state.data = { ...state.data, ...data };
+    },
+  },
+});
+
+export const { setTokensUniswapV3 } = tokensUniswapV3Slice.actions;
+export default tokensUniswapV3Slice.reducer;
+```
+
+`TokenState` is an interface with a _loading_ and _error_ control fields, and _data_, which has the shape of an object of records with the network of the blockchain that is selected as index key and a value object with two fields: `tokens` and `lastUpdated`.
+
+```typescript:src/features/shared/state/core/entities/Tokens.ts
+import { TokenExtended } from 'src/features/shared/tokens/core/entities/Tokens';
+
+export interface TokensObject {
+  [tokenId: string]: TokenExtended;
+}
+
+export interface TokensStateData {
+  [networkId: string]: {
+    tokens: TokensObject;
+    lastUpdated: number;
+  };
+}
+
+export interface TokensState {
+  loading: boolean | null;
+  error: boolean | null;
+  data?: TokensStateData | null;
+}
+```
+
+The idea is that every time that a network is selected, the tokens of this network persist in an index of the state.
+
+The states of all the features are defined in their slices and passed to the Redux store.
+
+```typescript:src/app/state/store.ts
+import { configureStore } from '@reduxjs/toolkit';
+import poolsUniswapV3SliceReducer from 'src/features/uniswapV3/pools/state/poolsUniswapV3Slice';
+import tokensUniswapV3SliceReducer from 'src/features/uniswapV3/tokens/state/tokensUniswapV3Slice';
+import protocolSlice from 'src/app/state/protocolSlice';
+import searchSliceReducer from 'src/app/state/searchSlice';
+import pairsUniswapV2SliceReducer from 'src/features/uniswapV2/pairs/state/pairsUniswapV2Slice';
+import tokensUniswapV2SliceReducer from 'src/features/uniswapV2/tokens/state/tokensUniswapV2Slice';
+import blocksSliceReducer from 'src/features/shared/blocks/state/blocksSlice';
+
+export const store = configureStore({
+  reducer: {
+    protocol: protocolSlice,
+    search: searchSliceReducer,
+    poolsUniswapV3: poolsUniswapV3SliceReducer,
+    tokensUniswapV3: tokensUniswapV3SliceReducer,
+    pairsUniswapV2: pairsUniswapV2SliceReducer,
+    tokensUniswapV2: tokensUniswapV2SliceReducer,
+    blocks: blocksSliceReducer,
+  },
+});
+
+export type AppDispatch = typeof store.dispatch;
+export type RootState = ReturnType<typeof store.getState>;
+```
+
+## User interface
+
+The ui folder gathers both, the implementation of the hook that gets the tokens, and the React.js component used to get the tokens from this hook and render another component with the table and the pagination.
+
+`useUniswapV3Tokens` is the hook that assigns the state in the tokens redux slice dispatching the proper payload to `setTokensUniswapV3` depending on the fetch responses of every interactor that is called.
+
+This state will ultimately control what to render in the tokens table, i.e. a loading message, an error message or the tokens themselves.
+
+```typescript:src/features/uniswapV3/tokens/ui/hooks/useUniswapV3Tokens.tsx
+import { useCallback, useEffect } from 'react';
+import { useAppDispatch } from 'src/app/ui/hooks/useAppDispatch';
+import { useAppSelector } from 'src/app/ui/hooks/useAppSelector';
+import useEndpoint from 'src/app/ui/hooks/useEndpoint';
+import useEndpointBlocks from 'src/app/ui/hooks/useEndpointBlocks';
+import queryBlocksEthereum from 'src/features/shared/blocks/core/interactors/queryBlocksEthereum';
+import queryEthPrices from 'src/features/uniswapV3/ethers/core/interactors/queryEthPrices';
+import queryTokens from 'src/features/uniswapV3/tokens/core/interactors/queryTokens';
+import { setBlocks } from 'src/features/shared/blocks/state/blocksSlice';
+import { setTokensUniswapV3 } from 'src/features/uniswapV3/tokens/state/tokensUniswapV3Slice';
+import { getFormattedBlocks } from 'src/features/shared/blocks/ui/utils/utils';
+import { getFormattedTokensUniswapV3 } from 'src/features/uniswapV3/tokens/utils/utils';
+import { getTimestamps, shouldFetch } from 'src/features/shared/utils/utils';
+
+export function useUniswapV3Tokens() {
+  const dispatch = useAppDispatch();
+  const tokens = useAppSelector((state) => state.tokensUniswapV3);
+  const { blockchain, network } = useAppSelector((state) => state.protocol);
+  const endpoint = useEndpoint();
+  const endpointBlocks = useEndpointBlocks();
+
+  // create a callback function with the use cases
+  const fetchTokens = useCallback(async () => {
+    dispatch(setBlocks({ loading: true, error: false }));
+    dispatch(setTokensUniswapV3({ loading: true, error: false }));
+    if (typeof endpoint !== 'undefined' && typeof endpointBlocks !== 'undefined' && blockchain && network) {
+      const [t1D, t2D, t1W] = getTimestamps();
+      const { error: errorBlock, data: blocks } = await queryBlocksEthereum(endpointBlocks, { t1D, t2D, t1W });
+      if (errorBlock) {
+        dispatch(setBlocks({ loading: false, error: true }));
+        dispatch(setTokensUniswapV3({ loading: false, error: true }));
+      } else if (blocks) {
+        const formattedBlocks = getFormattedBlocks(blocks, blockchain, network);
+        dispatch(setBlocks({ loading: false, error: false, data: formattedBlocks }));
+        const [{ error: errorEthers, data: dataEthers }, { error: errorTokens, data: dataTokens }] = await Promise.all([
+          queryEthPrices(endpoint, blocks),
+          queryTokens(endpointBlocks, blocks),
+        ]);
+        if (errorEthers || errorTokens) {
+          dispatch(setTokensUniswapV3({ loading: false, error: true }));
+        } else if (dataTokens && dataEthers && network) {
+          const formattedData = getFormattedTokensUniswapV3(dataTokens, dataEthers, network);
+          dispatch(setTokensUniswapV3({ loading: false, error: false, data: formattedData }));
+        } else {
+          dispatch(setTokensUniswapV3({ loading: false, error: true }));
+        }
+      }
+    }
+  }, [endpoint, endpointBlocks, dispatch, blockchain, network]);
+
+  useEffect(() => {
+    if (shouldFetch(tokens, network)) {
+      fetchTokens();
+    }
+  }, [fetchTokens, tokens, network]);
+
+  // return response and callback
+  return tokens;
+}
+```
+
+In this hook we use the helper function `getFormattedTokensUniswapV3` to edit some fields and create others, namely the daily, two-day and weekly changes.
+
+Also with a `useEffect` we control that the `fetchTokens` callback function is only called if the tokens have not been fetched already, or if they have been fetched more than 15 mins ago.
+
+Therefore, leveraging the persistence of the state in all the app routes, I aim to have a smooth transition between pages -with no delays- once the tokens, pools and pairs of all routes have been fetched. Also the ones in other networks where a protocol operates.
