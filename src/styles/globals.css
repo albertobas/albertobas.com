@@ -201,7 +201,7 @@ pre > code > span {
   margin-top: 1.25rem;
   padding: 0.5rem 1em;
   font-family: var(--font-mono);
-  @mixin $text-sm;
+  @mixin $text-xs;
   font-weight: 600;
   color: var(--black-200);
   background-color: var(--gray-200-l);
