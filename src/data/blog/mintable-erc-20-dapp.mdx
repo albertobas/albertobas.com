@@ -534,7 +534,7 @@ Once the data in the context is defined, the components [`Balance`](https://www.
 
 They show the TFT (Test Fungible Token, our token) balance of the context account address in the contract, a form to transfer TFTs and a panel with incoming and outgoing transactions respectively.
 
-I set listeners inside `useEffect`s in custom hooks to keep all three main components up to date with the state in the blockchain (also `TransferFrom`, since the input data is validated using the `Formik` library).
+I set listeners inside `useEffect`s in custom hooks to keep all three main components up to date with the state in the blockchain (also `TransferFrom`, since the input data are validated using the `Formik` library).
 
 In order to keep the balance synched with the state of the `_balance` mapping of our account in `MintableERC20.sol`, we use the event `Transfer` in our contract to create two filters:
 
