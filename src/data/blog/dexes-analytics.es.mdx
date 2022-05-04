@@ -2,7 +2,7 @@
 field: 'defi'
 title: 'Cómo crear una aplicación de analítcas de DEXes'
 description: 'Introducción a la obtención y representación de datos de DEXes utilizando TheGraph y React.js.'
-introduction: "<p>Los exchanges descentralizados (DEXes) generan enormes cantidades de datos que son interesantes de leer pero difíciles de recopilar y representar.</p><p>Afortunadamente para nosotros, [TheGraph](https://thegraph.com/ 'Ir a la web de TheGraph') viene a nuestro rescate para facilitar una solución y hacer posible recuperar la cantidad mínima requerida de datos que se necesitan de una manera simple usando [GraphQL](https://graphql.org/ 'Ir a la web de GraphQL'). Veamos.</p>"
+introduction: "<p>Los exchanges descentralizados (DEXes) generan enormes cantidades de datos que son interesantes de leer pero difíciles de recopilar.</p><p>Afortunadamente, [TheGraph](https://thegraph.com/ 'Ir a la web de TheGraph') ofrece la posibilidad de obtener la cantidad mínima requerida de datos que se necesitan de una manera simple utilizando [GraphQL](https://graphql.org/ 'Ir a la web de GraphQL').</p><p>En esta publicación intentaré explicar cómo desarrollar una aplicación creada con [Vite.js](https://vitejs.dev 'Ir a la web de Vite.js') que consulte los _subgraphs_ de Uniswap v2 y v3 en TheGraph, procese los datos, los almacene en un estado global y los represente utilizando componentes de React.js. Veamos.</p>"
 tags: 'defi,the-graph,hexagonal-architecture'
 tech: 'typescript,react-js,redux,vite-js,graphql'
 datePublished: '2022-05-03'
@@ -10,8 +10,6 @@ github: { repo: 'dexes-analytics' }
 ---
 
 ## Enfoque
-
-En esta publicación intentaré explicar cómo desarrollar una aplicación creada con [Vite.js](https://vitejs.dev 'Ir a la web de Vite.js') que consulte los _subgraphs_ de Uniswap v2 y de v3 en TheGraph utilizando un cliente de GraphQL básico, procese los datos, los almacene en un estado global y los represente utilizando componentes de React.js.
 
 Para abordar el desarrollo de esta aplicación, que puede consistir en un número creciente de _exchanges_, he optado por adoptar una arquitectura limpia adaptada al front-end.
 
