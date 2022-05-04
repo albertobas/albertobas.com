@@ -11,7 +11,7 @@ github: { repo: 'dexes-analytics' }
 
 ## Solución
 
-En esta publicación intentaré explicar cómo crear una aplicación creada con [Vite.js](https://vitejs.dev 'Ir a la web de Vite.js') que consulte los _subgraphs_ de Uniswap v2 y de v3 en TheGraph utilizando un cliente de GraphQL básico, procese los datos, los almacene en un estado global y los represente utilizando componentes de React.js.
+En esta publicación intentaré explicar cómo desarrollar una aplicación creada con [Vite.js](https://vitejs.dev 'Ir a la web de Vite.js') que consulte los _subgraphs_ de Uniswap v2 y de v3 en TheGraph utilizando un cliente de GraphQL básico, procese los datos, los almacene en un estado global y los represente utilizando componentes de React.js.
 
 Para abordar el desarrollo de esta aplicación, que puede consistir en un número creciente de _exchanges_, he optado por adoptar una arquitectura limpia adaptada al front-end.
 
@@ -27,17 +27,17 @@ Inversamente, eliminar un _exchange_ consistiría en remover la carpeta correspo
 
 Este enfoque también nos otorga un desacoplamiento completo de la lógica de negocio, la interfaz de usuario y el estado de la aplicación.
 
-De esta manera, por ejemplo, la transición a una interfaz de usuario diferente se lograría editando solo las carpetas _ui_.
+De esta manera, por ejemplo, la transición a una _framework_ o librería de front-end diferente se lograría editando solo las carpetas _ui_.
 
 ## Flujo de código
 
 Dado que esta aplicación se basa en una serie de funciones con la misma estructura, explicar el flujo del código al renderizar una de ellas puede servir para explicar la lógica de la aplicación.
 
-Por ejemplo, al navegar a [Uniswap v3 overview](https:// 'Uniswap V3 overview'), se renderizará un componente React.js y el _hook_ `useUniswapV3PoolsTokens` activará cuatro casos de uso o _interactors_:
+Por ejemplo, al navegar a Uniswap v3 overview, se renderizará un componente React.js y el _hook_ `useUniswapV3PoolsTokens` activará cuatro casos de uso o _interactors_:
 
 <Image alt="Diagrama de flujo useUniswapV3PoolsTokens" src="/images/dexes-analytics/flow_chart_useUniswapV3PoolsTokens.svg" width={924} height={867} />
 
-Cada _interactor_ llama a un método de un repositorio, que se implementa en una clase en las fuentes de datos. Este método consultará un _subgraph_ en TheGraph con un cliente GraphQL y devolverá un objeto tipo JSON que, posteriormente, se adaptará a una interfaz común a todos los protocolos.
+Cada _interactor_ llama a un método de un repositorio, que se implementa en una clase en las fuentes de datos. Este método consultará un _subgraph_ en TheGraph con un cliente GraphQL y devolverá un objeto que, posteriormente, se adaptará a una interfaz común a todos los protocolos.
 
 `queryBlocksEthereum` conformará una entidad `Blocks` con números de marcas de tiempo en segundos y números de bloque para cuatro marcas de tiempo: `current`, `t1D`, `t2D` y `t1W`.
 
@@ -70,7 +70,7 @@ export type TokenExtended = Token & {
 };
 ```
 
-Cada _feature_, o protocolo soportado, reúne varias _features_. Siguiendo el ejemplo mencionado anteriormente, echemos un vistazo a cada carpeta de la _feature_ implementada Uniswap v3.
+Cada _feature_, o protocolo soportado, reúne varias _features_. Así que, siguiendo el ejemplo mencionado anteriormente, veamos cada _feature_ o carpeta implementada en el protocolo Uniswap v3.
 
 La carpeta uniswapV3 reúne `pools`, `tokens`, `ethers` y una carpeta `shared` con el componente React que utiliza el _hook_ `useUniswapV3PoolsTokens` y muestra la página de descripción general.
 
@@ -127,7 +127,7 @@ Este es el caso de uso para generar una entidad `Tokens`. Básicamente obtiene u
 
 La implementación del repositorio devuelve una promesa de un objeto con el tipo `TokensUniswapV3` que se resuelve aquí y se adapta al tipo `Tokens` a entonces.
 
-Aquí se podría crear una instancia de `TokensUniswapV3DataSource`. Sin embargo, para que nuestra lógica no se vea afectada por ningún cambio en la infraestructura, obtiene una abstracción -un repositorio TokensUniswapV3Repository- en lugar de depender de una implementación de fuente de datos específica.
+Aquí se podría crear una instancia de `TokensUniswapV3DataSource`. Sin embargo, para que nuestra lógica no se vea afectada por ningún cambio en la infraestructura, obtiene una abstracción -un repositorio `TokensUniswapV3Repository`- en lugar de depender de una implementación de fuente de datos específica.
 
 ```typescript:src/features/uniswapV3/tokens/core/interactors/queryTokens/queryTokensUniswapV3.interactor.ts {7, 10, 11}
 import TokensUniswapV3Repository from 'src/features/uniswapV3/tokens/core/repositories/TokensUniswapV3.repository';
