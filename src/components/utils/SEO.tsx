@@ -24,7 +24,7 @@ interface ArticleSEO {
   locales: string[];
   tags?: string[];
   image?: { name: string; height: number; width: number };
-  type?: 'Article' | 'Blog' | 'NewsArticle' | undefined;
+  type?: 'Article' | 'Blog' | 'NewsArticle';
 }
 
 export const ArticleSEO = memo(function ArticleSEO({
