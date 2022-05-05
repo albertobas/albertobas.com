@@ -12,6 +12,11 @@ import {
 import { dictKeys } from 'src/utils/dict';
 import { DictKeys } from 'src/utils/interfaces/dict';
 
+interface LanguageAlternates {
+  href: string;
+  hrefLang: string;
+}
+
 interface ArticleSEO {
   slug: string;
   asPath: string;
@@ -63,7 +68,7 @@ export const ArticleSEO = memo(function ArticleSEO({
         type: imageType,
       }
     : defaultOGImages;
-  const languageAlternates = [];
+  const languageAlternates: LanguageAlternates[] = [];
   locales.forEach((localeParam) => {
     if (localeParam !== locale) {
       languageAlternates.push({ href: localeParam === 'en' ? url : urlEs, hrefLang: localeParam });
@@ -124,7 +129,7 @@ export default memo(function SEO({ pageKey, asPath, description, locale, locales
     : `${dictKeys[pageKey][locale]} - ${siteName}`;
   const url = asPath ? canonical + asPath : canonical;
   const urlEs = asPath ? canonical + '/es' + asPath : canonical + '/es';
-  const languageAlternates = [];
+  const languageAlternates: LanguageAlternates[] = [];
   locales.forEach((localeParam) => {
     if (localeParam !== locale) {
       languageAlternates.push({ href: localeParam === 'en' ? url : urlEs, hrefLang: localeParam });
