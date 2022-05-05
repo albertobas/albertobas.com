@@ -39,6 +39,7 @@ const ProjectsPost = ({
   datePublished,
   dateModified,
   image,
+  oGImage,
   tags,
   tech,
   relatedProjects,
@@ -70,7 +71,7 @@ const ProjectsPost = ({
         description={description}
         datePublished={datePublished}
         dateModified={dateModified}
-        image={image}
+        image={oGImage}
         locale={locale}
         locales={locales}
       />

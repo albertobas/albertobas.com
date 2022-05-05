@@ -39,7 +39,7 @@ const BlogPost = ({
   readingTime,
   datePublished,
   dateModified,
-  image,
+  oGImage,
   tags,
   tech,
   introduction,
@@ -71,7 +71,7 @@ const BlogPost = ({
         description={description}
         datePublished={datePublished}
         dateModified={dateModified}
-        image={image}
+        image={oGImage}
         locale={locale}
         locales={locales}
       />
@@ -95,19 +95,6 @@ const BlogPost = ({
                   intl.formatMessage({ id: 'reading', defaultMessage: 'min read' })}
               </span>
             )}
-          </div>
-        )}
-        {image && (
-          <div className={styles.imgWrapper}>
-            <Image
-              src={`/images/${slug}/${image.name}`}
-              alt={title}
-              layout="responsive"
-              objectFit="cover"
-              width={720}
-              height={480}
-              priority
-            />
           </div>
         )}
         {github &&
@@ -179,3 +166,17 @@ const BlogPost = ({
   );
 };
 export default BlogPost;
+/*
+{image && (
+  <div className={styles.imgWrapper}>
+    <Image
+      src={`/images/${slug}/${image.name}`}
+      alt={title}
+      layout="responsive"
+      width={1200}
+      height={630}
+      priority
+    />
+  </div>
+)}
+*/

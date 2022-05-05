@@ -15,6 +15,7 @@ export type MdxMetadataPost = {
   tags?: string;
   tech?: string;
   image?: { name: string; height: number; width: number };
+  oGImage?: { name: string; height: number; width: number };
   dateModified?: string;
   github?: { repo: string; file?: string };
   link?: string;
