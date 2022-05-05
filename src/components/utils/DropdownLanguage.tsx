@@ -17,7 +17,7 @@ type Props = {
   instanceId: string;
   onChange: any;
   value: Item;
-  options: Item[] | ItemNum[] | undefined;
+  options: Item[] | ItemNum[] | null;
   backgroundColor?: Theme;
   borderColor?: Theme;
   placeholder?: string;
@@ -68,7 +68,7 @@ const DropdownLanguage = ({
       isClearable={false}
       isSearchable={false}
       components={{ IndicatorSeparator: () => null, Placeholder }}
-      options={options}
+      options={options !== null ? options : undefined}
       onChange={onChange}
       placeholder={placeholder ? placeholder : intl.formatMessage({ id: 'select', defaultMessage: 'Select...' })}
       value={null}

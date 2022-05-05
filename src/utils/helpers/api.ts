@@ -98,7 +98,7 @@ async function getPost(section: string, slug: string, locale: string) {
       headings,
     } as MdxPost;
   } catch {
-    return undefined;
+    return null;
   }
 }
 
@@ -144,8 +144,8 @@ async function getRelatedPosts(section: Section, reference: RelatedPosts, locale
 
 export async function getProps(section: Section, slug: string, locale: string, locales: string[]) {
   const post = await getPost(section, slug as string, locale);
-  if (!post) {
-    return undefined;
+  if (post === null) {
+    return null;
   } else {
     const related = await getRelatedPosts(
       section,
@@ -155,7 +155,7 @@ export async function getProps(section: Section, slug: string, locale: string, l
     if (section === 'blog') return { post, relatedPosts: related.slice(0, 3), locale, locales };
     else if (section === 'projects') {
       return { post, relatedProjects: related.slice(0, 2), locale, locales };
-    } else return undefined;
+    } else return null;
   }
 }
 
@@ -171,7 +171,7 @@ export async function getPaths(section: Section, locales: string[]) {
 
 export async function getPropsTags(tag: string, locale: string, locales: string[]) {
   if (!Object.keys(dictTopics).includes(tag as string)) {
-    return undefined;
+    return null;
   }
   const blogCards = await getCards('blog', locale);
   const projectsCards = await getCards('projects', locale);
@@ -193,7 +193,7 @@ export async function getPathsTags(locales: string[]) {
     projectsCards.push(...(await getCards('projects', locale)));
     const tags = getKeySet([...blogCards, ...projectsCards], 'tags');
     const tech = getKeySet([...blogCards, ...projectsCards], 'tech');
-    const source = tags && tech ? [...tags, ...tech] : tags ? tags : tech ? tech : undefined;
+    const source = tags && tech ? [...tags, ...tech] : tags ? tags : tech ? tech : null;
     if (source) {
       source.map((tag) => {
         paths.push({
@@ -203,7 +203,7 @@ export async function getPathsTags(locales: string[]) {
           },
         });
       });
-    } else return;
+    } else return null;
   });
   return paths;
 }

@@ -50,7 +50,7 @@ const BlogPost = ({
   locales,
 }: Props) => {
   const tagsArray = useMemo(
-    () => (tags || tech ? (getItemsFromCards(tags + ',' + tech, 'tags', locale) as ItemExtended[]) : undefined),
+    () => (tags || tech ? (getItemsFromCards(tags + ',' + tech, 'tags', locale) as ItemExtended[]) : null),
     [tags, tech, locale]
   );
   const intl = useIntl();

@@ -14,8 +14,8 @@ export const getItemsFromTags = (data: ItemExtended[], key: keyof ItemExtended, 
           if (typeof item[key] != 'undefined') {
             if (key === 'topic') {
               return item[key];
-            } else return;
-          } else return;
+            } else return null;
+          } else return null;
         })
         .flat()
     )
@@ -27,7 +27,7 @@ export const getItemsFromTags = (data: ItemExtended[], key: keyof ItemExtended, 
         typeItemsArray.push({ label: dictTopics[item as DictTopics].label[locale], value: item });
       }
     });
-  } else return;
+  } else return null;
   return typeItemsArray.sort(sortItemArray);
 };
 export const sortTags = (data: ItemExtended[], sortValue: string | undefined, reverse: boolean) => {

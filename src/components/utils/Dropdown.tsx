@@ -17,7 +17,7 @@ type Props = {
   instanceId: string;
   onChange: any;
   value: Item | Item[] | ItemNum | null;
-  options: Item[] | ItemNum[] | undefined;
+  options: Item[] | ItemNum[] | null;
   backgroundColor?: Theme;
   borderColor?: Theme;
   isClearable?: boolean;
@@ -86,7 +86,7 @@ const Dropdown = ({
       isClearable={isClearable}
       isMulti
       components={{ IndicatorSeparator: () => null }}
-      options={options}
+      options={options !== null ? options : undefined}
       onChange={onChange}
       placeholder={placeholder ? placeholder : intl.formatMessage({ id: 'select', defaultMessage: 'Select...' })}
       value={value ? value : null}
@@ -106,7 +106,7 @@ const Dropdown = ({
       instanceId={instanceId}
       isClearable={isClearable}
       components={{ IndicatorSeparator: () => null }}
-      options={options}
+      options={options !== null ? options : undefined}
       onChange={onChange}
       placeholder={placeholder ? placeholder : intl.formatMessage({ id: 'select', defaultMessage: 'Select...' })}
       value={value ? value : null}

@@ -64,7 +64,7 @@ export const getStaticProps: GetStaticProps = async ({ locale, locales, params }
     return { notFound: true };
   } else {
     const props = await getPropsTags(params.tag as string, locale, locales);
-    if (!props) {
+    if (props === null) {
       return { notFound: true };
     } else {
       return { props };

@@ -3,7 +3,7 @@ import Tooltip from '../utils/Tooltip';
 import Tag from './Tag';
 import HashTag from './HashTag';
 
-const Tags = ({ tags, hash }: { tags: ItemExtended[] | undefined; hash?: boolean }) => {
+const Tags = ({ tags, hash }: { tags: ItemExtended[] | null; hash?: boolean }) => {
   return (
     <ul>
       {tags?.map((tag) => {

@@ -7,7 +7,7 @@ import { getLabel } from 'src/utils/helpers/post';
 import { useIsMounted } from 'src/utils/hooks';
 
 type Props = {
-  options: Item[] | undefined;
+  options: Item[] | null;
   locale: Language;
   type: string;
   onChange(item: Item | Item[]): void;
@@ -16,7 +16,7 @@ type Props = {
   isMulti?: boolean;
 };
 
-export default memo(function FilterSelectDSCB({ options, locale, type, onChange, value, isMulti }: Props) {
+export default memo(function FilterSelect({ options, locale, type, onChange, value, isMulti }: Props) {
   const isMounted = useIsMounted();
   return (
     <div className={styles.advancedRow}>

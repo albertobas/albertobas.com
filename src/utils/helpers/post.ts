@@ -6,7 +6,7 @@ import { Language } from 'src/utils/interfaces/languages';
 import { Filter, Headings, MdxMetadataCard, MdxMetadataPost } from 'src/utils/interfaces/post';
 
 export function cardFilter(cards: MdxMetadataCard[], filters: Filter[]) {
-  function booleanFilter(value: string | string[] | undefined, filter: Item[] | null) {
+  function booleanFilter(value: string | string[] | undefined, filter: Item[]) {
     const itemsArray: boolean[] = [];
     value &&
       filter &&
@@ -18,13 +18,7 @@ export function cardFilter(cards: MdxMetadataCard[], filters: Filter[]) {
   function cardMap(card: MdxMetadataCard) {
     return filters.map((filter) => {
       const tagExtended =
-        card.tags && card.tech
-          ? card.tags + ',' + card.tech
-          : card.tags
-          ? card.tags
-          : card.tech
-          ? card.tech
-          : undefined;
+        card.tags && card.tech ? card.tags + ',' + card.tech : card.tags ? card.tags : card.tech ? card.tech : null;
       return (
         (filter.filter &&
           filter.filter.length > 0 &&
@@ -115,8 +109,8 @@ export const getItemsFromCards = (data: MdxMetadataCard[] | string, key: keyof M
           typeItemsArray.push({ label: dictKeys[item as DictKeys][locale], value: item });
         }
       });
-    } else return;
-  } else return;
+    } else return null;
+  } else return null;
   return typeItemsArray.sort(sortItemArray);
 };
 export const getKeySet = (data: MdxMetadataCard[] | MdxMetadataPost[] | string, key: keyof MdxMetadataPost) => {
@@ -133,7 +127,7 @@ export const getKeySet = (data: MdxMetadataCard[] | MdxMetadataPost[] | string, 
       }
     });
     keySet.push(...new Set(source.flat()));
-  } else return;
+  } else return null;
   return keySet;
 };
 export const getLabel = (value: string, locale: Language) => {

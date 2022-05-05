@@ -49,7 +49,7 @@ const FiltersDSCB = ({
   }, [cards, typeTags, locale]);
   const optionsTagExtended = useMemo(() => {
     const tagExtended = [...(optionsTag || []), ...(optionsTech || [])].sort(sortItemArray);
-    return optionsTag && optionsTech ? tagExtended : optionsTag ? optionsTag : optionsTech ? optionsTech : undefined;
+    return optionsTag && optionsTech ? tagExtended : optionsTag ? optionsTag : optionsTech ? optionsTech : null;
   }, [optionsTag, optionsTech]);
   return (
     <div className={styles.layout}>

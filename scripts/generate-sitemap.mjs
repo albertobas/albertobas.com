@@ -25,7 +25,7 @@ function getTagsSet(data) {
         .map(function (item) {
           if (typeof item['tags'] != 'undefined') {
             return item['tags']?.split(',');
-          } else return;
+          } else return null;
         })
         .flat()
     ),
