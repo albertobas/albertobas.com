@@ -81,7 +81,7 @@ export const ArticleSEO = memo(function ArticleSEO({
           type: 'article',
           article: {
             publishedTime: datePublished,
-            modifiedTime: dateModified ? dateModified : undefined,
+            modifiedTime: dateModified,
             authors: [siteName],
             section: topic,
             tags: tags,
@@ -94,12 +94,12 @@ export const ArticleSEO = memo(function ArticleSEO({
         }}
       />
       <ArticleJsonLd
-        type={type ? type : undefined}
+        type={type}
         url={url}
         title={title}
         images={[imageUrl]}
         datePublished={datePublished}
-        dateModified={dateModified ? dateModified : datePublished}
+        dateModified={dateModified}
         authorName={siteName}
         description={description}
       />

@@ -198,12 +198,7 @@ export function sortCardList(data: MdxMetadataCard[]) {
       : 0
   );
 }
-export const sortCards = (
-  data: MdxMetadataCard[],
-  sortValue: string | undefined,
-  reverse: boolean,
-  locale: Language
-) => {
+export const sortCards = (data: MdxMetadataCard[], sortValue: string, reverse: boolean, locale: Language) => {
   if (reverse) {
     if (sortValue === 'title') {
       return data.sort((a, b) => (a.title > b.title ? -1 : a.title < b.title ? 1 : 0));
