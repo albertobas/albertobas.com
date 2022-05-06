@@ -114,7 +114,7 @@ import { Blocks } from 'src/features/shared/blocks/core/entities/Blocks';
 import { TokensUniswapV3 } from 'src/features/uniswapV3/tokens/core/entities/TokensUniswapV3';
 
 interface TokensUniswapV3Repository {
-  getByAddresses(endpoint: string, blocks: Blocks): Promise<TokensUniswapV3 | undefined>;
+  getByBlocks(endpoint: string, blocks: Blocks): Promise<TokensUniswapV3 | undefined>;
 }
 
 export default TokensUniswapV3Repository;
@@ -122,7 +122,7 @@ export default TokensUniswapV3Repository;
 
 ### Interactors
 
-This is the use case to generate a `Tokens` entity. It basically gets an _endpoint_ and a `Blocks` object and passes them to the `getByAddresses` method in `TokensUniswapV3Repository`.
+This is the use case to generate a `Tokens` entity. It basically gets an _endpoint_ and a `Blocks` object and passes them to the `getByBlocks` method in `TokensUniswapV3Repository`.
 
 The implementation of the repository returns a promise of an object with the type `TokensUniswapV3` which is resolved here and adapted to the type `Tokens` thereafter.
 
@@ -138,7 +138,7 @@ const queryTokensUniswapV3 =
   (tokensRepository: TokensUniswapV3Repository) =>
   async (endpoint: string, blocks: Blocks): Promise<{ error: boolean; data: Tokens | null }> => {
     try {
-      const data = await tokensRepository.getByAddresses(endpoint, blocks);
+      const data = await tokensRepository.getByBlocks(endpoint, blocks);
       return { error: false, data: tokensUniswapV3Adapter(data) };
     } catch (e) {
       // if an error is thrown, it will be catched and true will be passed in error for our ui logic.
@@ -202,11 +202,11 @@ Also, this step may help as a barrier in case there was a change on the subgraph
 
 ## Data source
 
-The only data source in tokens is a class that implements the `TokensUniswapV3Repository`, which only requires the method `getByAddresses`.
+The only data source in tokens is a class that implements the `TokensUniswapV3Repository`, which only requires the method `getByBlocks`.
 
 As seen above in interactors, this method queries the Uniswap V3 subgraph with a `GraphQLClient` and returns a promise of an object with the type `TokensUniswapV3`.
 
-A `Blocks` object is passed to `getByAddresses` because we need to query for four different timestamps, this is accomplished by setting the block number in the query.
+A `Blocks` object is passed to `getByBlocks` because we need to query for four different timestamps, this is accomplished by setting the block number in the query.
 
 However, instead of querying the subgraph four times, once for every timestamp, we create a single query with the four timestamps as keys:
 
@@ -218,7 +218,7 @@ import { TokensUniswapV3 } from 'src/features/uniswapV3/tokens/core/entities/Tok
 import { UNISWAP_V3_TOKENS_TO_HIDE } from 'src/features/uniswapV3/tokens/utils/constants';
 
 class TokensUniswapV3DataSource implements TokensUniswapV3Repository {
-  public async getByAddresses(endpoint: string, blocks: Blocks): Promise<TokensUniswapV3 | undefined> {
+  public async getByBlocks(endpoint: string, blocks: Blocks): Promise<TokensUniswapV3 | undefined> {
     const client = new GraphQLClient(endpoint);
     const getQuery = (blocksEntity: Blocks) => {
       let tokensToHide = '';
