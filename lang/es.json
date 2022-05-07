@@ -54,7 +54,7 @@
     "defaultMessage": "Secciones"
   },
   "footerWebNote": {
-    "defaultMessage": "Esta página no le rastrea. Su <openSource></openSource> es abierto."
+    "defaultMessage": "Esta página no le rastrea. El <openSource></openSource> es abierto."
   },
   "fullList": {
     "defaultMessage": "Lista completa"
