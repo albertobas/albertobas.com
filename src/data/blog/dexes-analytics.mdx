@@ -353,7 +353,7 @@ export type RootState = ReturnType<typeof store.getState>;
 
 The ui folder gathers both, the implementation of the hook that gets the tokens, and the React.js component used to get the tokens from this hook and render another component with the table and the pagination.
 
-`useUniswapV3Tokens` is the hook that assigns the state in the tokens redux slice dispatching the proper payload to `setTokensUniswapV3` depending on the fetch responses of every interactor that is called.
+`useUniswapV3Tokens` is the hook that assigns the state in the tokens Redux slice dispatching the proper payload to `setTokensUniswapV3` depending on the fetch responses of every interactor that is called.
 
 This state will ultimately control what to render in the tokens table, i.e. a loading message, an error message or the tokens themselves.
 
