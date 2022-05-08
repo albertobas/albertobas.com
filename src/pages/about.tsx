@@ -34,18 +34,22 @@ const AboutPage = () => {
         <p>
           <FormattedMessage
             id="aboutP1"
-            defaultMessage="I'm Alberto Bas, I've written 
-            this page to gather and publish some work and projects mainly about cryptography, blockchain and data science."
+            defaultMessage="I'm Alberto Bas, I've written this webpage to gather and publish some work and projects mainly about blockchain, but also about data science."
           />
         </p>
         <p>
           <FormattedMessage
             id="aboutP2"
-            defaultMessage="I try to cover concepts like <smartcontracts></smartcontracts>, flash loans and swaps, crypto wallets, 
-            ZK-SNARKs and others mostly about <defi></defi> generally coding decentralized applications which I usually develop using <reactjs></reactjs> 
-            components and <typescript></typescript>, sometimes using <nextjs></nextjs>. I code smart contracts in <solidity></solidity> 
-            and Vyper. The development environments I usually use are <hardhat></hardhat> and Brownie."
+            defaultMessage="Regarding the former, I'll be mostly covering concepts about <defi></defi>, like flash loans and swaps, crypto wallets, ZK-SNARKs, etc. 
+            and more general ones like <dapps></dapps>, <smartcontracts></smartcontracts>, etc. In order to do so, I usually develop applications using <reactjs></reactjs> 
+            components and <typescript></typescript>, sometimes with <nextjs></nextjs>. The development environments I usually use are <hardhat></hardhat> and Brownie where 
+            I code smart contracts in <solidity></solidity> and Vyper."
             values={{
+              dapps: () => (
+                <ILink className={styles.internal} href={'/tags/dapp'}>
+                  <FormattedMessage id="dapp" defaultMessage="decentralized applications" />
+                </ILink>
+              ),
               defi: () => (
                 <ILink className={styles.internal} href={'/tags/defi'}>
                   <FormattedMessage id="defi" defaultMessage="decentralized finance" />
