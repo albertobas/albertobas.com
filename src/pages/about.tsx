@@ -40,14 +40,14 @@ const AboutPage = () => {
         <p>
           <FormattedMessage
             id="aboutP2"
-            defaultMessage="Regarding the former, I'll be mostly covering concepts about <defi></defi>, like flash loans and swaps, crypto wallets, ZK-SNARKs, etc. 
+            defaultMessage="Regarding blockchain, I'll be mostly covering concepts about <defi></defi>, like flash loans and swaps, crypto wallets, ZK-SNARKs, etc. 
             and more general ones like <dapps></dapps>, <smartcontracts></smartcontracts>, etc. In order to do so, I usually develop applications using <reactjs></reactjs> 
-            components and <typescript></typescript>, sometimes with <nextjs></nextjs>. The development environments I usually use are <hardhat></hardhat> and Brownie where 
+            components and <typescript></typescript>, sometimes with <nextjs></nextjs>. The development environments I use are <hardhat></hardhat> and Brownie where 
             I code smart contracts in <solidity></solidity> and Vyper."
             values={{
               dapps: () => (
                 <ILink className={styles.internal} href={'/tags/dapp'}>
-                  <FormattedMessage id="dapp" defaultMessage="decentralized applications" />
+                  <FormattedMessage id="dapps" defaultMessage="decentralized applications" />
                 </ILink>
               ),
               defi: () => (
