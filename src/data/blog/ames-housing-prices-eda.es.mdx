@@ -402,17 +402,11 @@ Primero se realizará un análisis gráfico, mirando los predictores uno por uno
 Este análisis es útil para descubrir algunas particularidades en los datos:
 
 - La gran mayoría de las casas tienen menos de 2000 pies cuadrados de superficie habitable y menos de 20000 pies cuadrados de área de lote.
-
 - La parcela de distribución de `TotalBsmtSF` muestra que la mayoría de las casas tienen sótano.
-
 - La mayoría de las casas tienen entre 5 y 7 habitaciones sobre rasante, sin embargo, hay casas con hasta 14 habitaciones sobre rasante.
-
 - Hay algunas casas con más de una cocina sobre rasante y algunas sin dormitorios.
-
 - La mayoría de las propiedades tienen 1 o 2 baños completos, pero hay algunas con 3 y otras sin baños completos.
-
 - La mayoría de las propiedades tienen suficiente espacio para hasta dos automóviles en el garaje.
-
 - La mayoría de las casas no tienen piscina ni porche.
 
 ```python
@@ -889,7 +883,6 @@ plot_univariate(X_train, nominal_vars, 1.6, 3, 3, 2, sns.barplot, labels_thresh=
 <Image alt="Gráficas de barras de variables nominales" src="/images/ames-housing-prices-eda/output_21_0.png" width={1261} height={836} />
 
 - La gran mayoría de viviendas tienen aire acondicionado y también generadores de aire caliente de tiro forzado a gas como tipo de calefacción.
-
 - La mayoría de las viviendas se han construido en una zona residencial de baja densidad.
 
 ```python

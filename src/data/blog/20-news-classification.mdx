@@ -285,7 +285,6 @@ params_data_loader = {'batch_size': 128, 'shuffle': True, 'num_workers': 2, 'dro
 Two simple models with convolutional networks are trained:
 
 - the first version is a network with three one-dimension convolution layers with max pooling, which uses as input embeddings with pretrained weights of 100 dimensions, and which has a two-layer classifier in the output.
-
 - the second version is a network with four 1-d convolution layers with max pooling, an input embedding layer of 128-d, and an output of a one-layer classifier.
 
 I have set L2 regularization, and 50% and 40% dropout in every respective classifier to try to address an issue of overfitting the training set. This has a better result in the second convolutional network.
@@ -452,7 +451,6 @@ Epoch 12: 100%|##########| 125/125 30:26, _lr=0.0005625, acc=90.34, loss=0.3605,
 Lastly, I have trained two recurrent neural networks:
 
 - One with a bidirectional one-layer LSTM and a self attention mechanism.
-
 - And another one with a bidirectional one-layer GRU and a self attention mechanism.
 
 Both have an embedding layer of 128 dimensions and a one-layer classifier. However I have only set dropout in the LSTM.

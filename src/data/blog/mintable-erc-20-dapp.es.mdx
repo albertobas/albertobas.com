@@ -540,7 +540,6 @@ Establezco _listeners_ dentro de `useEffect`s en _hooks_ personalizados para man
 Para mantener el saldo sincronizado con el estado de nuestra cuenta en el _mapping_ `_balance` de MintableERC20.sol, usamos el evento `Transfer` en nuestro contrato para crear dos filtros
 
 - `filterReceived`: este filtro mantendrá todas las transacciones a nuestra cuenta (incluyendo el operaciones de acuñado).
-
 - `filterSent`: este filtro mantendrá todas las transacciones desde nuestra cuenta.
 
 Luego configuramos _listeners_ a estos eventos para actualizar el estado del saldo en nuestra aplicación.

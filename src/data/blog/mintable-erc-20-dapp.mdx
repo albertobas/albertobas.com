@@ -540,7 +540,6 @@ I set listeners inside `useEffect`s in custom hooks to keep all three main compo
 In order to keep the balance synched with the state of the `_balance` mapping of our account in `MintableERC20.sol`, we use the event `Transfer` in our contract to create two filters:
 
 - `filterReceived`: this filter will keep all the transactions to our account (including the mint operations).
-
 - `filterSent`: this filter will keep all the transactions from our account.
 
 We then set listeners to these events to update our application balance state.

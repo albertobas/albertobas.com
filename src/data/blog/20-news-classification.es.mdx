@@ -286,7 +286,6 @@ params_data_loader = {'batch_size': 128, 'shuffle': True, 'num_workers': 2, 'dro
 Se entrenan dos modelos simples con redes convolucionales:
 
 - la primera versión es una red con tres capas de convolución de una dimensión con _max pooling_, que usa como embeddings de entrada parámetros ya entrenados de 100 dimensiones, y que tiene en la salida un clasificador de dos capas.
-
 - la segunda versión es una red con cuatro capas de convolución 1-d con _max pooling_, una capa de embeddings de entrada de 128-d y en la salida un clasificador de una capa.
 
 He establecido regularización L2 y un 50 % y un 40 % de _dropout_ en cada clasificador respectivamente, para tratar de solucionar un problema del sobreajuste del conjunto de entrenamiento. Esto tiene un mejor resultado en la segunda red convolucional.
