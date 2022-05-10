@@ -61,7 +61,6 @@ quantitative = [n for n in numerical if n not in qualitative and n != 'SalePrice
 As part of the workflow, the imputation of missing values inside the chain in every single pipeline will be given by an `Imputer` object, however, most of the missing values are deductible just considering other values in the same observation:
 
 - In the case of qualitative variables consider the following example, if an observation showed that there is no pool, i.e., `PoolArea` is zero, we would then assign `NA` to the pertinent observation in `PoolQC` if it was missing, as the data description states this is the value for the quality of the pool when there is no pool. And if in fact there was a pool, we would impute `None` so that we do not bias the result. Also, in relation to the pipelines that use sets with dummy variables, when the indicators are created this observation would not be represented by any of the `PoolQC` classes, and in relation to the pipelines that use categorical sets `None` would not be taken as a category.
-
 - In the case of quantitative variables, and following a similar example, if there was a missing value in `GarageArea` for a given observation and `GarageQual` was `NA` in the same row, then `0` would be imputed in `GarageArea`.
 
 The rest of the missing values will be assigned by an `Imputer` object, which takes as one of the arguments either a number to fill the missing values or the type of average (mean or median). This average can also be computed after grouping by another predictor, passing the feature name to the _groupby_ argument.
@@ -491,9 +490,7 @@ The reason for passing this list of categories is to prevent the estimators from
 I have written [three classes](https://www.github.com/albertobas/ames-housing-prices/blob/main/utils/validation.py 'Validation classes') that are used in this section:
 
 - `PipeTunerCV`, which is used to optimize the parameters passed from the estimators in the pipelines, prevailing the values of this parameters with lower cross-validated RMSE over the others. Also, I include some methods to plot the coefficients of pipelines with Ridge, the Lasso and ElasticNet regressors, and the feature importance of the Random Forest Regressor.
-
 - `BoostingTunerCV`, which is used to optimize the pre-arranged parameters of the estimators outside the pipelines and to plot the feature importance of the predictors and the learning curve of the model.
-
 - `WeightedAverage`: it is used to select the combination of pipelines that yields the best performance.
 
 In order to assess how well the estimators generalize I use the square root of the mean squared error evaluated by cross-validation using 5 folds:

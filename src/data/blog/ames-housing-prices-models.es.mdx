@@ -61,7 +61,6 @@ quantitative = [n for n in numerical if n not in qualitative and n != 'SalePrice
 Como parte del flujo de trabajo, la imputación de los valores faltantes dentro de la cadena en cada pipeline la dará un objeto `Imputer`. Sin embargo, la mayoría de los valores faltantes son deducibles simplemente considerando otros valores en la misma observación:
 
 - En el caso de las variables cualitativas, considere el siguiente ejemplo, si una observación mostrase que no hay piscina, es decir, `PoolArea` fuese cero, entonces asignaríamos `NA` a la observación pertinente en `PoolQC`, y es que la descripción de los datos indica que este es el valor de la variable de calidad de la piscina cuando en una casa no hay piscina. Y si de hecho hubiese una piscina, introduciríamos `None` para no sesgar el resultado. También, en relación con las pipelines que utilizan conjuntos con variables dummy -o indicadoras-, cuando los indicadores se crean, esta observación no será representada por ninguna de las clases `PoolQC`, y en relación con las pipelines que utilizan conjuntos categóricos, `None` no formaría parte de las categorías.
-
 - En el caso de variables cuantitativas, y siguiendo un ejemplo similar, si faltase un valor en `GarageArea` para una observación determinada y `GarageQual` fuese `NA` en la misma fila, entonces se imputaría `0` en `GarageArea`.
 
 El resto de los valores faltantes serán asignados por un objeto `Imputer`, el cual toma como uno de los argumentos un número para completar los valores faltantes, o el tipo de promedio (media o mediana). Este promedio también se puede calcular después de agrupar en base a otro predictor, pasando el nombre de la variable al argumento _groupby_.
@@ -491,9 +490,7 @@ La razón de pasar esta lista de categorías es evitar que los estimadores recib
 He escrito [tres clases](https://www.github.com/albertobas/ames-housing-prices/blob/main/utils/validation.py “clases de validación”) que se utilizan en esta sección:
 
 - `PipeTunerCV`, que se utiliza para optimizar los parámetros pasados de los estimadores en los pipelines, prevaleciendo los valores de estos parámetros con RMSE de validación cruzada más bajos sobre los demás. Además, incluyo algunos métodos para dibujar los gráficos de los coeficientes de las pipelines con los regresores Ridge, Lasso y ElasticNet, y la importancia de las variables del regresor de bosque aleatorio.
-
 - `BoostingTunerCV`, que se utiliza para optimizar los parámetros preestablecidos de los estimadores fuera de las pipelines y para trazar la importancia de las características de los predictores y la curva de aprendizaje del modelo.
-
 - `WeightedAverage`: se utiliza para seleccionar la combinación de pipelines que produce el mejor rendimiento.
 
 Para evaluar cómo de bien generalizan los estimadores, utilizo la raíz cuadrada del error cuadrático medio evaluado por validación cruzada usando 5 divisiones o _folds_:
