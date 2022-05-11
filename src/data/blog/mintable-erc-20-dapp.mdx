@@ -348,7 +348,9 @@ We are mostly interested in `MintableERC20.json` under `/hardhat/artifacts/contr
 
 We'll use them in our React application to interact with the smart contract using Ethers.js.
 
-The name of this workspace is the same as the name of the package `hardhat` that we have already installed, so, in order to import the files we need in `react-app`, we could either rename this workspace, to avoid any naming conflict, and import them from this _workspace_, or, as shown below, leave it as it is and code a simple script to read the files we need and write them in the `react-app` workspace to import them from there:
+In order to import the files that we need from the workspace `hardhat` to `react-app`, we could do so simply with import statements.
+
+However, in case we'd like to keep a copy of those files in `react-app` or just to avoid naming conflicts with packages installed in our workspace and other workspaces names, we could run a simple script to read the files we need and write them in `react-app` to import them from there:
 
 ```typescript:hardhat/scripts/shareFiles.ts
 async function shareFiles() {
