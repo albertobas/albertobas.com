@@ -58,5 +58,29 @@
     "stylelint-config-prettier": "^9.0.3",
     "stylelint-config-recommended": "^7.0.0",
     "typescript": "4.6.2"
+  },
+  "eslintConfig": {
+    "extends": "next/core-web-vitals",
+    "rules": {
+      "react/prop-types": 0,
+      "react/no-unescaped-entities": 0
+    }
+  },
+  "prettier": {
+    "useTabs": false,
+    "trailingComma": "es5",
+    "tabWidth": 2,
+    "semi": true,
+    "singleQuote": true,
+    "bracketSpacing": true,
+    "printWidth": 120,
+    "overrides": [
+      {
+        "files": "*.mdx",
+        "options": {
+          "printWidth": 1000
+        }
+      }
+    ]
   }
 }
