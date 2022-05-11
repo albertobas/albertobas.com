@@ -1,4 +1,3 @@
-import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
 import { FormattedMessage } from 'react-intl';
 import { useCloseMobile } from 'src/utils/hooks';
@@ -28,7 +27,7 @@ const HomePage = ({ blogCards, projectsCards, tags, locale, locales }: Props) =>
     <>
       <SEO pageKey={'home'} locale={locale} locales={locales} />
       <div className={styles.me}>
-        <h1 id={styles.title}>
+        <h1>
           <FormattedMessage id="introSectionH1" defaultMessage="A page about blockchain, data science and Web3" />
         </h1>
         <p>

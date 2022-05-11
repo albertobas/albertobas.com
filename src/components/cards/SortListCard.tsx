@@ -136,7 +136,6 @@ const SortListCard = ({ cards, filteredSearch, pageNum, setPageNum, locale, all 
           cardsPerPageDefault={cardsPerPageDefault.value}
           pageNum={pageNum}
           setPageNum={setPageNum}
-          locale={locale}
         />
       )}
     </>

@@ -1,5 +1,4 @@
 import { useRouter } from 'next/router';
-import Image from 'next/image';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useMemo } from 'react';
 import { Headings, MdxMetadataCard, MdxMetadataPost } from 'src/utils/interfaces/post';

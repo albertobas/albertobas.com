@@ -74,7 +74,6 @@ const SearchList = ({ cards, locale, all }: Props) => {
         handleSearch={handleSearch}
         onClick={handleFilters}
         isBtnClicked={filters}
-        locale={locale}
         placeholder={
           cards[0]?.section === 'blog'
             ? intl.formatMessage({ id: 'searchPosts', defaultMessage: 'Search posts...' })

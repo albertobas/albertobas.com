@@ -19,7 +19,6 @@ type Props = {
   setCardsPerPage: Dispatch<SetStateAction<ItemNum>>;
   pageNum: number;
   setPageNum: Dispatch<SetStateAction<number>>;
-  locale: Language;
 };
 
 const PaginationSection = ({
@@ -29,7 +28,6 @@ const PaginationSection = ({
   setCardsPerPage,
   pageNum,
   setPageNum,
-  locale,
 }: Props) => {
   const router = useRouter();
   const isMounted = useIsMounted();

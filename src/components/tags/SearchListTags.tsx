@@ -40,7 +40,6 @@ const SearchListTags = ({ tags, locale }: Props) => {
         handleSearch={handleSearch}
         onClick={handleFilters}
         isBtnClicked={filters}
-        locale={locale}
         placeholder={intl.formatMessage({ id: 'searchTags', defaultMessage: 'Search tags...' })}
       />
       {filters && <FilterTags tags={filteredTags} topic={topic} handleTopic={handleTopic} locale={locale} />}

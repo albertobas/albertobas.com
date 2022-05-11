@@ -65,7 +65,6 @@ const SearchLists = ({ cardsObject, locale }: Props) => {
         handleSearch={handleSearch}
         onClick={handleFilters}
         isBtnClicked={filters}
-        locale={locale}
         placeholder={intl.formatMessage({ id: 'searchPostsProjects', defaultMessage: 'Search posts and projects...' })}
       />
       {filters && (

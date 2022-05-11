@@ -7,13 +7,12 @@ import Tooltip from 'src/components/utils/Tooltip';
 interface Props {
   query: string | null;
   handleSearch(value: string): void;
-  locale: Language;
   isBtnClicked?: boolean;
   onClick?(): void;
   placeholder?: string;
 }
 
-const SearchBar = ({ query, handleSearch, isBtnClicked, onClick, placeholder, locale }: Props) => {
+const SearchBar = ({ query, handleSearch, isBtnClicked, onClick, placeholder }: Props) => {
   const intl = useIntl();
   return (
     <div className={styles.searchWrapper}>
