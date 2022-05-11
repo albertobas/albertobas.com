@@ -1,6 +1,6 @@
 {
   "aboutDescription": "Breve introducción de Alberto Bas",
-  "aboutP1": "Soy Alberto Bas, he escrito esta página para publicar y mostrarles algunos trabajos y proyectos principalmente acerca de cadena de bloques, aunque también sobre ciencia de datos.",
+  "aboutP1": "Estoy muy interesado en la noción de descentralización y centrado en su aplicación en algunas industrias. He escrito esta página para publicar y mostrarles algunos trabajos y proyectos principalmente acerca de cadena de bloques, aunque también sobre ciencia de datos.",
   "aboutP2": "Respecto a cadena de bloques, intentaré ir tratando mayormente conceptos sobre <defi></defi>, como préstamos rápidos, carteras criptográficas, ZK-SNARKs, etc. y otros más generales como <dapps></dapps>, <smartcontracts></smartcontracts>, etc. Para llevarlo a cabo, suelo escribir aplicaciones utilizando componentes de <reactjs></reactjs> y <typescript></typescript>, en ocasiones con <nextjs></nextjs>. Los entornos de desarrollo que utilizo son <hardhat></hardhat> y Brownie, donde desarrollo contratos inteligentes en los lenguajes <solidity></solidity> y Vyper.",
   "aboutP3": "En cuanto a ciencia de datos, tengo conocimiento de modelado paramétrico y no paramétrico en <supervisedlearning></supervisedlearning>, y de clusterizado y técnicas de PCA en aprendizaje no supervidsado. Principalmente escribo código en <python></python> y utilizo librerías como <scikitlearn></scikitlearn>, <xgboost></xgboost>, <lightgbm></lightgbm>. Tengo experiencia implementando y optimizando redes neuronales prealimentadas and <cnn></cnn>, así como recurrentes (<lstm></lstm> y <gru></gru>) y redes recursivas. Principalmente utilizo <pytorch></pytorch>, aunque también TensorFlow y Keras. En cuanto a <eda></eda>, utilizo librerías de python (<pandas></pandas>, <numpy></numpy>, <scipy></scipy>, <matplotlib></matplotlib> y <seaborn></seaborn>).",
   "aboutP4": "Me puede contactar por <email></email> y en mis perfiles de <github></github> y de <linkedin></linkedin>.",
@@ -40,6 +40,7 @@
   "postFound": "entrada encontrada",
   "postsFound": "entradas encontradas",
   "prevPage": "Página previa",
+  "profession": "Desarrollador de blockchain",
   "projectFound": "proyecto encontrado",
   "projectsDescription": "Proyectos sobre criptografía, cadena de bloques and ciencia de datos.",
   "projectsFound": "proyectos encontrados",

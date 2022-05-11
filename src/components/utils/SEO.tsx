@@ -11,6 +11,7 @@ import {
 } from 'src/utils/constants';
 import { dictKeys } from 'src/utils/dict';
 import { DictKeys } from 'src/utils/interfaces/dict';
+import { useIntl } from 'react-intl';
 
 interface LanguageAlternates {
   href: string;
@@ -122,10 +123,11 @@ interface SEO {
 }
 
 export default memo(function SEO({ pageKey, asPath, description, locale, locales, title }: SEO) {
+  const intl = useIntl();
   const titlePageSite = title
     ? `${title} - ${siteName}`
     : pageKey === 'home'
-    ? `${siteName}`
+    ? `${siteName} - ${intl.formatMessage({ id: 'profession', defaultMessage: 'Blockchain developer' })}`
     : `${dictKeys[pageKey][locale]} - ${siteName}`;
   const url = asPath ? canonical + asPath : canonical;
   const urlEs = asPath ? canonical + '/es' + asPath : canonical + '/es';

@@ -3,7 +3,7 @@
     "defaultMessage": "Breve introducción de Alberto Bas"
   },
   "aboutP1": {
-    "defaultMessage": "Soy Alberto Bas, he escrito esta página para publicar y mostrarles algunos trabajos y proyectos principalmente acerca de cadena de bloques, aunque también sobre ciencia de datos."
+    "defaultMessage": "Estoy muy interesado en la noción de descentralización y centrado en su aplicación en algunas industrias. He escrito esta página para publicar y mostrarles algunos trabajos y proyectos principalmente acerca de cadena de bloques, aunque también sobre ciencia de datos."
   },
   "aboutP2": {
     "defaultMessage": "Respecto a cadena de bloques, intentaré ir tratando mayormente conceptos sobre <defi></defi>, como préstamos rápidos, carteras criptográficas, ZK-SNARKs, etc. y otros más generales como <dapps></dapps>, <smartcontracts></smartcontracts>, etc. Para llevarlo a cabo, suelo escribir aplicaciones utilizando componentes de <reactjs></reactjs> y <typescript></typescript>, en ocasiones con <nextjs></nextjs>. Los entornos de desarrollo que utilizo son <hardhat></hardhat> y Brownie, donde desarrollo contratos inteligentes en los lenguajes <solidity></solidity> y Vyper."
@@ -121,6 +121,9 @@
   },
   "prevPage": {
     "defaultMessage": "Página previa"
+  },
+  "profession": {
+    "defaultMessage": "Desarrollador de blockchain"
   },
   "projectFound": {
     "defaultMessage": "proyecto encontrado"

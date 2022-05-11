@@ -3,7 +3,7 @@
     "defaultMessage": "Brief introduction of Alberto Bas"
   },
   "aboutP1": {
-    "defaultMessage": "I'm Alberto Bas, I've written this webpage to gather and publish some work and projects mainly about blockchain, but also about data science."
+    "defaultMessage": "I am very interested in the notion of decentralization and focused on its application to some industries. I've written this webpage to gather and publish some work and projects mainly about blockchain, but also about data science."
   },
   "aboutP2": {
     "defaultMessage": "Regarding blockchain, I'll be mostly covering concepts about <defi></defi>, like flash loans and swaps, crypto wallets, ZK-SNARKs, etc. and more general ones like <dapps></dapps>, <smartcontracts></smartcontracts>, etc. In order to do so, I usually develop applications using <reactjs></reactjs> components and <typescript></typescript>, sometimes with <nextjs></nextjs>. The development environments I use are <hardhat></hardhat> and Brownie where I code smart contracts in <solidity></solidity> and Vyper."
@@ -121,6 +121,9 @@
   },
   "prevPage": {
     "defaultMessage": "Previous page"
+  },
+  "profession": {
+    "defaultMessage": "Blockchain developer"
   },
   "projectFound": {
     "defaultMessage": "project found"
