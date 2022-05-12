@@ -111,7 +111,7 @@ const SortListsCard = ({
             >
               <SVG
                 icon={
-                  (sort?.value === 'field' || sort?.value === 'title'
+                  (sort?.value === 'field' || sort?.value === 'title' || sort?.value === 'topic'
                     ? reverse
                       ? 'sortAlphaUp'
                       : 'sortAlphaDown'

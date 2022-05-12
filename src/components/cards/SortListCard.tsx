@@ -98,7 +98,7 @@ const SortListCard = ({ cards, filteredSearch, pageNum, setPageNum, locale, all 
             >
               <SVG
                 icon={
-                  (sort?.value === 'field' || sort?.value === 'title'
+                  (sort?.value === 'field' || sort?.value === 'title' || sort?.value === 'topic'
                     ? reverse
                       ? 'sortAlphaUp'
                       : 'sortAlphaDown'
