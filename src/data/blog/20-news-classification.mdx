@@ -116,7 +116,7 @@ In this section four models are trained, two convolutional networks and two recu
 
 All of the models implemented share a similar workflow, i.e., a multidimensional representation of the sequences, a process of learning high-level features in the data and a last phase of classifying the estimations.
 
-For this reason I have written a simple object that I will instantiate in every model and which will gather the different modules to be used.
+For this reason I have written a simple class that I will instantiate in every model and which will gather the different modules to be used.
 
 ```python
 class TwentyNewsNet(nn.Module):
@@ -455,7 +455,7 @@ Lastly, I have trained two recurrent neural networks:
 
 Both have an embedding layer of 128 dimensions and a one-layer classifier. However I have only set dropout in the LSTM.
 
-We achieve a better validation accuracy with the recurrent networks, although there appears to be a more remarkable overfitting as we can see on the graphs below during the learning process.
+We achieve a better validation accuracy with the recurrent networks, although there also appears to be a remarkable overfitting as we can see on the graphs below during the learning process.
 
 ```python
 class RNN(nn.Module):

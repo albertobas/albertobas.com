@@ -117,7 +117,7 @@ En esta sección se entrenan cuatro modelos, dos redes convolucionales y dos red
 
 Todos los modelos implementados comparten un flujo de trabajo similar, es decir, una representación multidimensional de las secuencias, un proceso de aprendizaje de características de alto nivel en los datos y una última fase de clasificación de las estimaciones.
 
-Por eso he escrito un objeto simple que instanciaré en cada modelo y que reunirá los diferentes módulos a utilizar.
+Por eso he escrito una simple clase que instanciaré en cada modelo y que reunirá los diferentes módulos a utilizar.
 
 ```python
 class TwentyNewsNet(nn.Module):
@@ -457,7 +457,7 @@ Por último, he entrenado dos redes neuronales recurrentes:
 
 Ambos tienen una capa de _embeddings_ de 128 dimensiones y un clasificador de una capa. Sin embargo, solo he configurado _dropout_ en el LSTM.
 
-Logramos una mejor precisión de validación con las redes recurrentes, aunque parece haber un sobreajuste más notable, como podemos ver en los gráficos a continuación durante el proceso de aprendizaje.
+Logramos una mejor precisión de validación con las redes recurrentes, aunque también hay un sobreajuste notable, como podemos ver en los gráficos a continuación durante el proceso de aprendizaje.
 
 ```python
 class RNN(nn.Module):
