@@ -10,7 +10,7 @@ import SVG from 'src/components/utils/SVG';
 import DateFormatter from 'src/components/utils/DateFormatter';
 import { ArticleSEO } from 'src/components/utils/SEO';
 import { getItemsFromCards } from 'src/utils/helpers/post';
-import { hrefGithub } from 'src/utils/constants';
+import { canonical, hrefGithub } from 'src/utils/constants';
 import { ItemExtended } from 'src/utils/interfaces/architecture';
 import TOC from 'src/components/utils/TOC';
 import ILink from 'src/components/utils/ILink';
@@ -118,7 +118,7 @@ const ProjectsPost = ({
             )}
             {
               <div className={styles.layoutLinkGithub}>
-                {link && (
+                {link && link !== canonical && (
                   <div>
                     <ILink href={link}>
                       <SVG icon="link" dim={{ width: 1.1, height: 1.1 }} />
