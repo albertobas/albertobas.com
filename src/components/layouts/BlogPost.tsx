@@ -19,6 +19,7 @@ import ScrollToTop from '../utils/ScrollToTop';
 import { useDelayedRender } from 'src/utils/hooks';
 import SectionCards from 'src/components/home-page/SectionCards';
 import Tags from 'src/components/tags/Tags';
+import Image from 'next/image';
 
 type Props = MdxMetadataPost & {
   children: React.ReactNode;
@@ -38,6 +39,7 @@ const BlogPost = ({
   readingTime,
   datePublished,
   dateModified,
+  image,
   oGImage,
   tags,
   tech,
@@ -82,7 +84,7 @@ const BlogPost = ({
             {(datePublished || dateModified) && (
               <span>
                 {dateModified
-                  ? intl.formatMessage({ id: 'dateUpdated', defaultMessage: 'Updated on' })
+                  ? intl.formatMessage({ id: 'dateUpdated', defaultMessage: 'Updated on' }) + ' '
                   : intl.formatMessage({ id: 'datePublished', defaultMessage: 'Published on' }) + ' '}
                 <DateFormatter dateString={dateModified ? dateModified : datePublished} locale={locale} />
               </span>
@@ -94,6 +96,18 @@ const BlogPost = ({
                   intl.formatMessage({ id: 'reading', defaultMessage: 'min read' })}
               </span>
             )}
+          </div>
+        )}
+        {image && (
+          <div className={styles.imgWrapper}>
+            <Image
+              src={`/images/${slug}/${image.name}`}
+              alt={title}
+              layout="responsive"
+              width={image.width}
+              height={image.height}
+              priority
+            />
           </div>
         )}
         {github &&
@@ -165,17 +179,3 @@ const BlogPost = ({
   );
 };
 export default BlogPost;
-/*
-{image && (
-  <div className={styles.imgWrapper}>
-    <Image
-      src={`/images/${slug}/${image.name}`}
-      alt={title}
-      layout="responsive"
-      width={1200}
-      height={630}
-      priority
-    />
-  </div>
-)}
-*/
