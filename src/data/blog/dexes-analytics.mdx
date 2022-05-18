@@ -6,7 +6,9 @@ introduction: "<p>Decentralized exchanges (DEXes) generate enormous quantities o
 tags: 'defi,the-graph,hexagonal-architecture'
 tech: 'typescript,react-js,redux,vite-js,graphql'
 datePublished: '2022-05-03'
+dateModified: '2022-05-18'
 github: { repo: 'dexes-analytics' }
+image: { name: 'dexes_analytics.png', width: 739, height: 739 }
 oGImage: { name: 'oGImage.png', width: 1200, height: 630 }
 ---
 
@@ -18,7 +20,7 @@ My implementation is based on an hexagonal architecture in which the state exist
 
 The core is where the business logic is defined, this is, entities, repositories, use cases and adapters.
 
-I thought of every DEX supported by the application as a new feature. Each feature consists of its core, data sources, a Redux state slice and ui components, helper functions and constants.
+I thought of every DEX supported by the application as a new group of features. Each feature consists of its core, data sources, a Redux state slice and ui components, helper functions and constants.
 
 Therefore, if the application was to escalate, supporting a new decentralized exchange would consist merely of adding a new folder with independent code in features.
 
@@ -40,36 +42,9 @@ Each interactor calls a method of a repository, which is implemented in a class 
 
 `queryBlocksEthereum` will conform a `Blocks` entity with timestamps numbers in seconds and block numbers for four timestamps: `current`, `t1D`, `t2D` and `t1W`.
 
-`queryEthPricesUniswapV3` will conform an entity `Ethers` with ether prices for the same four timestamps, that is used to calculate stats in `TokenFeatured`.
+`queryEthPricesUniswapV3` will conform an entity `Ethers` with ether prices for the same four timestamps, that is used to calculate ETH to USD conversions.
 
-```typescript:src/features/shared/tokens/core/entities/Tokens.ts {20,21,22,23}
-export interface Token {
-  address: string;
-  name: string;
-  symbol: string;
-  volume: number | null;
-  tvl: number;
-  derivedETH: number;
-}
-
-export interface Tokens {
-  current: Record<string, Token>;
-  t1D: Record<string, Token>;
-  t2D: Record<string, Token>;
-  t1W: Record<string, Token>;
-}
-
-export type TokenExtended = Token & {
-  volumeChange: number | null;
-  volume1W: number | null;
-  tvlChange: number | null;
-  price: number;
-  priceChange: number | null;
-  priceChangeWeek: number | null;
-};
-```
-
-Every feature, or supported protocol, gathers several features. So, following the aforementioned example, let's have a look at each feature or folder of the implemented Uniswap v3 protocol.
+Every supported protocol gathers several features. So, following the aforementioned example, let's have a look at each feature or folder of the implemented Uniswap v3 protocol.
 
 The folder uniswapV3 gathers `pools`, `tokens`, `ethers` and the folder `shared` which contains the React component that uses the hook `useUniswapV3PoolsTokens` and renders the Overview page.
 
