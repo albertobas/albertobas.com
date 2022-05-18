@@ -97,7 +97,8 @@ async function getPost(section: string, slug: string, locale: string) {
       } as MdxMetadataPost,
       headings,
     } as MdxPost;
-  } catch {
+  } catch (e) {
+    console.log(e);
     return null;
   }
 }
