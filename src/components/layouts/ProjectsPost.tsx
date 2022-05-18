@@ -99,7 +99,7 @@ const ProjectsPost = ({
                 {(datePublished || dateModified) && (
                   <span>
                     {dateModified
-                      ? intl.formatMessage({ id: 'dateUpdated', defaultMessage: 'Updated on' })
+                      ? intl.formatMessage({ id: 'dateUpdated', defaultMessage: 'Updated on' }) + ' '
                       : intl.formatMessage({ id: 'datePublished', defaultMessage: 'Published on' }) + ' '}
                     <DateFormatter dateString={dateModified ? dateModified : datePublished} locale={locale} />
                   </span>
