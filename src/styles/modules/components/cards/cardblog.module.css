@@ -38,6 +38,9 @@
     margin: 0 0.2rem 0 0;
   }
 }
+.layoutTags > ul > li a {
+  display: block;
+}
 .tech {
   ul {
     display: flex;
