@@ -8,7 +8,7 @@ This is my personal website, where I publish articles and side-projects. The cod
 
 The page is in both dark and light mode and uses the `prefers-color-scheme` CSS media feature to select between both.
 
-Furthermore, this website is entirely translated to spanish.
+Furthermore, this website is entirely translated to Spanish.
 
 ## Technical details
 
