@@ -33,7 +33,7 @@ In this guide [npm 7 workspaces](https://docs.npmjs.com/cli/v7/using-npm/workspa
      "description": "",
    - "main": "index.js",
    +	"workspaces": [
-   +		"hardhat",
+   +		"hardhat-env",
    +		"react-app"
    +	],
      "scripts": {
@@ -48,14 +48,14 @@ In this guide [npm 7 workspaces](https://docs.npmjs.com/cli/v7/using-npm/workspa
 4. Create the workspaces folders:
 
    ```bash
-   $ npm init -w hardhat
+   $ npm init -w hardhat-env
    $ npm init -w react-app
    ```
 
 5. Install the Hardhat environment dependencies:
 
    ```bash
-   $ npm install --save-dev -w hardhat @nomiclabs/hardhat-ethers
+   $ npm install --save-dev -w hardhat-env @nomiclabs/hardhat-ethers
    $ @nomiclabs/hardhat-waffle @typechain/ethers-v5 @typechain/hardhat
    $ @types/chai @types/mocha @types/node chai ethereum-waffle
    $ ethers hardhat ts-node typechain typescript
@@ -71,7 +71,7 @@ In this guide [npm 7 workspaces](https://docs.npmjs.com/cli/v7/using-npm/workspa
 
 7. Add some scripts that will be handy:
 
-   ```diff:hardhat/package.json
+   ```diff:hardhat-env/package.json
    "scripts": {
    - "test": "echo \"Error: no test specified\" && exit 1"
    + "test": "hardhat test",
@@ -96,10 +96,10 @@ In this guide [npm 7 workspaces](https://docs.npmjs.com/cli/v7/using-npm/workspa
    ```diff:package.json
    "scripts": {
    -	"test": "echo \"Error: no test specified\" && exit 1"
-   + "node": "npm run node --workspace=hardhat",
-   + "test-hardhat": "npm run test --workspace=hardhat",
-   + "compile-share-deploy": "npm run compile --workspace=hardhat && npm run share --workspace=hardhat && npm run deploy --workspace=hardhat",
-   + "mint": "npm run mint --workspace=hardhat",
+   + "node": "npm run node --workspace=hardhat-env",
+   + "test-hardhat": "npm run test --workspace=hardhat-env",
+   + "compile-share-deploy": "npm run compile --workspace=hardhat-env && npm run share --workspace=hardhat-env && npm run deploy --workspace=hardhat-env",
+   + "mint": "npm run mint --workspace=hardhat-env",
    + "start-app": "npm start --workspace=react-app",
    }
    ```
@@ -108,7 +108,7 @@ In this guide [npm 7 workspaces](https://docs.npmjs.com/cli/v7/using-npm/workspa
 
    > In case we use Metamask we'll need to either assign in `hardhat.config.ts` `1337` to the `chainId` of our local network, or set the `chainId` of `localhost` in Metamask to `31337`:
 
-   ```typescript:hardhat/hardhat.config.ts
+   ```typescript:hardhat-env/hardhat.config.ts
    import { HardhatUserConfig } from "hardhat/types";
    import "@typechain/hardhat";
    import "@nomiclabs/hardhat-ethers";
@@ -128,7 +128,7 @@ In this guide [npm 7 workspaces](https://docs.npmjs.com/cli/v7/using-npm/workspa
 
 The smart contract is written in Solidity and complies with the [EIP-20 standard](https://eips.ethereum.org/EIPS/eip-20 'EIP-20: Token Standard') specifications.
 
-```solidity:hardhat/contracts/MintableERC20.sol
+```solidity:hardhat-env/contracts/MintableERC20.sol
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
@@ -237,7 +237,7 @@ In this guide a hardhat plugin for integration with [Waffle](https://hardhat.org
 
 This tests are structured in three main `describe` calls:
 
-```typescript:hardhat/test/mintableerc20.spec.ts
+```typescript:hardhat-env/test/mintableerc20.spec.ts
 describe('TFT', function () {
   let MintableERC20Factory: ContractFactory,
     tft: Contract,
@@ -316,7 +316,7 @@ Now run the script `test-hardhat`:
 $ npm run test-hardhat
 
 > mintable-erc-20-dapp@1.0.0 test-hardhat
-> npm run test --workspace=hardhat
+> npm run test --workspace=hardhat-env
 
 
 > hardhat@1.0.0 test
@@ -344,15 +344,15 @@ Compiled 1 Solidity file successfully
 
 As we can see, `hardhat test` will compile the solidity contract and generate typings beforehand. This will create the folders `artifacts`, `cache`, and `typechain-types`.
 
-We are mostly interested in `MintableERC20.json` under `/hardhat/artifacts/contracts/MintableERC20.sol`, and `MintableERC20.ts` under `/hardhat/typechain-types`, as they contain the [ABI](https://docs.soliditylang.org/en/v0.8.4/abi-spec.html) and the typings that have been generated, respectively.
+We are mostly interested in `MintableERC20.json` under `/hardhat-env/artifacts/contracts/MintableERC20.sol`, and `MintableERC20.ts` under `/hardhat-env/typechain-types`, as they contain the [ABI](https://docs.soliditylang.org/en/v0.8.4/abi-spec.html) and the typings that have been generated, respectively.
 
 We'll use them in our React application to interact with the smart contract using Ethers.js.
 
-In order to import the files that we need from the workspace `hardhat` to `react-app`, we could do so simply with import statements.
+In order to import the files that we need from the workspace `hardhat-env` to `react-app`, we could do so simply with import statements.
 
 However, in case we'd like to keep a copy of those files in `react-app` or just to avoid naming conflicts with packages installed in our workspace and other workspaces names, we could run a simple script to read the files we need and write them in `react-app` to import them from there:
 
-```typescript:hardhat/scripts/shareFiles.ts
+```typescript:hardhat-env/scripts/shareFiles.ts
 async function shareFiles() {
   const hardhatContractsPath = join(__dirname, '../artifacts/contracts');
   const hardhatContractsTypePath = join(__dirname, '../typechain-types');
@@ -397,7 +397,7 @@ This is easily accomplished by adding a simple [task](https://hardhat.org/guides
 
 > To simplify the process, a pre-specified amount of 100 TFT is set.
 
-```typescript:hardhat/tasks/mint.ts
+```typescript:hardhat-env/tasks/mint.ts
 task('mint', 'Mint TFT and internally transfer it to an address')
   .addPositionalParam('receiver', 'The address that will receive them')
   .setAction(async ({ receiver }, hre) => {
@@ -437,7 +437,7 @@ task('mint', 'Mint TFT and internally transfer it to an address')
 
 Lastly, it is just needed to import this file in the hardhat configuration:
 
-```diff:hardhat/hardhat.config.ts
+```diff:hardhat-env/hardhat.config.ts
 import { HardhatUserConfig } from "hardhat/types";
 import "@typechain/hardhat";
 import "@nomiclabs/hardhat-ethers";
@@ -455,7 +455,7 @@ The latter command will, furthermore, ensure our React app has the current contr
 $ npm run compile-share-deploy
 
 > mintable-erc-20-dapp@1.0.0 compile-share-deploy
-> npm run compile --workspace=hardhat && npm run share --workspace=hardhat && npm run deploy --workspace=hardhat
+> npm run compile --workspace=hardhat-env && npm run share --workspace=hardhat-env && npm run deploy --workspace=hardhat-env
 
 
 > hardhat@1.0.0 compile
