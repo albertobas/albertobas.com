@@ -109,10 +109,10 @@ In this guide [npm 7 workspaces](https://docs.npmjs.com/cli/v7/using-npm/workspa
    > In case we use Metamask we'll need to either assign in `hardhat.config.ts` `1337` to the `chainId` of our local network, or set the `chainId` of `localhost` in Metamask to `31337`:
 
    ```typescript:hardhat-env/hardhat.config.ts
-   import { HardhatUserConfig } from "hardhat/types";
-   import "@typechain/hardhat";
-   import "@nomiclabs/hardhat-ethers";
-   import "@nomiclabs/hardhat-waffle";
+   import { HardhatUserConfig } from 'hardhat/types';
+   import '@typechain/hardhat';
+   import '@nomiclabs/hardhat-ethers';
+   import '@nomiclabs/hardhat-waffle';
 
    const config: HardhatUserConfig = {
      solidity: '0.8.4',
@@ -438,11 +438,11 @@ task('mint', 'Mint TFT and internally transfer it to an address')
 Lastly, it is just needed to import this file in the hardhat configuration:
 
 ```diff:hardhat-env/hardhat.config.ts
-import { HardhatUserConfig } from "hardhat/types";
-import "@typechain/hardhat";
-import "@nomiclabs/hardhat-ethers";
-import "@nomiclabs/hardhat-waffle";
-+ require("./tasks/mint");
+import { HardhatUserConfig } from 'hardhat/types';
+import '@typechain/hardhat';
+import '@nomiclabs/hardhat-ethers';
+import '@nomiclabs/hardhat-waffle';
++ import './tasks/mint';
 ```
 
 ## Deploying the contract

@@ -109,10 +109,10 @@ En esta guía se utiliza [npm 7 workspaces](https://docs.npmjs.com/cli/v7/using-
    > En caso de utilizar Metamask necesitaremos o bien asignar en `hardhat.config.ts` `1337` a la `chainId` de nuestra red local, o bien configurar la `chainId` de `localhost` en Metamask a `31337`:
 
    ```typescript:hardhat-env/hardhat.config.ts
-   import { HardhatUserConfig } from "hardhat/types";
-   import "@typechain/hardhat";
-   import "@nomiclabs/hardhat-ethers";
-   import "@nomiclabs/hardhat-waffle";
+   import { HardhatUserConfig } from 'hardhat/types';
+   import '@typechain/hardhat';
+   import '@nomiclabs/hardhat-ethers';
+   import '@nomiclabs/hardhat-waffle';
 
    const config: HardhatUserConfig = {
      solidity: '0.8.4',
@@ -438,11 +438,11 @@ task('mint', 'Mint TFT and internally transfer it to an address')
 Por último, solo es necesario importar este archivo en la configuración de hardhat:
 
 ```diff:hardhat-env/hardhat.config.ts
-import { HardhatUserConfig } from "hardhat/types";
-import "@typechain/hardhat";
-import "@nomiclabs/hardhat-ethers";
-import "@nomiclabs/hardhat-waffle";
-+ require("./tasks/mint");
+import { HardhatUserConfig } from 'hardhat/types';
+import '@typechain/hardhat';
+import '@nomiclabs/hardhat-ethers';
+import '@nomiclabs/hardhat-waffle';
++ import './tasks/mint';
 ```
 
 ## Desplegado del contrato
