@@ -99,7 +99,7 @@ export default TokensUniswapV3Repository;
 
 Este es el caso de uso para generar una entidad `Tokens`. Básicamente obtiene un _endpoint_ y un `Blocks` y los pasa al método `getByBlocks` de `TokensUniswapV3Repository`.
 
-La implementación del repositorio devuelve una promesa de un objeto con el tipo `TokensUniswapV3` que se resuelve aquí y se adapta al tipo `Tokens` a entonces.
+La implementación del repositorio devuelve una promesa de un objeto con el tipo `TokensUniswapV3` que se resuelve aquí y posteriormente se adapta al tipo `Tokens`.
 
 Aquí se podría crear una instancia de `TokensUniswapV3DataSource`. Sin embargo, para que nuestra lógica no se vea afectada por ningún cambio en la infraestructura, obtiene una abstracción -un repositorio `TokensUniswapV3Repository`- en lugar de depender de una implementación de fuente de datos específica.
 
