@@ -1,19 +1,5 @@
 /** @type {import('next').NextConfig} */
 
-const ContentSecurityPolicy = `
-  default-src 'self'; 
-  child-src 'self'; 
-  style-src 'self' 'unsafe-inline'; 
-  img-src 'self' data:; 
-  media-src 'none'; 
-  connect-src *; 
-  font-src 'self'; 
-  frame-ancestors 'none'; 
-  base-uri 'none'; 
-  form-action 'none'; 
-  script-src 'self' 'unsafe-eval';
-`;
-
 const nextConfig = {
   reactStrictMode: true,
   i18n: {
@@ -52,10 +38,6 @@ const nextConfig = {
           {
             key: 'Referrer-Policy',
             value: 'no-referrer',
-          },
-          {
-            key: 'Content-Security-Policy',
-            value: ContentSecurityPolicy.replace(/\s{2,}/g, ' ').trim(),
           },
         ],
       },
